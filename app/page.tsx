@@ -1,65 +1,85 @@
-import Image from "next/image";
+import Link from 'next/link'
+import { auth, signOut } from '@/lib/auth'
 
-export default function Home() {
+const GAMES = [
+{ id: 'hangman', href: '/hangman', label: 'Ahorcado', desc: 'Adivina la palabra secreta letra a letra usando el teclado.' },
+{ id: 'memory-sonidos', href: '/memory-sonidos', label: 'Memory de Sonidos', desc: 'Escucha la secuencia de sonidos y repítela en el mismo orden.' },
+  { id: 'aventura-texto', href: '/aventura-texto', label: 'Aventura de Texto', desc: 'Explora un mundo con comandos de texto como ir norte, tomar objeto.' },
+  { id: 'breakout', href: '/games/breakout.html', label: 'Breakout', desc: 'Rompe todos los bloques con la paleta. Usa las flechas para moverte y Espacio para lanzar.' },
+  { id: 'rpg', href: '/games/rpg/index.html', label: 'Mazmorra Oscura', desc: 'RPG medieval accesible. Explora mazmorras con WASD, ataca con Espacio e interactúa con E.' },
+  { id: 'mastermind', href: '/mastermind', label: 'Mastermind de Números', desc: 'Adivina el número secreto de 4 dígitos. Recibirás pistas: toros (posición correcta) y vacas (dígito correcto, posición incorrecta).' },
+  { id: 'wordle', href: '/wordle', label: 'Wordle', desc: 'Adivina la palabra de 5 letras en 6 intentos. Verde = posición correcta, amarillo = letra presente, gris = letra ausente.' },
+  { id: 'mates-rapidas', href: '/mates-rapidas', label: 'Matemáticas Rápidas', desc: 'Responde operaciones aritméticas antes de que se agote el tiempo. Elige entre tres niveles de dificultad.' },
+]
+
+export default async function Home() {
+  const session = await auth()
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
+    <div className="min-h-screen flex flex-col">
+      <header className="flex items-center justify-between px-6 py-4 border-b border-[#333]">
+        <h1 className="text-2xl font-bold text-[#ffd700]">Juegos Accesibles</h1>
+        <nav aria-label="Navegación de usuario" className="flex items-center gap-4 flex-wrap">
+          {session?.user ? (
+            <>
+              <span className="text-sm text-[#888]">Hola, {session.user.name}</span>
+              <Link href="/perfil" className="text-[#ffd700] underline hover:text-white text-sm">
+                Mi perfil
+              </Link>
+              <Link href="/tabla-lideres" className="text-[#ffd700] underline hover:text-white text-sm">
+                Tabla de líderes
+              </Link>
+              <form
+                action={async () => {
+                  'use server'
+                  await signOut({ redirectTo: '/' })
+                }}
+              >
+                <button type="submit" className="text-sm text-[#888] hover:text-white underline cursor-pointer">
+                  Cerrar sesión
+                </button>
+              </form>
+            </>
+          ) : (
+            <>
+              <Link href="/login" className="text-[#ffd700] underline hover:text-white text-sm">
+                Iniciar sesión
+              </Link>
+              <Link href="/register" className="text-[#ffd700] underline hover:text-white text-sm">
+                Registrarse
+              </Link>
+            </>
+          )}
+        </nav>
+      </header>
+
+      <main id="main-content" className="flex-1 max-w-2xl mx-auto w-full px-6 py-10">
+        <h2 className="text-xl mb-2">Bienvenido al sitio de juegos accesibles</h2>
+        <p className="text-[#888] mb-8 text-base">
+          Todos los juegos se controlan completamente con el teclado y son compatibles con lectores de pantalla como NVDA, JAWS y VoiceOver.
+        </p>
+
+        <ul className="space-y-4" role="list" aria-label="Lista de juegos disponibles">
+          {GAMES.map((game) => (
+            <li key={game.id}>
+              <Link
+                href={game.href}
+                className="block p-5 rounded-lg border border-[#333] bg-[#111] hover:border-[#ffd700] hover:bg-[#1a1a1a] transition-colors focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-[#ffd700] focus-visible:ring-offset-2 focus-visible:ring-offset-black"
+                aria-describedby={`desc-${game.id}`}
+              >
+                <span className="block text-lg font-bold text-[#ffd700]">{game.label}</span>
+                <span id={`desc-${game.id}`} className="block text-sm text-[#888] mt-1">
+                  {game.desc}
+                </span>
+              </Link>
+            </li>
+          ))}
+        </ul>
       </main>
+
+      <footer className="px-6 py-4 border-t border-[#333] text-center text-sm text-[#555]">
+        Navega con Tab entre los juegos. Presiona Enter para ingresar.
+      </footer>
     </div>
-  );
+  )
 }
