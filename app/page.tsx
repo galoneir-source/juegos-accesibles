@@ -11,6 +11,7 @@ const GAMES = [
   { id: 'wordle', href: '/wordle', label: 'Wordle', desc: 'Adivina la palabra de 5 letras en 6 intentos. Verde = posición correcta, amarillo = letra presente, gris = letra ausente.' },
   { id: 'mates-rapidas', href: '/mates-rapidas', label: 'Matemáticas Rápidas', desc: 'Responde operaciones aritméticas antes de que se agote el tiempo. Elige entre tres niveles de dificultad.' },
   { id: 'laberinto-audio', href: '/laberinto-audio', label: 'Laberinto de Audio', desc: 'Navega un laberinto guiándote solo por el sonido. La brújula de audio indica dirección y distancia a la salida. Usa las flechas o WASD para moverte.' },
+  { id: 'anagramas', href: '/anagramas', label: 'Anagramas', desc: 'Se muestra una palabra con las letras desordenadas. Escribe la palabra original antes de que se agote el tiempo. Pide pistas si necesitas ayuda.' },
 ]
 
 export default async function Home() {
