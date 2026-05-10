@@ -75,6 +75,10 @@ export const audio = {
     playTone(160, 0.08, 'sawtooth', 0.25)
     playTone(110, 0.12, 'sawtooth', 0.18, 0.07)
   },
+  deal() {
+    playTone(660, 0.04, 'square', 0.12)
+    playTone(880, 0.06, 'sine', 0.1, 0.05)
+  },
   // Maze: spatial compass tone — pan indicates horizontal direction to goal, freq indicates distance
   compass(pan: number, freq: number, gain = 0.35) {
     playPannedTone(freq, 0.4, pan, gain)

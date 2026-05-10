@@ -12,6 +12,7 @@ const GAMES = [
   { id: 'mates-rapidas', href: '/mates-rapidas', label: 'Matemáticas Rápidas', desc: 'Responde operaciones aritméticas antes de que se agote el tiempo. Elige entre tres niveles de dificultad.' },
   { id: 'laberinto-audio', href: '/laberinto-audio', label: 'Laberinto de Audio', desc: 'Navega un laberinto guiándote solo por el sonido. La brújula de audio indica dirección y distancia a la salida. Usa las flechas o WASD para moverte.' },
   { id: 'anagramas', href: '/anagramas', label: 'Anagramas', desc: 'Se muestra una palabra con las letras desordenadas. Escribe la palabra original antes de que se agote el tiempo. Pide pistas si necesitas ayuda.' },
+  { id: 'blackjack', href: '/blackjack', label: 'Blackjack', desc: 'Juego de cartas contra el dealer. Llega a 21 o acércate más que él sin pasarte. Teclas P, S y D para jugar.' },
 ]
 
 export default async function Home() {
