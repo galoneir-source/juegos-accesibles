@@ -84,4 +84,24 @@ export const audio = {
     playPannedTone(freq, 0.4, pan, gain)
     playPannedTone(freq * 1.2, 0.15, pan, gain * 0.4, 0.44)
   },
+  // Pong: ball position ping (pan = horizontal, freqY = vertical pitch)
+  pongBall(pan: number, freqY: number) {
+    playPannedTone(freqY, 0.07, pan, 0.22)
+  },
+  // Pong: paddle hit (isPlayer = player side, otherwise AI)
+  pongPaddle(isPlayer: boolean) {
+    playTone(isPlayer ? 920 : 540, 0.035, 'square', isPlayer ? 0.28 : 0.18)
+  },
+  // Pong: ball bounces off top/bottom wall
+  pongWall() {
+    playTone(360, 0.04, 'square', 0.16)
+  },
+  // Pong: tono de posición de paleta (agudo = arriba, grave = abajo)
+  pongPaddlePos(freq: number) {
+    playTone(freq, 0.07, 'sine', 0.25)
+  },
+  // Pong: player paddle reaches top (atTop=true) or bottom edge
+  pongEdge(atTop: boolean) {
+    playTone(atTop ? 980 : 220, 0.06, 'sine', 0.22)
+  },
 }
