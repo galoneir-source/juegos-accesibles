@@ -104,4 +104,52 @@ export const audio = {
   pongEdge(atTop: boolean) {
     playTone(atTop ? 980 : 220, 0.06, 'sine', 0.22)
   },
+  // Naval: player scores a hit on enemy ship
+  navalHit() {
+    playTone(300, 0.04, 'sawtooth', 0.38)
+    playTone(820, 0.06, 'square', 0.3, 0.05)
+    playTone(480, 0.14, 'sawtooth', 0.22, 0.1)
+  },
+  // Naval: player misses (water splash)
+  navalMiss() {
+    playTone(180, 0.09, 'sine', 0.28)
+    playTone(120, 0.18, 'sine', 0.18, 0.09)
+  },
+  // Naval: player sinks an enemy ship
+  navalSink() {
+    ;[880, 784, 698, 587, 523, 440].forEach((f, i) => playTone(f, 0.14, 'sine', 0.32, i * 0.1))
+    playTone(392, 0.45, 'sine', 0.28, 0.64)
+  },
+  // Naval: enemy hits player's ship
+  navalEnemyHit() {
+    playTone(220, 0.07, 'sawtooth', 0.38)
+    playTone(160, 0.12, 'sawtooth', 0.3, 0.08)
+    playTone(110, 0.2, 'sawtooth', 0.22, 0.22)
+  },
+  // Naval: enemy misses (distant splash)
+  navalEnemyMiss() {
+    playTone(130, 0.07, 'sine', 0.18)
+    playTone(95, 0.14, 'sine', 0.12, 0.07)
+  },
+  // Naval: ship placed on board
+  navalPlace() {
+    playTone(520, 0.04, 'square', 0.18)
+    playTone(720, 0.08, 'sine', 0.14, 0.05)
+  },
+  // Penaltis: ball kick impact
+  penaltyKick() {
+    playTone(180, 0.04, 'sawtooth', 0.4)
+    playTone(120, 0.07, 'sine', 0.25, 0.04)
+  },
+  // Penaltis: goal scored — crowd-like ascent
+  penaltyGoal() {
+    ;[392, 494, 587, 698, 784, 988].forEach((f, i) => playTone(f, 0.14, 'sine', 0.35, i * 0.09))
+    playTone(1047, 0.5, 'sine', 0.4, 0.58)
+  },
+  // Penaltis: save — thud + descending
+  penaltySave() {
+    playTone(260, 0.06, 'sawtooth', 0.38)
+    playTone(190, 0.1, 'sawtooth', 0.28, 0.07)
+    playTone(140, 0.18, 'sine', 0.2, 0.19)
+  },
 }
