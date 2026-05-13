@@ -4,7 +4,7 @@ import { revalidatePath } from 'next/cache'
 import { auth } from '@/lib/auth'
 import { prisma } from '@/lib/db'
 
-export type GameId = 'hangman' | 'memory' | 'aventura' | 'mastermind' | 'wordle' | 'mates-rapidas' | 'laberinto' | 'anagramas' | 'blackjack' | 'pong' | 'batalla-naval' | 'penaltis' | 'tres-en-raya'
+export type GameId = 'hangman' | 'memory' | 'aventura' | 'mastermind' | 'wordle' | 'mates-rapidas' | 'laberinto' | 'anagramas' | 'blackjack' | 'pong' | 'batalla-naval' | 'penaltis' | 'tres-en-raya' | 'gorillas'
 
 export async function saveScore(game: GameId, points: number) {
   const session = await auth()
@@ -29,7 +29,7 @@ export async function getLeaderboard(game: GameId) {
 }
 
 export async function getUserScores(userId: string) {
-  const games: GameId[] = ['hangman', 'memory', 'aventura', 'mastermind', 'wordle', 'mates-rapidas', 'laberinto', 'anagramas', 'blackjack', 'pong', 'batalla-naval', 'penaltis', 'tres-en-raya']
+  const games: GameId[] = ['hangman', 'memory', 'aventura', 'mastermind', 'wordle', 'mates-rapidas', 'laberinto', 'anagramas', 'blackjack', 'pong', 'batalla-naval', 'penaltis', 'tres-en-raya', 'gorillas']
   const results: Record<string, number> = {}
   for (const game of games) {
     const best = await prisma.score.findFirst({
