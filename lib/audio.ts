@@ -152,4 +152,14 @@ export const audio = {
     playTone(190, 0.1, 'sawtooth', 0.28, 0.07)
     playTone(140, 0.18, 'sine', 0.2, 0.19)
   },
+  // Tres en Raya: AI places its mark — softer, lower than player click
+  tresAiMark() {
+    playTone(440, 0.06, 'sine', 0.22)
+    playTone(330, 0.1, 'sine', 0.15, 0.07)
+  },
+  // Tres en Raya: draw result — neutral two-tone
+  tresDraw() {
+    playTone(523, 0.1, 'sine', 0.25)
+    playTone(466, 0.2, 'sine', 0.2, 0.13)
+  },
 }
