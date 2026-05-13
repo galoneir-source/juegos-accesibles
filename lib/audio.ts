@@ -162,4 +162,21 @@ export const audio = {
     playTone(523, 0.1, 'sine', 0.25)
     playTone(466, 0.2, 'sine', 0.2, 0.13)
   },
+  // Gorillas: banana throw whoosh
+  gorillaThrow() {
+    playTone(600, 0.04, 'square', 0.18)
+    playTone(480, 0.06, 'sine', 0.14, 0.05)
+    playTone(360, 0.08, 'sine', 0.1, 0.12)
+  },
+  // Gorillas: explosion on building or miss
+  gorillaExplode() {
+    playTone(90, 0.1, 'sawtooth', 0.45)
+    playTone(130, 0.08, 'sawtooth', 0.38, 0.05)
+    playTone(60, 0.22, 'sine', 0.32, 0.1)
+  },
+  // Gorillas: direct gorilla hit — dramatic descending fanfare
+  gorillaHit() {
+    ;[880, 784, 659, 523, 392, 294].forEach((f, i) => playTone(f, 0.1, 'sawtooth', 0.42, i * 0.07))
+    playTone(196, 0.45, 'sine', 0.32, 0.48)
+  },
 }
