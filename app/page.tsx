@@ -20,6 +20,7 @@ const GAMES = [
   { id: 'gorillas', href: '/gorillas', label: 'Gorilas', desc: 'El clásico Gorillas.bas. Introduce el ángulo y la velocidad para lanzar un plátano explosivo al gorila enemigo. El viento complica la puntería. Partida al mejor de 3 rondas.' },
   { id: 'misterio', href: '/misterio', label: 'Detective: El Caso Blackwood', desc: 'Juego de misterio detectivesco. Lord Blackwood ha sido hallado muerto envenenado. Interroga a los cinco sospechosos, examina la escena del crimen y acusa al culpable.' },
   { id: 'secuencias', href: '/secuencias', label: 'Secuencias', desc: 'Puente de plataformas de cristal. Escucha los tonos antes de saltar: agudo = seguro, grave = peligroso. Memoriza la secuencia y cruza el puente. 3 dificultades: 5, 8 o 12 saltos.' },
+  { id: 'conecta4', href: '/conecta-cuatro', label: 'Conecta 4', desc: 'Coloca fichas amarillas para conectar 4 en línea (horizontal, vertical o diagonal) antes que la IA. Usa las flechas para mover entre columnas y Enter para soltar la ficha.' },
 ]
 
 export default async function Home() {
