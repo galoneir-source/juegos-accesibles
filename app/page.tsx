@@ -22,6 +22,7 @@ const GAMES = [
   { id: 'secuencias', href: '/secuencias', label: 'Secuencias', desc: 'Puente de plataformas de cristal. Escucha los tonos antes de saltar: agudo = seguro, grave = peligroso. Memoriza la secuencia y cruza el puente. 3 dificultades: 5, 8 o 12 saltos.' },
   { id: 'conecta4', href: '/conecta-cuatro', label: 'Conecta 4', desc: 'Coloca fichas amarillas para conectar 4 en línea (horizontal, vertical o diagonal) antes que la IA. Usa las flechas para mover entre columnas y Enter para soltar la ficha.' },
   { id: 'generala', href: '/generala', label: 'Generala', desc: '13 turnos, 5 dados, hasta 3 tiradas por turno. Rellena categorías como Escalera, Full, Póker o Generala para acumular la mayor puntuación posible. R para tirar, 1-5 para guardar dados, ↑↓ y Enter para anotar.' },
+  { id: '2048', href: '/2048', label: '2048', desc: 'Desliza las fichas numéricas con las flechas para fusionarlas. Cuando dos fichas iguales chocan se combinan en una sola. Llega a la ficha 2048.' },
 ]
 
 export default async function Home() {
