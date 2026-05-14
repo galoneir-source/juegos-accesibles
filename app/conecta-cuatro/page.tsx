@@ -153,11 +153,30 @@ export default function ConectaCuatroPage() {
 
   function goPhase(p: Phase) { phaseRef.current = p; setPhaseState(p) }
 
+  function describeCol(c: number, b: Board = boardRef.current): string {
+    // Read column bottom-to-top and build description
+    const pieces: string[] = []
+    for (let r = ROWS - 1; r >= 0; r--) {
+      if (b[r][c] === 1) pieces.push('tuya')
+      else if (b[r][c] === 2) pieces.push('IA')
+    }
+    if (pieces.length === 0) return 'vacía'
+    if (pieces.length === ROWS) return 'llena'
+    const yours = pieces.filter(p => p === 'tuya').length
+    const ai    = pieces.filter(p => p === 'IA').length
+    const free  = ROWS - pieces.length
+    const parts: string[] = []
+    if (yours > 0) parts.push(`${yours} tuya${yours > 1 ? 's' : ''}`)
+    if (ai > 0)    parts.push(`${ai} de la IA`)
+    parts.push(`${free} libre${free > 1 ? 's' : ''}`)
+    return parts.join(', ')
+  }
+
   function moveCol(c: number) {
     colRef.current = c
     setCol(c)
     audio.compass((c / (COLS - 1)) * 2 - 1, 330 + c * 70)
-    announcePolite(`Columna ${c + 1}`)
+    announcePolite(`Columna ${c + 1}: ${describeCol(c)}`)
   }
 
   function startGame() {
@@ -256,6 +275,17 @@ export default function ConectaCuatroPage() {
         e.preventDefault(); moveCol(Math.min(COLS - 1, colRef.current + 1))
       } else if (e.key === 'Enter' || e.key === ' ') {
         e.preventDefault(); handleDrop()
+      } else if (e.key === 'i' || e.key === 'I') {
+        e.preventDefault()
+        // Read current column bottom-to-top
+        const c = colRef.current
+        const b = boardRef.current
+        const labels: string[] = []
+        for (let r = ROWS - 1; r >= 0; r--) {
+          const v = b[r][c]
+          labels.push(v === 1 ? 'tuya' : v === 2 ? 'IA' : 'vacío')
+        }
+        announceAssertive(`Columna ${c + 1} de abajo arriba: ${labels.join(', ')}.`)
       }
     }
     window.addEventListener('keydown', onKey)
@@ -341,7 +371,16 @@ export default function ConectaCuatroPage() {
       title="Conecta 4"
       instructions={INSTRUCTIONS}
       score={score}
-      onReread={() => announcePolite(`Columna ${col + 1} de ${COLS}. ${thinking ? 'La IA está pensando.' : 'Tu turno.'}`)}
+      onReread={() => {
+        const b = boardRef.current
+        const yours = b.flat().filter(v => v === 1).length
+        const ai    = b.flat().filter(v => v === 2).length
+        announcePolite(
+          `Columna ${colRef.current + 1} seleccionada. ${describeCol(colRef.current)}. ` +
+          `Fichas en tablero: ${yours} tuyas, ${ai} de la IA. ` +
+          (thinking ? 'La IA está pensando.' : 'Tu turno. I para leer la columna completa.')
+        )
+      }}
     >
       <div className="flex flex-col items-center gap-3">
 
@@ -391,11 +430,40 @@ export default function ConectaCuatroPage() {
               }`}
               onClick={() => { moveCol(c); setTimeout(handleDrop, 0) }}
               disabled={thinking}
-              aria-label={`Columna ${c + 1}${board[0][c] !== 0 ? ' (llena)' : ''}`}
+              aria-label={`Columna ${c + 1}: ${describeCol(c, board)}`}
             >
               {c + 1}
             </button>
           ))}
+        </div>
+
+        {/* Column summary — shows stacked pieces as compact text */}
+        <div className="flex gap-1.5" aria-hidden="true">
+          {Array.from({ length: COLS }, (_, c) => {
+            const stack: Cell[] = []
+            for (let r = ROWS - 1; r >= 0; r--) stack.push(board[r][c])
+            return (
+              <div
+                key={c}
+                className={`w-9 sm:w-11 flex flex-col-reverse items-center gap-0.5 py-1 rounded text-[10px] leading-none ${
+                  c === col ? 'bg-[#1e3048]' : ''
+                }`}
+              >
+                {stack.map((v, i) => (
+                  <span
+                    key={i}
+                    className={
+                      v === 1 ? 'text-yellow-400 font-bold' :
+                      v === 2 ? 'text-red-400 font-bold' :
+                      'text-[#1e3a5a]'
+                    }
+                  >
+                    {v === 1 ? '●' : v === 2 ? '●' : '○'}
+                  </span>
+                ))}
+              </div>
+            )
+          })}
         </div>
 
         {/* Status */}
@@ -432,7 +500,7 @@ export default function ConectaCuatroPage() {
           </Button>
         </div>
 
-        <p className="text-xs text-[#555]">← → o A/D para mover · Enter o Espacio para soltar</p>
+        <p className="text-xs text-[#555]">← → o A/D para mover · Enter o Espacio para soltar · I para leer la columna</p>
       </div>
     </GameShell>
   )
