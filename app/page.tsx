@@ -18,6 +18,8 @@ const GAMES = [
   { id: 'penaltis', href: '/penaltis', label: 'Penaltis', desc: 'Tanda de 5 penaltis. Elige izquierda, centro o derecha para disparar o defender. El portero rival se adapta a tu historial de tiros.' },
   { id: 'tres-en-raya', href: '/tres-en-raya', label: 'Tres en Raya', desc: 'Juega al tres en raya contra la IA. Mueve el cursor con las flechas y coloca tu marca con Enter. La IA juega de forma óptima.' },
   { id: 'gorillas', href: '/gorillas', label: 'Gorilas', desc: 'El clásico Gorillas.bas. Introduce el ángulo y la velocidad para lanzar un plátano explosivo al gorila enemigo. El viento complica la puntería. Partida al mejor de 3 rondas.' },
+  { id: 'misterio', href: '/misterio', label: 'Detective: El Caso Blackwood', desc: 'Juego de misterio detectivesco. Lord Blackwood ha sido hallado muerto envenenado. Interroga a los cinco sospechosos, examina la escena del crimen y acusa al culpable.' },
+  { id: 'secuencias', href: '/secuencias', label: 'Secuencias', desc: 'Puente de plataformas de cristal. Escucha los tonos antes de saltar: agudo = seguro, grave = peligroso. Memoriza la secuencia y cruza el puente. 3 dificultades: 5, 8 o 12 saltos.' },
 ]
 
 export default async function Home() {
