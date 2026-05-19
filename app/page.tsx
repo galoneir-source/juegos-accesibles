@@ -5,6 +5,8 @@ const GAMES = [
 { id: 'hangman', href: '/hangman', label: 'Ahorcado', desc: 'Adivina la palabra secreta letra a letra usando el teclado.' },
 { id: 'memory-sonidos', href: '/memory-sonidos', label: 'Memory de Sonidos', desc: 'Escucha la secuencia de sonidos y repítela en el mismo orden.' },
   { id: 'aventura-texto', href: '/aventura-texto', label: 'Aventura de Texto', desc: 'Explora un mundo con comandos de texto como ir norte, tomar objeto.' },
+  { id: 'casa-encantada', href: '/casa-encantada', label: 'Casa Encantada', desc: 'Aventura de texto de terror. Explora la Mansión Voss, cuida tu vida y tu cordura, y derrota al Espectro del Amo para escapar.' },
+  { id: 'aventura-espacio', href: '/aventura-espacio', label: 'Aventura Espacial', desc: 'Explora la estación espacial UES Kronos con comandos de texto. Descubre qué le ocurrió a la tripulación y destruye al Vórtex Primario.' },
   { id: 'breakout', href: '/games/breakout.html', label: 'Breakout', desc: 'Rompe todos los bloques con la paleta. Usa las flechas para moverte y Espacio para lanzar.' },
   { id: 'rpg', href: '/games/rpg/index.html', label: 'Mazmorra Oscura', desc: 'RPG medieval accesible. Explora mazmorras con WASD, ataca con Espacio e interactúa con E.' },
   { id: 'mastermind', href: '/mastermind', label: 'Mastermind de Números', desc: 'Adivina el número secreto de 4 dígitos. Recibirás pistas: toros (posición correcta) y vacas (dígito correcto, posición incorrecta).' },
