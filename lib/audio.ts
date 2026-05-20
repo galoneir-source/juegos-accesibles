@@ -243,4 +243,21 @@ export const audio = {
     playTone(280, 0.04, 'sawtooth', 0.3)
     playTone(180, 0.08, 'sine',     0.22, 0.04)
   },
+  // Frogger: frog hop
+  frogJump() {
+    playTone(900, 0.02, 'sine', 0.18)
+    playTone(680, 0.04, 'sine', 0.14, 0.02)
+  },
+  // Frogger: reached a home slot
+  frogHome() {
+    ;[523, 659, 784, 1047].forEach((f, i) => playTone(f, 0.1, 'sine', 0.3, i * 0.08))
+  },
+  // Frogger: vehicle danger nearby (pan = position -1..1)
+  frogDanger(pan: number) {
+    playPannedTone(320, 0.05, pan, 0.22)
+  },
+  // Frogger: water/log nearby (pan = position -1..1)
+  frogLog(pan: number) {
+    playPannedTone(200, 0.06, pan, 0.16)
+  },
 }
