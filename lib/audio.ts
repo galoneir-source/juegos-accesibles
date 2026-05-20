@@ -214,4 +214,33 @@ export const audio = {
       playTone(f, 0.1, 'sine', 0.3, i * 0.08)
     )
   },
+  // Tetris: piece locks onto the board
+  tetrisPlace() {
+    playTone(220, 0.04, 'square', 0.22)
+    playTone(160, 0.08, 'sine',   0.16, 0.04)
+  },
+  // Tetris: lines cleared (1–4)
+  tetrisClear(lines: number) {
+    const sets: number[][] = [
+      [523, 659],
+      [523, 659, 784],
+      [523, 659, 784, 988],
+      [523, 659, 784, 988, 1047, 1319, 1568],
+    ]
+    const freqs = sets[Math.min(lines, 4) - 1]
+    freqs.forEach((f, i) => playTone(f, lines === 4 ? 0.18 : 0.12, 'sine', 0.32, i * 0.07))
+  },
+  // Tetris: piece rotated
+  tetrisRotate() {
+    playTone(660, 0.04, 'square', 0.14)
+  },
+  // Tetris: piece moved left/right
+  tetrisMove() {
+    playTone(440, 0.03, 'sine', 0.1)
+  },
+  // Tetris: hard drop
+  tetrisDrop() {
+    playTone(280, 0.04, 'sawtooth', 0.3)
+    playTone(180, 0.08, 'sine',     0.22, 0.04)
+  },
 }
