@@ -70,8 +70,9 @@ const INSTRUCTIONS =
   'Destruye todos los alienígenas antes de que lleguen a tu posición. ' +
   'La marcha de los aliens suena en estéreo: el canal izquierdo o derecho indica dónde está el grupo. ' +
   'Cuando un alien dispara también lo oyes en su posición. ' +
-  'Tecla E: escuchar ahora mismo dónde están los aliens y cuántos quedan. ' +
-  'Tienes 3 vidas. R: leer estado. H: repetir instrucciones.'
+  'Tecla E: escuchar primero un pitido con la posición de tu nave y después la marcha con la posición de los aliens. ' +
+  'El disparo también suena en estéreo según dónde esté tu nave. ' +
+  'Tienes 3 vidas. R: leer posición de nave y estado. H: repetir instrucciones.'
 
 interface Alien { row: number; col: number; alive: boolean }
 interface Bullet { x: number; y: number }
@@ -147,7 +148,7 @@ export default function SpaceInvadersPage() {
         x: playerXRef.current,
         y: PLAYER_Y - PLAYER_H / 2 - BULLET_H,
       }
-      audio.siShoot()
+      audio.siShoot((playerXRef.current / W) * 2 - 1)
     }
     prevShootRef.current = keysRef.current.shoot
 
@@ -410,25 +411,36 @@ export default function SpaceInvadersPage() {
           e.preventDefault(); keysRef.current.right = down; break
         case ' ':
           e.preventDefault(); keysRef.current.shoot = down; break
-        case 'r': case 'R':
+        case 'r': case 'R': {
           if (!down) break
+          const playerPan = (playerXRef.current / W) * 2 - 1
+          const playerSide = playerPan < -0.3 ? 'izquierda' : playerPan > 0.3 ? 'derecha' : 'centro'
           announcePolite(
-            `Puntuación: ${scoreRef.current}. Vidas: ${livesRef.current}. ` +
+            `Tu nave en ${playerSide}. Puntuación: ${scoreRef.current}. Vidas: ${livesRef.current}. ` +
             `Alienígenas restantes: ${aliensRef.current.filter(a => a.alive).length}.`
           )
           break
+        }
         case 'e': case 'E': {
           if (!down) break
+          // Player position beacon first
+          const playerPan2 = (playerXRef.current / W) * 2 - 1
+          audio.siPlayerPos(playerPan2)
+          const playerSide2 = playerPan2 < -0.3 ? 'izquierda' : playerPan2 > 0.3 ? 'derecha' : 'centro'
+          // Alien group after a short delay
           const aliveNow = aliensRef.current.filter(a => a.alive)
-          if (aliveNow.length === 0) break
-          const cols2   = aliveNow.map(a => a.col)
-          const minC    = Math.min(...cols2)
-          const maxC    = Math.max(...cols2)
-          const centerX = gridXRef.current + (minC + maxC + 1) * CELL_W / 2
-          const pan2    = (centerX / W) * 2 - 1
-          audio.siMarch(0, pan2)
-          const side = pan2 < -0.3 ? 'izquierda' : pan2 > 0.3 ? 'derecha' : 'centro'
-          announcePolite(`Aliens en ${side}. ${aliveNow.length} restantes.`)
+          if (aliveNow.length > 0) {
+            const cols2   = aliveNow.map(a => a.col)
+            const minC    = Math.min(...cols2)
+            const maxC    = Math.max(...cols2)
+            const centerX = gridXRef.current + (minC + maxC + 1) * CELL_W / 2
+            const pan2    = (centerX / W) * 2 - 1
+            setTimeout(() => audio.siMarch(0, pan2), 280)
+            const alienSide = pan2 < -0.3 ? 'izquierda' : pan2 > 0.3 ? 'derecha' : 'centro'
+            announcePolite(`Tu nave en ${playerSide2}. Aliens en ${alienSide}. ${aliveNow.length} restantes.`)
+          } else {
+            announcePolite(`Tu nave en ${playerSide2}.`)
+          }
           break
         }
         case 'h': case 'H':
@@ -545,7 +557,7 @@ export default function SpaceInvadersPage() {
           className="w-full max-w-[560px] border border-[#333] rounded block mx-auto bg-black"
         />
         <p className="text-xs text-[#555] text-center">
-          ← → / A D — mover &nbsp;|&nbsp; Espacio — disparar &nbsp;|&nbsp; E — ubicar aliens &nbsp;|&nbsp; R — estado &nbsp;|&nbsp; H — instrucciones
+          ← → / A D — mover &nbsp;|&nbsp; Espacio — disparar &nbsp;|&nbsp; E — ubicar nave y aliens &nbsp;|&nbsp; R — estado &nbsp;|&nbsp; H — instrucciones
         </p>
       </div>
     </GameShell>
