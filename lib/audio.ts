@@ -180,10 +180,16 @@ export const audio = {
     playTone(196, 0.45, 'sine', 0.32, 0.48)
   },
   // Space Invaders: player shoots
-  siShoot() {
-    playTone(1200, 0.02, 'square', 0.18)
-    playTone(900, 0.03, 'square', 0.14, 0.02)
-    playTone(600, 0.04, 'sawtooth', 0.1, 0.05)
+  siShoot(pan = 0) {
+    playPannedTone(1200, 0.02, pan, 0.18)
+    playPannedTone(900, 0.03, pan, 0.14, 0.02)
+    playPannedTone(600, 0.04, pan, 0.1, 0.05)
+  },
+  // Space Invaders: player ship position beacon (pan = ship position -1..1)
+  siPlayerPos(pan: number) {
+    playPannedTone(1400, 0.05, pan, 0.28)
+    playPannedTone(1750, 0.08, pan, 0.22, 0.06)
+    playPannedTone(1400, 0.05, pan, 0.18, 0.16)
   },
   // Space Invaders: alien destroyed (pan = horizontal position -1..1)
   siAlienHit(pan: number) {
