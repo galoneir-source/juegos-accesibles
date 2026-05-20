@@ -262,6 +262,11 @@ export const audio = {
   frogDanger(pan: number) {
     playPannedTone(320, 0.05, pan, 0.22)
   },
+  // Frogger: continuous car engine rumble — gain 0..1 scales with proximity
+  frogCar(pan: number, gain: number) {
+    playPannedTone(130, 0.16, pan, gain)
+    playPannedTone(85,  0.16, pan, gain * 0.55, 0.04)
+  },
   // Frogger: water/log nearby (pan = position -1..1)
   frogLog(pan: number) {
     playPannedTone(200, 0.06, pan, 0.16)

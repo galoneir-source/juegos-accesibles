@@ -155,22 +155,69 @@ export default function FroggerPage() {
 
   // ── Danger scan audio ───────────────────────────────────────────────────────
 
+  // Continuous scan: called every ~150 ms. Gain scales with X-proximity so
+  // a car directly in front is loud and one 5 cells away is barely audible.
   function scanDanger(frogX: number, frogRow: number) {
+    const scanDefs: Array<[number, number]> = [
+      [frogRow,     1.0],   // current row — full gain
+      [frogRow - 1, 0.4],   // row ahead   — reduced (anticipation)
+      [frogRow + 1, 0.4],   // row behind  — reduced
+    ]
+    const HEAR_CELLS = 5    // hearing range in cells
+
+    for (const [r, mult] of scanDefs) {
+      if (r <= 0 || r >= ROWS) continue
+      const vehs = getVehicles(r)
+      const lane = LANE_DEFS.find(l => l.row === r)
+      if (!vehs.length || !lane) continue
+
+      if (lane.type === 'road') {
+        for (const v of vehs) {
+          const cx   = v.x + v.w / 2
+          const dist = Math.abs(cx - frogX)
+          if (dist > CELL * HEAR_CELLS) continue
+          const gain = (1 - dist / (CELL * HEAR_CELLS)) * mult * 0.44
+          audio.frogCar((cx / W) * 2 - 1, gain)
+        }
+      } else if (r === frogRow && lane.type === 'water') {
+        // For the current water row ping the nearest log every slow scan (not the fast road scan)
+        const log = getVehicles(r).reduce<{ x: number; w: number } | null>((best, v) => {
+          const cx = v.x + v.w / 2
+          if (!best) return v
+          return Math.abs(cx - frogX) < Math.abs(best.x + best.w / 2 - frogX) ? v : best
+        }, null)
+        if (log) audio.frogLog((log.x + log.w / 2) / W * 2 - 1)
+      }
+    }
+  }
+
+  // On-demand scan (key E): plays sound + returns text description of nearest threat
+  function scanDangerOnDemand(frogX: number, frogRow: number): string {
     const rows = [frogRow - 1, frogRow, frogRow + 1].filter(r => r > 0 && r < ROWS)
+    const parts: string[] = []
     rows.forEach((r, i) => {
       const vehs = getVehicles(r)
       if (!vehs.length) return
+      const lane = LANE_DEFS.find(l => l.row === r)
+      if (!lane) return
       const closest = [...vehs].sort(
         (a, b) => Math.abs(a.x + a.w / 2 - frogX) - Math.abs(b.x + b.w / 2 - frogX)
       )[0]
-      const pan = ((closest.x + closest.w / 2) / W) * 2 - 1
-      const delay = i * 90
-      if (ROAD_ROWS.includes(r)) {
+      const cx    = closest.x + closest.w / 2
+      const pan   = (cx / W) * 2 - 1
+      const distCells = Math.round(Math.abs(cx - frogX) / CELL)
+      const side  = pan < -0.2 ? 'izquierda' : pan > 0.2 ? 'derecha' : 'justo enfrente'
+      const label = r === frogRow ? 'Tu fila' : r < frogRow ? 'Fila anterior' : 'Fila siguiente'
+      const delay = i * 100
+      if (lane.type === 'road') {
         setTimeout(() => audio.frogDanger(pan), delay)
+        parts.push(`${label}: coche a ${distCells} celda${distCells !== 1 ? 's' : ''} a la ${side}`)
       } else {
         setTimeout(() => audio.frogLog(pan), delay)
+        parts.push(`${label}: tronco a la ${side}`)
       }
     })
+    return parts.length ? parts.join('. ') + '.' : 'Sin vehículos cercanos.'
   }
 
   // ── Main tick ───────────────────────────────────────────────────────────────
@@ -225,8 +272,8 @@ export default function FroggerPage() {
       die('squish'); rafRef.current = requestAnimationFrame(tick); return
     }
 
-    // Periodic danger audio
-    if (now - lastScanRef.current >= 900) {
+    // Continuous proximity audio — 150 ms keeps tones crisp without overlap
+    if (now - lastScanRef.current >= 150) {
       lastScanRef.current = now
       scanDanger(frogXRef.current, row)
     }
@@ -449,11 +496,12 @@ export default function FroggerPage() {
         case 'ArrowRight': case 'd': case 'D': e.preventDefault(); jump( 0,  1); break
         case 'e': case 'E':
           e.preventDefault()
-          scanDanger(frogXRef.current, frogRowRef.current)
-          announcePolite(
-            `Fila ${ROWS - 1 - frogRowRef.current}. ` +
-            `${rowZone(frogRowRef.current) === 'water' ? 'Agua' : rowZone(frogRowRef.current) === 'road' ? 'Carretera' : 'Seguro'}.`
-          )
+          {
+            const desc = scanDangerOnDemand(frogXRef.current, frogRowRef.current)
+            const zone = rowZone(frogRowRef.current)
+            const zoneLabel = zone === 'water' ? 'Agua' : zone === 'road' ? 'Carretera' : 'Zona segura'
+            announcePolite(`${zoneLabel}, fila ${ROWS - 1 - frogRowRef.current}. ${desc}`)
+          }
           break
         case 'r': case 'R':
           announcePolite(
