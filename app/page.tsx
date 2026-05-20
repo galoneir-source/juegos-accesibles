@@ -27,6 +27,7 @@ const GAMES = [
   { id: '2048', href: '/2048', label: '2048', desc: 'Desliza las fichas numéricas con las flechas para fusionarlas. Cuando dos fichas iguales chocan se combinan en una sola. Llega a la ficha 2048.' },
   { id: 'bingo', href: '/bingo', label: 'Bingo', desc: 'Cartón de 5×5 con números del 1 al 75. Las bolas se cantan con su letra (B, I, N, G, O) y los números de tu cartón se marcan solos. Pulsa Espacio para pedir cada bola. Gana con una línea o el Bingo completo.' },
   { id: 'aventura-magica', href: '/aventura-magica', label: 'El Cristal Eterno', desc: 'Aventura medieval fantástica. El Dragón de las Sombras ha destruido el Cristal Eterno. Recorre el reino de Eloria, reúne los 3 Fragmentos y derrota al Dragón. Elige entre Paladín, Hechicera o Ladrón.' },
+  { id: 'space-invaders', href: '/space-invaders', label: 'Space Invaders', desc: 'Defiende la Tierra de 40 alienígenas en 4 filas. Mueve tu nave con las flechas o A D y dispara con Espacio. La marcha de los aliens suena en estéreo: izquierda o derecha según su posición. Tecla E para ubicarlos en cualquier momento. Modo práctica sin disparos enemigos, y 3 niveles reales con 3 vidas.' },
 ]
 
 export default async function Home() {

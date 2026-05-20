@@ -179,4 +179,39 @@ export const audio = {
     ;[880, 784, 659, 523, 392, 294].forEach((f, i) => playTone(f, 0.1, 'sawtooth', 0.42, i * 0.07))
     playTone(196, 0.45, 'sine', 0.32, 0.48)
   },
+  // Space Invaders: player shoots
+  siShoot() {
+    playTone(1200, 0.02, 'square', 0.18)
+    playTone(900, 0.03, 'square', 0.14, 0.02)
+    playTone(600, 0.04, 'sawtooth', 0.1, 0.05)
+  },
+  // Space Invaders: alien destroyed (pan = horizontal position -1..1)
+  siAlienHit(pan: number) {
+    playPannedTone(300, 0.04, pan, 0.38)
+    playPannedTone(180, 0.08, pan, 0.3, 0.05)
+    playPannedTone(90, 0.16, pan, 0.2, 0.12)
+  },
+  // Space Invaders: alien fires a bullet (pan = shooter position -1..1)
+  siAlienShoot(pan: number) {
+    playPannedTone(350, 0.03, pan, 0.2)
+    playPannedTone(200, 0.06, pan, 0.16, 0.04)
+  },
+  // Space Invaders: player ship hit
+  siPlayerHit() {
+    playTone(160, 0.06, 'sawtooth', 0.45)
+    playTone(100, 0.12, 'sawtooth', 0.38, 0.07)
+    playTone(60, 0.25, 'sine', 0.32, 0.18)
+    playTone(80, 0.35, 'sine', 0.22, 0.4)
+  },
+  // Space Invaders: march beat (beat = 0-3 cycle, pan = grid center -1..1)
+  siMarch(beat: number, pan: number) {
+    const freqs = [220, 180, 140, 110]
+    playPannedTone(freqs[beat % 4], 0.07, pan, 0.28)
+  },
+  // Space Invaders: wave cleared — ascending fanfare
+  siWaveClear() {
+    ;[392, 494, 587, 698, 784, 988, 1047, 1319].forEach((f, i) =>
+      playTone(f, 0.1, 'sine', 0.3, i * 0.08)
+    )
+  },
 }
