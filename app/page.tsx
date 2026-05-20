@@ -30,6 +30,7 @@ const GAMES = [
   { id: 'space-invaders', href: '/space-invaders', label: 'Space Invaders', desc: 'Defiende la Tierra de 40 alienígenas en 4 filas. Mueve tu nave con las flechas o A D y dispara con Espacio. La marcha de los aliens suena en estéreo: izquierda o derecha según su posición. Tecla E para ubicarlos en cualquier momento. Modo práctica sin disparos enemigos, y 3 niveles reales con 3 vidas.' },
   { id: 'tetris', href: '/tetris', label: 'Tetris', desc: 'Las piezas caen desde arriba: muévelas con las flechas, rota con ↑ o X, caída instantánea con Espacio. Completa líneas para eliminarlas. Sonido distintivo al rotar, colocar y limpiar líneas. Pausa con P.' },
   { id: 'frogger', href: '/frogger', label: 'Frogger', desc: 'Lleva a la rana desde la parte inferior hasta las cinco casas en la cima. Cruza la carretera esquivando coches y el río saltando sobre troncos. Los vehículos suenan en estéreo. Tecla E para escuchar los peligros cercanos. 3 vidas, 45 segundos por intento.' },
+  { id: 'pacman', href: '/pacman', label: 'Pac-Man', desc: 'Come todos los puntos del laberinto evitando a los dos fantasmas. Las cuatro pastillas de poder te permiten comerte a los fantasmas durante 8 segundos. Los fantasmas suenan en estéreo. Tecla E para escuchar su posición en cualquier momento. 3 vidas.' },
 ]
 
 export default async function Home() {

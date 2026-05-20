@@ -260,4 +260,24 @@ export const audio = {
   frogLog(pan: number) {
     playPannedTone(200, 0.06, pan, 0.16)
   },
+  // Pac-Man: eat a dot
+  pacChompDot() {
+    playTone(480, 0.03, 'square', 0.12)
+  },
+  // Pac-Man: eat a power pellet
+  pacPower() {
+    ;[330, 440, 550, 660].forEach((f, i) => playTone(f, 0.1, 'sine', 0.28, i * 0.06))
+  },
+  // Pac-Man: eat a scared ghost
+  pacEatGhost() {
+    playTone(880, 0.05, 'square', 0.3)
+    playTone(1100, 0.08, 'sine', 0.25, 0.06)
+    playTone(660, 0.12, 'sine', 0.2, 0.15)
+  },
+  // Pac-Man: caught by ghost
+  pacDie() {
+    ;[494, 440, 392, 349, 294, 247, 196, 147].forEach((f, i) =>
+      playTone(f, 0.12, 'sawtooth', 0.3, i * 0.1)
+    )
+  },
 }
