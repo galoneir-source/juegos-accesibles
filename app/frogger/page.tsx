@@ -179,7 +179,9 @@ export default function FroggerPage() {
           const dist = Math.abs(cx - frogX)
           if (dist > CELL * HEAR_CELLS) continue
           const gain = (1 - dist / (CELL * HEAR_CELLS)) * mult * 0.44
-          audio.frogCar((cx / W) * 2 - 1, gain)
+          // Pan relative to frog: positive = right of frog, negative = left of frog
+          const pan = (cx - frogX) / (CELL * HEAR_CELLS)
+          audio.frogCar(pan, gain)
         }
       } else if (lane.type === 'water') {
         // Ping every log within range — same proximity formula as cars
@@ -188,7 +190,8 @@ export default function FroggerPage() {
           const dist = Math.abs(cx - frogX)
           if (dist > CELL * HEAR_CELLS) continue
           const gain = (1 - dist / (CELL * HEAR_CELLS)) * mult * 0.38
-          audio.frogLog((cx / W) * 2 - 1, gain)
+          const pan = (cx - frogX) / (CELL * HEAR_CELLS)
+          audio.frogLog(pan, gain)
         }
       }
     }
@@ -207,9 +210,10 @@ export default function FroggerPage() {
         (a, b) => Math.abs(a.x + a.w / 2 - frogX) - Math.abs(b.x + b.w / 2 - frogX)
       )[0]
       const cx    = closest.x + closest.w / 2
-      const pan   = (cx / W) * 2 - 1
+      // Pan relative to frog position
+      const pan   = Math.max(-1, Math.min(1, (cx - frogX) / (CELL * 4)))
       const distCells = Math.round(Math.abs(cx - frogX) / CELL)
-      const side  = pan < -0.2 ? 'izquierda' : pan > 0.2 ? 'derecha' : 'justo enfrente'
+      const side  = cx < frogX - CELL * 0.4 ? 'izquierda' : cx > frogX + CELL * 0.4 ? 'derecha' : 'justo enfrente'
       const label = r === frogRow ? 'Tu fila' : r < frogRow ? 'Fila anterior' : 'Fila siguiente'
       const delay = i * 100
       if (lane.type === 'road') {
@@ -265,10 +269,10 @@ export default function FroggerPage() {
         if (frogXRef.current < CELL / 2 || frogXRef.current > W - CELL / 2) {
           die('splash'); rafRef.current = requestAnimationFrame(tick); return
         }
-        // Rhythmic confirmation pulse: "you are on a log"
+        // Rhythmic confirmation pulse: "you are on a log" — center pan (frog is on the log)
         if (now - lastOnLogRef.current >= 500) {
           lastOnLogRef.current = now
-          audio.frogOnLog((frogXRef.current / W) * 2 - 1)
+          audio.frogOnLog(0)
         }
       } else {
         die('splash'); rafRef.current = requestAnimationFrame(tick); return
