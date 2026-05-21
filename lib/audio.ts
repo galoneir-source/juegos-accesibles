@@ -374,6 +374,29 @@ export const audio = {
       playTone(f, 0.12, 'sawtooth', 0.3, i * 0.1)
     )
   },
+  // Pac-Man: periodic ghost radar pulse (egocentric pan, freq=vertical cue, scared=timbre)
+  pacGhostPulse(pan: number, freq: number, gain: number, scared: boolean) {
+    if (scared) {
+      playPannedTone(freq,       0.06, pan, gain)
+      playPannedTone(freq * 1.5, 0.05, pan, gain * 0.4, 0.06)
+    } else {
+      playPannedTone(freq,       0.09, pan, gain)
+      playPannedTone(freq * 0.7, 0.08, pan, gain * 0.5, 0.05)
+    }
+  },
+  // Pac-Man: nearby power-pellet beacon (panned to pellet direction)
+  pacPelletBeacon(pan: number, gain: number) {
+    playPannedTone(680,  0.04, pan, gain)
+    playPannedTone(1020, 0.03, pan, gain * 0.5, 0.06)
+  },
+  // Pac-Man: tried to move into a wall
+  pacWall() {
+    playTone(240, 0.03, 'square', 0.12)
+  },
+  // Pac-Man: arrived at a junction (3+ open paths) — subtle navigation cue
+  pacJunction() {
+    playTone(1047, 0.025, 'sine', 0.08)
+  },
   // Sokoban: player footstep (pan = column position -1..1)
   sokobanStep(pan: number) {
     playPannedTone(600, 0.04, pan, 0.16)

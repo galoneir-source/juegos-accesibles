@@ -20,9 +20,9 @@ const DOT   = 2
 const POWER = 3
 
 // ── Timing ────────────────────────────────────────────────────────────────────
-const PAC_MS    = 165   // ms per Pac-Man step
-const GHOST_MS  = 230   // ms per ghost step (normal)
-const SCARED_MS = 420   // ms per ghost step (scared)
+const PAC_MS    = 210   // ms per Pac-Man step  (was 165 — slowed for blind play)
+const GHOST_MS  = 370   // ms per ghost step (normal)  (was 230)
+const SCARED_MS = 620   // ms per ghost step (scared)  (was 420)
 const POWER_MS  = 8000  // scared duration ms
 const DEATH_MS  = 1400  // death animation ms
 
@@ -186,7 +186,9 @@ export default function PacManPage() {
   const ghostTimerRef  = useRef(0)
   const powerTimerRef  = useRef(0)
   const scanTimerRef   = useRef(0)
+  const pelletTimerRef = useRef(0)
   const ghostEatRef    = useRef(0)
+  const wallBlockedRef = useRef(false)  // edge-trigger: only beep on first wall contact
 
   const canvasRef = useRef<HTMLCanvasElement>(null)
 
@@ -215,6 +217,12 @@ export default function PacManPage() {
     const req   = reqDirRef.current
     const cur   = pacDirRef.current
 
+    // Wall feedback: only when player tried to change direction and it's blocked
+    const reqChanged  = req.dr !== cur.dr || req.dc !== cur.dc
+    const reqIsWalled = reqChanged && blocked(grid, r + req.dr, c + req.dc)
+    if (reqIsWalled && !wallBlockedRef.current) audio.pacWall()
+    wallBlockedRef.current = reqIsWalled
+
     let moved = false
     for (const dir of [req, cur]) {
       const nr = r + dir.dr, nc = c + dir.dc
@@ -231,6 +239,11 @@ export default function PacManPage() {
     chompRef.current++
 
     const nr = pacRowRef.current, nc = pacColRef.current
+
+    // Junction cue: 3+ open paths at new position
+    const openPaths = DIRS.filter(d => !blocked(grid, nr + d.dr, nc + d.dc)).length
+    if (openPaths >= 3) audio.pacJunction()
+
     const cell = grid[nr][nc]
 
     if (cell === DOT) {
@@ -272,11 +285,20 @@ export default function PacManPage() {
       g.row += d.dr
       g.col += d.dc
     } else {
-      const step = bfsNext(g.row, g.col, pacRowRef.current, pacColRef.current, grid)
+      // 28% random movement so the player has breathing room
+      const useRandom = Math.random() < 0.28
+      const step = useRandom
+        ? null
+        : bfsNext(g.row, g.col, pacRowRef.current, pacColRef.current, grid)
       if (step) {
         g.dir = { dr: step[0] - g.row, dc: step[1] - g.col }
         g.row = step[0]
         g.col = step[1]
+      } else {
+        const d = randomDir(g.row, g.col, grid, g.dir)
+        g.dir = d
+        g.row += d.dr
+        g.col += d.dc
       }
     }
   }
@@ -488,15 +510,47 @@ export default function PacManPage() {
       if (phaseRef.current === 'playing') checkCollisions()
     }
 
-    // Periodic ghost audio scan
+    // Periodic ghost radar (egocentric: pan and freq relative to Pac-Man)
     scanTimerRef.current += dt
-    if (scanTimerRef.current >= 1100) {
+    if (scanTimerRef.current >= 600) {
       scanTimerRef.current = 0
+      const pr = pacRowRef.current, pc = pacColRef.current
       ghostsRef.current.forEach(g => {
         if (g.dead) return
-        const pan = (g.col / (COLS - 1)) * 2 - 1
-        g.scared ? audio.frogLog(pan) : audio.frogDanger(pan)
+        const dx   = g.col - pc
+        const dy   = g.row - pr
+        const dist = Math.abs(dx) + Math.abs(dy)
+        const gain = Math.max(0, 0.38 - dist * 0.028)
+        if (gain < 0.04) return
+        const pan  = Math.max(-1, Math.min(1, dx / 5))
+        // Frequency encodes vertical direction: ghost above → higher pitch
+        const freq = g.scared
+          ? Math.max(350, Math.min(700, 520 - dy * 18))
+          : Math.max(180, Math.min(420, 300 - dy * 14))
+        audio.pacGhostPulse(pan, freq, gain, g.scared)
       })
+    }
+
+    // Power-pellet beacon — soft pulse toward nearest uncollected pellet
+    pelletTimerRef.current += dt
+    if (pelletTimerRef.current >= 900) {
+      pelletTimerRef.current = 0
+      if (powerTimerRef.current <= 0) {
+        const pr = pacRowRef.current, pc = pacColRef.current
+        let nearDist = Infinity, nearPan = 0
+        const grid2 = gridRef.current
+        for (let r2 = 0; r2 < ROWS; r2++) {
+          for (let c2 = 0; c2 < COLS; c2++) {
+            if (grid2[r2]?.[c2] === POWER) {
+              const d2 = Math.abs(r2 - pr) + Math.abs(c2 - pc)
+              if (d2 < nearDist) { nearDist = d2; nearPan = Math.max(-1, Math.min(1, (c2 - pc) / 5)) }
+            }
+          }
+        }
+        if (nearDist < 12) {
+          audio.pacPelletBeacon(nearPan, Math.max(0.06, 0.28 - nearDist * 0.02))
+        }
+      }
     }
 
     const canvas = canvasRef.current
@@ -525,7 +579,8 @@ export default function PacManPage() {
 
     ghostsRef.current = buildGhosts()
     pacTimerRef.current = 0; ghostTimerRef.current = 0
-    powerTimerRef.current = 0; scanTimerRef.current = 0; ghostEatRef.current = 0
+    powerTimerRef.current = 0; scanTimerRef.current = 0; pelletTimerRef.current = 0
+    ghostEatRef.current = 0; wallBlockedRef.current = false
 
     setScore(0); setLives(3); setDotsLeft(total)
     setSaved(false); setSaveError('')
@@ -548,23 +603,58 @@ export default function PacManPage() {
       if (d) { e.preventDefault(); reqDirRef.current = d; return }
 
       switch (e.key) {
-        case 'e': case 'E':
+        case 'e': case 'E': {
           e.preventDefault()
-          ghostsRef.current.forEach((g, i) => {
-            if (g.dead) {
-              announcePolite(`Fantasma ${i + 1} comido, reaparecerá pronto.`)
-              return
+          const pr = pacRowRef.current, pc = pacColRef.current
+          const grid = gridRef.current
+          const parts: string[] = []
+
+          // Open paths
+          const openNames: string[] = []
+          if (!blocked(grid, pr - 1, pc)) openNames.push('norte')
+          if (!blocked(grid, pr + 1, pc)) openNames.push('sur')
+          if (!blocked(grid, pr, pc - 1)) openNames.push('oeste')
+          if (!blocked(grid, pr, pc + 1)) openNames.push('este')
+          parts.push(`Caminos abiertos: ${openNames.join(', ')}.`)
+
+          // Nearest power pellet
+          let nearDist2 = Infinity, nearDir2 = ''
+          for (let r2 = 0; r2 < ROWS; r2++) {
+            for (let c2 = 0; c2 < COLS; c2++) {
+              if (grid[r2]?.[c2] === POWER) {
+                const d2 = Math.abs(r2 - pr) + Math.abs(c2 - pc)
+                if (d2 < nearDist2) {
+                  nearDist2 = d2
+                  const dx2 = c2 - pc, dy2 = r2 - pr
+                  nearDir2 = Math.abs(dx2) >= Math.abs(dy2)
+                    ? (dx2 > 0 ? 'este' : 'oeste')
+                    : (dy2 < 0 ? 'norte' : 'sur')
+                }
+              }
             }
-            const pan  = (g.col / (COLS - 1)) * 2 - 1
-            g.scared ? audio.frogLog(pan) : audio.frogDanger(pan)
-            const side = g.col < pacColRef.current - 2 ? 'izquierda'
-                       : g.col > pacColRef.current + 2 ? 'derecha' : 'cerca'
-            const dist = Math.abs(g.row - pacRowRef.current) + Math.abs(g.col - pacColRef.current)
-            announcePolite(
-              `Fantasma ${i + 1} ${g.scared ? 'asustado' : ''} a ${dist} casillas al ${side}.`
-            )
+          }
+          if (nearDist2 < Infinity) parts.push(`Pastilla de poder al ${nearDir2}, ${nearDist2} casillas.`)
+
+          // Ghosts (egocentric)
+          ghostsRef.current.forEach((g, i) => {
+            if (g.dead) { parts.push(`Fantasma ${i + 1}: comido, reaparecerá pronto.`); return }
+            const dx = g.col - pc, dy = g.row - pr
+            const dist = Math.abs(dx) + Math.abs(dy)
+            const horiz = Math.abs(dx) >= Math.abs(dy)
+              ? (dx > 0 ? 'este' : 'oeste')
+              : (dy < 0 ? 'norte' : 'sur')
+            const pan2  = Math.max(-1, Math.min(1, dx / 5))
+            const freq2 = g.scared
+              ? Math.max(350, Math.min(700, 520 - dy * 18))
+              : Math.max(180, Math.min(420, 300 - dy * 14))
+            audio.pacGhostPulse(pan2, freq2, 0.35, g.scared)
+            parts.push(`Fantasma ${i + 1}${g.scared ? ' (asustado)' : ''}: al ${horiz}, ${dist} casillas.`)
           })
+
+          parts.push(`Puntos: ${scoreRef.current}. Puntos restantes: ${dotsRef.current}.`)
+          announceAssertive(parts.join(' '))
           break
+        }
         case 'r': case 'R':
           announcePolite(
             `Puntos: ${scoreRef.current}. Vidas: ${livesRef.current}. ` +
