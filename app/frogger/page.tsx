@@ -32,8 +32,9 @@ const INSTRUCTIONS =
   'Flechas o WASD para saltar en las cuatro direcciones. ' +
   'En la carretera esquiva los coches; si te atropellan pierdes una vida. ' +
   'En el agua salta solo sobre los troncos: si caes al agua pierdes una vida. ' +
-  'Los vehículos suenan en estéreo según su posición. ' +
-  'Tecla E: escuchar los peligros en tu fila y las adyacentes. ' +
+  'Los coches suenan con un rumor grave; los troncos con un toque agudo de madera. ' +
+  'Cuanto más cerca, más fuerte el sonido. Cuando estás subido en un tronco oyes un golpecito rítmico que confirma que estás a salvo. ' +
+  'Tecla E: escuchar los peligros en tu fila y las adyacentes con distancia exacta. ' +
   'Tienes 3 vidas y 45 segundos por intento. R: estado. H: instrucciones.'
 
 // ── Lane definitions ──────────────────────────────────────────────────────────
@@ -95,6 +96,7 @@ export default function FroggerPage() {
   const lastTimeRef  = useRef(0)
   const lastTimerRef = useRef(0)
   const lastScanRef  = useRef(0)
+  const lastOnLogRef = useRef(0)   // confirmation pulse while riding a log
   const canvasRef    = useRef<HTMLCanvasElement>(null)
 
   const syncPhase = useCallback((p: Phase) => {
@@ -155,15 +157,15 @@ export default function FroggerPage() {
 
   // ── Danger scan audio ───────────────────────────────────────────────────────
 
-  // Continuous scan: called every ~150 ms. Gain scales with X-proximity so
-  // a car directly in front is loud and one 5 cells away is barely audible.
+  // Continuous scan: called every ~150 ms. Gain scales with X-proximity for
+  // both cars and logs, and covers current + adjacent rows.
   function scanDanger(frogX: number, frogRow: number) {
     const scanDefs: Array<[number, number]> = [
-      [frogRow,     1.0],   // current row — full gain
-      [frogRow - 1, 0.4],   // row ahead   — reduced (anticipation)
-      [frogRow + 1, 0.4],   // row behind  — reduced
+      [frogRow,     1.0],
+      [frogRow - 1, 0.5],
+      [frogRow + 1, 0.5],
     ]
-    const HEAR_CELLS = 5    // hearing range in cells
+    const HEAR_CELLS = 5
 
     for (const [r, mult] of scanDefs) {
       if (r <= 0 || r >= ROWS) continue
@@ -179,14 +181,15 @@ export default function FroggerPage() {
           const gain = (1 - dist / (CELL * HEAR_CELLS)) * mult * 0.44
           audio.frogCar((cx / W) * 2 - 1, gain)
         }
-      } else if (r === frogRow && lane.type === 'water') {
-        // For the current water row ping the nearest log every slow scan (not the fast road scan)
-        const log = getVehicles(r).reduce<{ x: number; w: number } | null>((best, v) => {
-          const cx = v.x + v.w / 2
-          if (!best) return v
-          return Math.abs(cx - frogX) < Math.abs(best.x + best.w / 2 - frogX) ? v : best
-        }, null)
-        if (log) audio.frogLog((log.x + log.w / 2) / W * 2 - 1)
+      } else if (lane.type === 'water') {
+        // Ping every log within range — same proximity formula as cars
+        for (const v of vehs) {
+          const cx   = v.x + v.w / 2
+          const dist = Math.abs(cx - frogX)
+          if (dist > CELL * HEAR_CELLS) continue
+          const gain = (1 - dist / (CELL * HEAR_CELLS)) * mult * 0.38
+          audio.frogLog((cx / W) * 2 - 1, gain)
+        }
       }
     }
   }
@@ -213,8 +216,8 @@ export default function FroggerPage() {
         setTimeout(() => audio.frogDanger(pan), delay)
         parts.push(`${label}: coche a ${distCells} celda${distCells !== 1 ? 's' : ''} a la ${side}`)
       } else {
-        setTimeout(() => audio.frogLog(pan), delay)
-        parts.push(`${label}: tronco a la ${side}`)
+        setTimeout(() => audio.frogLog(pan, 0.28), delay)
+        parts.push(`${label}: tronco a ${distCells} celda${distCells !== 1 ? 's' : ''} a la ${side}`)
       }
     })
     return parts.length ? parts.join('. ') + '.' : 'Sin vehículos cercanos.'
@@ -261,6 +264,11 @@ export default function FroggerPage() {
         frogXRef.current += lane.dir * lane.speed * dt / 1000
         if (frogXRef.current < CELL / 2 || frogXRef.current > W - CELL / 2) {
           die('splash'); rafRef.current = requestAnimationFrame(tick); return
+        }
+        // Rhythmic confirmation pulse: "you are on a log"
+        if (now - lastOnLogRef.current >= 500) {
+          lastOnLogRef.current = now
+          audio.frogOnLog((frogXRef.current / W) * 2 - 1)
         }
       } else {
         die('splash'); rafRef.current = requestAnimationFrame(tick); return
@@ -474,6 +482,7 @@ export default function FroggerPage() {
     lastTimeRef.current  = now
     lastTimerRef.current = now
     lastScanRef.current  = 0
+    lastOnLogRef.current = 0
 
     announcePolite(
       `Frogger. Lleva la rana a las ${TOTAL_HOMES} casas en lo alto. ` +

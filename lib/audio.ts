@@ -267,9 +267,16 @@ export const audio = {
     playPannedTone(130, 0.16, pan, gain)
     playPannedTone(85,  0.16, pan, gain * 0.55, 0.04)
   },
-  // Frogger: water/log nearby (pan = position -1..1)
-  frogLog(pan: number) {
-    playPannedTone(200, 0.06, pan, 0.16)
+  // Frogger: log location pulse — gain 0..1 scales with proximity
+  frogLog(pan: number, gain = 0.22) {
+    playPannedTone(520, 0.04, pan, gain)
+    playPannedTone(380, 0.07, pan, gain * 0.7, 0.03)
+    playPannedTone(260, 0.10, pan, gain * 0.5, 0.07)
+  },
+  // Frogger: soft rhythmic bump while riding a log (confirms safe position)
+  frogOnLog(pan: number) {
+    playPannedTone(440, 0.07, pan, 0.18)
+    playPannedTone(320, 0.09, pan, 0.12, 0.05)
   },
   // Pac-Man: eat a dot
   pacChompDot() {
