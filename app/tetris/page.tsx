@@ -385,6 +385,33 @@ export default function TetrisPage() {
     return free
   }
 
+  // Describes what piece types are stacked in a column, read from bottom to top.
+  // Holes (free cells between blocks) are also reported.
+  // Returns 'vacía' if the column has no locked blocks.
+  function describeColumn(col: number): string {
+    const board = boardRef.current
+    let topFilled = -1
+    for (let r = 0; r < ROWS; r++) {
+      if (board[r][col]) { topFilled = r; break }
+    }
+    if (topFilled === -1) return 'vacía'
+
+    // Collect cells from bottom (row ROWS-1) up to the topmost block
+    type Entry = { name: string; count: number }
+    const groups: Entry[] = []
+    for (let r = ROWS - 1; r >= topFilled; r--) {
+      const v = board[r][col]
+      const name = v ? PIECES[v - 1] : 'hueco'
+      const last = groups[groups.length - 1]
+      if (last && last.name === name) last.count++
+      else groups.push({ name, count: 1 })
+    }
+
+    return 'de abajo: ' + groups.map(g =>
+      g.count === 1 ? g.name : `${g.count} ${g.name}`
+    ).join(', ')
+  }
+
   // Playing controls
   useEffect(() => {
     if (phase !== 'playing') return
@@ -449,8 +476,12 @@ export default function TetrisPage() {
             row.forEach((v, c) => { if (v) pieceCols.add(p.x + c) })
           )
           const colInfo = [...pieceCols].sort((a, b) => a - b)
-            .map(c => `columna ${c + 1}: ${free[c]} libre${free[c] !== 1 ? 's' : ''}`)
-            .join(', ')
+            .map(c => {
+              const freeStr  = `${free[c]} libre${free[c] !== 1 ? 's' : ''}`
+              const contents = describeColumn(c)
+              return `columna ${c + 1}: ${freeStr}${contents !== 'vacía' ? '; ' + contents : ''}`
+            })
+            .join('. ')
           const drop = ghostY(p, board) - p.y
           announcePolite(`${PIECE_NAMES[p.type]}, columna ${p.x + 1}. Caerá ${drop} fila${drop !== 1 ? 's' : ''}. ${colInfo}.`)
           break
