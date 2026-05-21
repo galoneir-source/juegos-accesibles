@@ -411,4 +411,42 @@ export const audio = {
     ;[523, 659, 784, 1047, 1319].forEach((f, i) => playTone(f, 0.14, 'sine', 0.32, i * 0.10))
     playTone(1568, 0.55, 'sine', 0.38, 0.56)
   },
+  // Tragaperras: rodillos girando
+  slotSpin() {
+    playTone(320, 0.18, 'sawtooth', 0.10)
+    playTone(260, 0.14, 'sawtooth', 0.08, 0.16)
+    playTone(200, 0.14, 'sawtooth', 0.06, 0.28)
+  },
+  // Tragaperras: un rodillo se detiene (pan = posición -1..1)
+  slotStop(pan: number) {
+    playPannedTone(300, 0.04, pan, 0.28)
+    playPannedTone(200, 0.07, pan, 0.22, 0.04)
+  },
+  // Tragaperras: premio pequeño (dos cerezas)
+  slotWinSmall() {
+    playTone(523, 0.09, 'sine', 0.28)
+    playTone(659, 0.12, 'sine', 0.26, 0.11)
+  },
+  // Tragaperras: premio medio (tres frutas)
+  slotWinMedium() {
+    ;[523, 659, 784, 988].forEach((f, i) => playTone(f, 0.11, 'sine', 0.30, i * 0.09))
+  },
+  // Tragaperras: jackpot (tres campanas o tres sietes)
+  slotWinBig() {
+    ;[523, 659, 784, 988, 1047, 1319, 1568].forEach((f, i) => playTone(f, 0.14, 'sine', 0.34, i * 0.07))
+    playTone(2093, 0.7, 'sine', 0.42, 0.54)
+  },
+  // Tragaperras: sin premio
+  slotLose() {
+    playTone(340, 0.05, 'sine', 0.16)
+    playTone(270, 0.09, 'sine', 0.12, 0.07)
+  },
+  // Tragaperras: retener/liberar rodillo
+  slotHold() {
+    playTone(700, 0.04, 'square', 0.16)
+  },
+  // Tragaperras: partida terminada sin créditos
+  slotGameOver() {
+    ;[400, 350, 300, 250, 200].forEach((f, i) => playTone(f, 0.13, 'sine', 0.26, i * 0.11))
+  },
 }

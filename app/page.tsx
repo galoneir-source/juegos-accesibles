@@ -34,6 +34,7 @@ const GAMES = [
   { id: 'asteroids', href: '/asteroides', label: 'Asteroides', desc: 'Destruye todos los asteroides antes de que te alcancen. Gira con A D, propulsa con W y dispara con Espacio. Cada asteroide emite un zumbido espacializado: el estéreo indica izquierda o derecha y el tono indica arriba o abajo. Los grandes suenan muy graves, los pequeños agudos. Tecla E para escanear posiciones.' },
   { id: 'buscaminas', href: '/buscaminas', label: 'Buscaminas', desc: 'Descubre todas las celdas sin minas. Navega con las flechas o WASD, revela con Enter y marca minas con F. Cada celda emite un tono al revelarla: agudo y suave si hay pocas minas alrededor, grave y áspero si hay muchas. Tecla E para escuchar la celda actual y sus ocho vecinas. Tres dificultades: 9×9, 12×12 y 16×16.' },
   { id: 'sokoban', href: '/sokoban', label: 'Sokoban', desc: 'Empuja las cajas hasta las metas. Usa las flechas o WASD para moverte y empujar. Z deshace el último movimiento, R reinicia el nivel, E describe el entorno. 10 niveles de dificultad creciente.' },
+  { id: 'tragaperras', href: '/tragaperras', label: 'Tragaperras', desc: 'Máquina tragaperras con 3 rodillos y 5 símbolos. Gira con Espacio, retén rodillos con 1-2-3. Cada símbolo tiene un tono propio. Premio máximo: tres sietes, 250 créditos. Q para salir y guardar puntuación.' },
 ]
 
 export default async function Home() {
