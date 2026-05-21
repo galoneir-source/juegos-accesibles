@@ -449,4 +449,24 @@ export const audio = {
   slotGameOver() {
     ;[400, 350, 300, 250, 200].forEach((f, i) => playTone(f, 0.13, 'sine', 0.26, i * 0.11))
   },
+  // Quince: ficha deslizada (pan = columna destino -1..1)
+  quinceTile(pan: number) {
+    playPannedTone(520, 0.035, pan, 0.24)
+    playPannedTone(390, 0.055, pan, 0.17, 0.03)
+  },
+  // Quince: ficha colocada en posición correcta
+  quinceCorrect() {
+    playTone(880,  0.06, 'sine', 0.28)
+    playTone(1047, 0.10, 'sine', 0.24, 0.07)
+  },
+  // Quince: intento de mover sin hueco en esa dirección
+  quinceWall() {
+    playTone(220, 0.04, 'sawtooth', 0.18)
+    playTone(160, 0.07, 'sawtooth', 0.13, 0.04)
+  },
+  // Quince: puzle resuelto
+  quinceWin() {
+    ;[523, 659, 784, 988, 1047, 1319].forEach((f, i) => playTone(f, 0.13, 'sine', 0.32, i * 0.09))
+    playTone(1568, 0.60, 'sine', 0.40, 0.58)
+  },
 }
