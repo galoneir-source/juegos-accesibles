@@ -287,6 +287,42 @@ export const audio = {
     playPannedTone(440, 0.07, pan, 0.18)
     playPannedTone(320, 0.09, pan, 0.12, 0.05)
   },
+  // Asteroids: ship engine thrust pulse
+  asteroidsThrust() {
+    playTone(75, 0.11, 'sawtooth', 0.17)
+    playTone(55, 0.11, 'sine',     0.11, 0.04)
+  },
+  // Asteroids: bullet fired
+  asteroidsFire() {
+    playTone(1400, 0.02, 'square',   0.22)
+    playTone(900,  0.03, 'sawtooth', 0.15, 0.02)
+    playTone(500,  0.05, 'sine',     0.09, 0.04)
+  },
+  // Asteroids: asteroid hit — sound depends on size
+  asteroidsHit(size: 'large' | 'medium' | 'small', pan: number) {
+    if (size === 'large') {
+      playPannedTone(80, 0.12, pan, 0.42)
+      playPannedTone(55, 0.22, pan, 0.36, 0.06)
+      playPannedTone(35, 0.35, pan, 0.28, 0.15)
+    } else if (size === 'medium') {
+      playPannedTone(130, 0.08, pan, 0.36)
+      playPannedTone(85,  0.16, pan, 0.28, 0.05)
+      playPannedTone(55,  0.24, pan, 0.20, 0.10)
+    } else {
+      playPannedTone(240, 0.05, pan, 0.30)
+      playPannedTone(150, 0.10, pan, 0.22, 0.03)
+      playPannedTone(90,  0.16, pan, 0.15, 0.07)
+    }
+  },
+  // Asteroids: player ship destroyed
+  asteroidsShipDie() {
+    ;[160, 120, 90, 60, 40].forEach((f, i) => playTone(f, 0.15, 'sawtooth', 0.40, i * 0.09))
+    playTone(28, 0.55, 'sine', 0.38, 0.50)
+  },
+  // Asteroids: proximity pulse for ambient scan (pan=position, freq=size cue)
+  asteroidsPulse(pan: number, freq: number, gain: number) {
+    playPannedTone(freq, 0.10, pan, gain)
+  },
   // Pac-Man: eat a dot
   pacChompDot() {
     playTone(480, 0.03, 'square', 0.12)

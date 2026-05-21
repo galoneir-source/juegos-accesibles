@@ -31,6 +31,7 @@ const GAMES = [
   { id: 'tetris', href: '/tetris', label: 'Tetris', desc: 'Las piezas caen desde arriba: muévelas con las flechas, rota con ↑ o X, caída instantánea con Espacio. Completa líneas para eliminarlas. Sonido distintivo al rotar, colocar y limpiar líneas. Pausa con P.' },
   { id: 'frogger', href: '/frogger', label: 'Frogger', desc: 'Lleva a la rana desde la parte inferior hasta las cinco casas en la cima. Cruza la carretera esquivando coches y el río saltando sobre troncos. Los vehículos suenan en estéreo. Tecla E para escuchar los peligros cercanos. 3 vidas, 45 segundos por intento.' },
   { id: 'pacman', href: '/pacman', label: 'Pac-Man', desc: 'Come todos los puntos del laberinto evitando a los dos fantasmas. Las cuatro pastillas de poder te permiten comerte a los fantasmas durante 8 segundos. Los fantasmas suenan en estéreo. Tecla E para escuchar su posición en cualquier momento. 3 vidas.' },
+  { id: 'asteroids', href: '/asteroides', label: 'Asteroides', desc: 'Destruye todos los asteroides antes de que te alcancen. Gira con A D, propulsa con W y dispara con Espacio. Cada asteroide emite un zumbido espacializado: el estéreo indica izquierda o derecha y el tono indica arriba o abajo. Los grandes suenan muy graves, los pequeños agudos. Tecla E para escanear posiciones.' },
 ]
 
 export default async function Home() {
