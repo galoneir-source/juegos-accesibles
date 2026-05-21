@@ -374,4 +374,41 @@ export const audio = {
       playTone(f, 0.12, 'sawtooth', 0.3, i * 0.1)
     )
   },
+  // Sokoban: player footstep (pan = column position -1..1)
+  sokobanStep(pan: number) {
+    playPannedTone(600, 0.04, pan, 0.16)
+    playPannedTone(450, 0.06, pan, 0.10, 0.03)
+  },
+  // Sokoban: push a box (pan = destination column -1..1)
+  sokobanPush(pan: number) {
+    playPannedTone(280, 0.04, pan, 0.26)
+    playPannedTone(200, 0.08, pan, 0.20, 0.04)
+    playPannedTone(150, 0.14, pan, 0.14, 0.10)
+  },
+  // Sokoban: box lands on goal — ascending chime
+  sokobanGoal() {
+    playTone(523, 0.08, 'sine', 0.28)
+    playTone(659, 0.08, 'sine', 0.28, 0.10)
+    playTone(784, 0.18, 'sine', 0.34, 0.21)
+  },
+  // Sokoban: box moved off goal — short descending tone
+  sokobanOffGoal() {
+    playTone(523, 0.07, 'sine', 0.20)
+    playTone(415, 0.12, 'sine', 0.16, 0.09)
+  },
+  // Sokoban: bump into wall or immovable box
+  sokobanWall() {
+    playTone(180, 0.05, 'sawtooth', 0.22)
+    playTone(130, 0.08, 'sawtooth', 0.16, 0.05)
+  },
+  // Sokoban: undo move
+  sokobanUndo() {
+    playTone(440, 0.05, 'sine', 0.18)
+    playTone(370, 0.08, 'sine', 0.13, 0.06)
+  },
+  // Sokoban: level complete fanfare
+  sokobanWin() {
+    ;[523, 659, 784, 1047, 1319].forEach((f, i) => playTone(f, 0.14, 'sine', 0.32, i * 0.10))
+    playTone(1568, 0.55, 'sine', 0.38, 0.56)
+  },
 }
