@@ -244,6 +244,16 @@ export default function PacManPage() {
     const openPaths = DIRS.filter(d => !blocked(grid, nr + d.dr, nc + d.dc)).length
     if (openPaths >= 3) audio.pacJunction()
 
+    // Forward dot sonar: brief ping whose pitch = dot count in next 4 cells ahead
+    const fwd = pacDirRef.current
+    let dotsFwd = 0
+    for (let i = 1; i <= 4; i++) {
+      const sr = nr + fwd.dr * i, sc = nc + fwd.dc * i
+      if (blocked(grid, sr, sc)) break
+      if (grid[sr]?.[sc] === DOT || grid[sr]?.[sc] === POWER) dotsFwd++
+    }
+    audio.pacDotSonar(dotsFwd)
+
     const cell = grid[nr][nc]
 
     if (cell === DOT) {
@@ -609,13 +619,36 @@ export default function PacManPage() {
           const grid = gridRef.current
           const parts: string[] = []
 
-          // Open paths
-          const openNames: string[] = []
-          if (!blocked(grid, pr - 1, pc)) openNames.push('norte')
-          if (!blocked(grid, pr + 1, pc)) openNames.push('sur')
-          if (!blocked(grid, pr, pc - 1)) openNames.push('oeste')
-          if (!blocked(grid, pr, pc + 1)) openNames.push('este')
-          parts.push(`Caminos abiertos: ${openNames.join(', ')}.`)
+          // Helper: scan a direction, return dot count and wall distance
+          function scanDir(dr: number, dc: number) {
+            let dots = 0, wallAt = 0
+            for (let i = 1; i <= 8; i++) {
+              const nr2 = pr + dr * i, nc2 = pc + dc * i
+              if (blocked(grid, nr2, nc2)) { wallAt = i; break }
+              if (grid[nr2]?.[nc2] === DOT || grid[nr2]?.[nc2] === POWER) dots++
+            }
+            return { dots, wallAt }
+          }
+
+          // Directions: play audio sweep then build text
+          const SCAN_DIRS = [
+            { dr: -1, dc:  0, name: 'Norte', pan:  0.0  },
+            { dr:  1, dc:  0, name: 'Sur',   pan:  0.0  },
+            { dr:  0, dc: -1, name: 'Oeste', pan: -1.0  },
+            { dr:  0, dc:  1, name: 'Este',  pan:  1.0  },
+          ]
+          let delay = 0
+          for (const sd of SCAN_DIRS) {
+            const { dots, wallAt } = scanDir(sd.dr, sd.dc)
+            if (wallAt === 1) {
+              parts.push(`${sd.name}: pared.`)
+            } else {
+              const wallTxt = wallAt > 0 ? `, pared a ${wallAt}` : ''
+              parts.push(`${sd.name}: ${dots > 0 ? `${dots} punto${dots > 1 ? 's' : ''}` : 'vacío'}${wallTxt}.`)
+              setTimeout(() => audio.pacDotScan(sd.pan, dots), delay)
+              delay += 180
+            }
+          }
 
           // Nearest power pellet
           let nearDist2 = Infinity, nearDir2 = ''
@@ -640,28 +673,50 @@ export default function PacManPage() {
             if (g.dead) { parts.push(`Fantasma ${i + 1}: comido, reaparecerá pronto.`); return }
             const dx = g.col - pc, dy = g.row - pr
             const dist = Math.abs(dx) + Math.abs(dy)
-            const horiz = Math.abs(dx) >= Math.abs(dy)
+            const side = Math.abs(dx) >= Math.abs(dy)
               ? (dx > 0 ? 'este' : 'oeste')
               : (dy < 0 ? 'norte' : 'sur')
             const pan2  = Math.max(-1, Math.min(1, dx / 5))
             const freq2 = g.scared
               ? Math.max(350, Math.min(700, 520 - dy * 18))
               : Math.max(180, Math.min(420, 300 - dy * 14))
-            audio.pacGhostPulse(pan2, freq2, 0.35, g.scared)
-            parts.push(`Fantasma ${i + 1}${g.scared ? ' (asustado)' : ''}: al ${horiz}, ${dist} casillas.`)
+            setTimeout(() => audio.pacGhostPulse(pan2, freq2, 0.35, g.scared), delay)
+            delay += 160
+            parts.push(`Fantasma ${i + 1}${g.scared ? ' asustado' : ''}: al ${side}, ${dist} casillas.`)
           })
 
-          parts.push(`Puntos: ${scoreRef.current}. Puntos restantes: ${dotsRef.current}.`)
           announceAssertive(parts.join(' '))
           break
         }
-        case 'r': case 'R':
+        case 'r': case 'R': {
+          const pr2 = pacRowRef.current, pc2 = pacColRef.current
+          const grid2 = gridRef.current
+          // Dot count in each open direction
+          const dirInfo: string[] = []
+          const RKEY_DIRS = [
+            { dr: -1, dc: 0, name: 'norte' },
+            { dr:  1, dc: 0, name: 'sur'   },
+            { dr:  0, dc:-1, name: 'oeste' },
+            { dr:  0, dc: 1, name: 'este'  },
+          ]
+          for (const d2 of RKEY_DIRS) {
+            if (blocked(grid2, pr2 + d2.dr, pc2 + d2.dc)) continue
+            let dots2 = 0
+            for (let i = 1; i <= 6; i++) {
+              const nr2 = pr2 + d2.dr * i, nc2 = pc2 + d2.dc * i
+              if (blocked(grid2, nr2, nc2)) break
+              if (grid2[nr2]?.[nc2] === DOT || grid2[nr2]?.[nc2] === POWER) dots2++
+            }
+            dirInfo.push(`${d2.name}: ${dots2}`)
+          }
           announcePolite(
-            `Puntos: ${scoreRef.current}. Vidas: ${livesRef.current}. ` +
-            `Puntos restantes: ${dotsRef.current}. ` +
-            (powerTimerRef.current > 0 ? `Poder: ${Math.ceil(powerTimerRef.current / 1000)}s.` : 'Sin poder activo.')
+            `Fila ${pr2 + 1}, columna ${pc2 + 1}. ` +
+            `Puntos por dirección: ${dirInfo.join(', ')}. ` +
+            `Total restante: ${dotsRef.current}. Vidas: ${livesRef.current}. ` +
+            (powerTimerRef.current > 0 ? `Poder: ${Math.ceil(powerTimerRef.current / 1000)}s.` : '')
           )
           break
+        }
         case 'h': case 'H':
           announcePolite(INSTRUCTIONS)
           break

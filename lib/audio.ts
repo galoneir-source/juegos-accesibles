@@ -397,6 +397,18 @@ export const audio = {
   pacJunction() {
     playTone(1047, 0.025, 'sine', 0.08)
   },
+  // Pac-Man: forward sonar — pitch indicates dot count in next 4 cells (0=silent, 4=bright)
+  pacDotSonar(count: number) {
+    if (count === 0) return
+    const freq = 260 + count * 95  // 355Hz×1 … 640Hz×4
+    playTone(freq, 0.032, 'sine', 0.14)
+  },
+  // Pac-Man: directional dot scan (pan=direction, freq=dot density) for E-key sweep
+  pacDotScan(pan: number, count: number) {
+    if (count === 0) return
+    const freq = 260 + count * 95
+    playPannedTone(freq, 0.06, pan, 0.22)
+  },
   // Sokoban: player footstep (pan = column position -1..1)
   sokobanStep(pan: number) {
     playPannedTone(600, 0.04, pan, 0.16)
