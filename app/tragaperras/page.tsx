@@ -133,6 +133,7 @@ export default function Tragaperras() {
   const [lastWinAmt, setLastWinAmt] = useState(0)
   const lastWinAmtRef = useRef(0)
   const spinGen = useRef(0)
+  const holdsAvailableRef = useRef(false)
 
   function setPhaseSync(p: Phase) { phaseRef.current = p; setPhase(p) }
   function setCreditsSync(n: number) { creditsRef.current = n; setCredits(n) }
@@ -166,6 +167,7 @@ export default function Tragaperras() {
     setPhaseSync('spinning')
     setLastWinAmt(0)
     lastWinAmtRef.current = 0
+    holdsAvailableRef.current = false
 
     const h = [...heldRef.current] as [boolean, boolean, boolean]
     const cur = displaySymsRef.current
@@ -223,12 +225,15 @@ export default function Tragaperras() {
     lastWinAmtRef.current = amount
     redraw(results, [false, false, false], amount)
 
+    holdsAvailableRef.current = amount === 0
+
     if (amount >= 100)      audio.slotWinBig()
     else if (amount >= 25)  audio.slotWinMedium()
     else if (amount > 0)    audio.slotWinSmall()
     else                    audio.slotLose()
 
-    assertive(`${desc} Créditos: ${newCredits}.`)
+    const holdsHint = amount === 0 ? ' Puedes retener rodillos para la siguiente tirada.' : ''
+    assertive(`${desc} Créditos: ${newCredits}.${holdsHint}`)
 
     if (newCredits <= 0) {
       setTimeout(() => {
@@ -244,6 +249,10 @@ export default function Tragaperras() {
 
   function toggleHold(i: 0 | 1 | 2) {
     if (phaseRef.current !== 'idle') return
+    if (!holdsAvailableRef.current) {
+      assertive('Solo puedes retener rodillos tras una tirada sin premio.')
+      return
+    }
     const h = [...heldRef.current] as [boolean, boolean, boolean]
     h[i] = !h[i]
     setHeldSync(h)
@@ -266,6 +275,7 @@ export default function Tragaperras() {
     setLastResult('')
     setLastWinAmt(0)
     lastWinAmtRef.current = 0
+    holdsAvailableRef.current = false
     setPhaseSync('idle')
     setTimeout(() => {
       redraw(['cereza', 'cereza', 'cereza'], [false, false, false], 0)
@@ -310,7 +320,7 @@ export default function Tragaperras() {
             Haz girar los 3 rodillos y consigue tres símbolos iguales en la línea central. Apuesta: {BET} créditos por tirada.
           </p>
           <p className="text-[#666] text-sm leading-relaxed">
-            Espacio: girar · 1 / 2 / 3: retener rodillo antes de girar · Q: salir y guardar puntuación
+            Espacio: girar · 1 / 2 / 3: retener rodillo (solo tras perder) · Q: salir y guardar puntuación
           </p>
           <div className="border border-[#333] rounded p-3 text-sm text-[#888] space-y-1">
             <p className="text-[#aaa] font-bold mb-2">Tabla de premios</p>
@@ -358,7 +368,7 @@ export default function Tragaperras() {
           </div>
 
           <p className="text-[#555] text-xs">
-            Espacio: girar · 1/2/3: retener rodillo · Q: salir
+            Espacio: girar · 1/2/3: retener (solo tras perder) · Q: salir
           </p>
         </div>
       )}
