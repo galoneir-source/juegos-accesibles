@@ -354,61 +354,6 @@ export const audio = {
   asteroidsPulse(pan: number, freq: number, gain: number) {
     playPannedTone(freq, 0.10, pan, gain)
   },
-  // Pac-Man: eat a dot
-  pacChompDot() {
-    playTone(480, 0.03, 'square', 0.12)
-  },
-  // Pac-Man: eat a power pellet
-  pacPower() {
-    ;[330, 440, 550, 660].forEach((f, i) => playTone(f, 0.1, 'sine', 0.28, i * 0.06))
-  },
-  // Pac-Man: eat a scared ghost
-  pacEatGhost() {
-    playTone(880, 0.05, 'square', 0.3)
-    playTone(1100, 0.08, 'sine', 0.25, 0.06)
-    playTone(660, 0.12, 'sine', 0.2, 0.15)
-  },
-  // Pac-Man: caught by ghost
-  pacDie() {
-    ;[494, 440, 392, 349, 294, 247, 196, 147].forEach((f, i) =>
-      playTone(f, 0.12, 'sawtooth', 0.3, i * 0.1)
-    )
-  },
-  // Pac-Man: periodic ghost radar pulse (egocentric pan, freq=vertical cue, scared=timbre)
-  pacGhostPulse(pan: number, freq: number, gain: number, scared: boolean) {
-    if (scared) {
-      playPannedTone(freq,       0.06, pan, gain)
-      playPannedTone(freq * 1.5, 0.05, pan, gain * 0.4, 0.06)
-    } else {
-      playPannedTone(freq,       0.09, pan, gain)
-      playPannedTone(freq * 0.7, 0.08, pan, gain * 0.5, 0.05)
-    }
-  },
-  // Pac-Man: nearby power-pellet beacon (panned to pellet direction)
-  pacPelletBeacon(pan: number, gain: number) {
-    playPannedTone(680,  0.04, pan, gain)
-    playPannedTone(1020, 0.03, pan, gain * 0.5, 0.06)
-  },
-  // Pac-Man: tried to move into a wall
-  pacWall() {
-    playTone(240, 0.03, 'square', 0.12)
-  },
-  // Pac-Man: arrived at a junction (3+ open paths) — subtle navigation cue
-  pacJunction() {
-    playTone(1047, 0.025, 'sine', 0.08)
-  },
-  // Pac-Man: forward sonar — pitch indicates dot count in next 4 cells (0=silent, 4=bright)
-  pacDotSonar(count: number) {
-    if (count === 0) return
-    const freq = 260 + count * 95  // 355Hz×1 … 640Hz×4
-    playTone(freq, 0.032, 'sine', 0.14)
-  },
-  // Pac-Man: directional dot scan (pan=direction, freq=dot density) for E-key sweep
-  pacDotScan(pan: number, count: number) {
-    if (count === 0) return
-    const freq = 260 + count * 95
-    playPannedTone(freq, 0.06, pan, 0.22)
-  },
   // Sokoban: player footstep (pan = column position -1..1)
   sokobanStep(pan: number) {
     playPannedTone(600, 0.04, pan, 0.16)
