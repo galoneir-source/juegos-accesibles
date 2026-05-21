@@ -287,6 +287,37 @@ export const audio = {
     playPannedTone(440, 0.07, pan, 0.18)
     playPannedTone(320, 0.09, pan, 0.12, 0.05)
   },
+  // Buscaminas: cursor move click (pan = column position -1..1)
+  mineCursor(pan: number) {
+    playPannedTone(700, 0.03, pan, 0.14)
+  },
+  // Buscaminas: reveal cell — tone encodes adjacent mine count (0=bright, 8=harsh)
+  mineReveal(count: number) {
+    const freq = count === 0 ? 880 : Math.max(160, 600 - count * 52)
+    const type: OscillatorType = count >= 5 ? 'sawtooth' : count >= 3 ? 'square' : 'sine'
+    playTone(freq, 0.09, type, 0.18 + count * 0.02)
+  },
+  // Buscaminas: flag placed
+  mineFlag() {
+    playTone(660, 0.04, 'square', 0.18)
+    playTone(880, 0.07, 'sine',   0.14, 0.05)
+  },
+  // Buscaminas: flag removed
+  mineUnflag() {
+    playTone(440, 0.04, 'square', 0.14)
+    playTone(330, 0.06, 'sine',   0.10, 0.04)
+  },
+  // Buscaminas: mine exploded — game over
+  mineExplosion() {
+    playTone(120, 0.07, 'sawtooth', 0.45)
+    playTone(80,  0.14, 'sawtooth', 0.40, 0.07)
+    playTone(50,  0.30, 'sine',     0.35, 0.14)
+    playTone(35,  0.50, 'sine',     0.28, 0.40)
+  },
+  // Buscaminas: cascade reveal (many empty cells opened at once)
+  mineCascade() {
+    ;[523, 659, 784].forEach((f, i) => playTone(f, 0.10, 'sine', 0.22, i * 0.07))
+  },
   // Asteroids: ship engine thrust pulse
   asteroidsThrust() {
     playTone(75, 0.11, 'sawtooth', 0.17)
