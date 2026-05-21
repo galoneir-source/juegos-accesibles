@@ -244,6 +244,10 @@ export const audio = {
   tetrisMove() {
     playTone(440, 0.03, 'sine', 0.1)
   },
+  // Tetris: column height scan tone — pan = column position, freq encodes free space
+  tetrisColHeight(freq: number, pan: number) {
+    playPannedTone(freq, 0.07, pan, 0.22)
+  },
   // Tetris: hard drop
   tetrisDrop() {
     playTone(280, 0.04, 'sawtooth', 0.3)
