@@ -449,4 +449,16 @@ export const audio = {
     ;[523, 659, 784, 988, 1047, 1319].forEach((f, i) => playTone(f, 0.13, 'sine', 0.32, i * 0.09))
     playTone(1568, 0.60, 'sine', 0.40, 0.58)
   },
+  // Solitario: revelar carta boca abajo — breve barrido ascendente
+  solitarioFlip() {
+    playTone(600, 0.03, 'sine', 0.14)
+    playTone(800, 0.04, 'sine', 0.18, 0.04)
+    playTone(1050, 0.07, 'sine', 0.22, 0.09)
+  },
+  // Solitario: carta colocada en fundación — campana satisfactoria
+  solitarioFoundation() {
+    playTone(784, 0.06, 'sine', 0.28)
+    playTone(988, 0.08, 'sine', 0.26, 0.09)
+    playTone(1175, 0.16, 'sine', 0.32, 0.20)
+  },
 }

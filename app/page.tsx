@@ -35,6 +35,7 @@ const GAMES = [
   { id: 'sokoban', href: '/sokoban', label: 'Sokoban', desc: 'Empuja las cajas hasta las metas. Usa las flechas o WASD para moverte y empujar. Z deshace el último movimiento, R reinicia el nivel, E describe el entorno. 10 niveles de dificultad creciente.' },
   { id: 'tragaperras', href: '/tragaperras', label: 'Tragaperras', desc: 'Máquina tragaperras con 3 rodillos y 5 símbolos. Gira con Espacio, retén rodillos con 1-2-3. Cada símbolo tiene un tono propio. Premio máximo: tres sietes, 250 créditos. Q para salir y guardar puntuación.' },
   { id: 'quince', href: '/quince', label: 'Puzle Quince', desc: 'Puzle deslizante de 15 fichas en una cuadrícula 4×4. Desliza fichas hacia el hueco con las flechas hasta ordenarlas del 1 al 15. Cada ficha emite un tono al moverse, paneado a su columna de destino. E describe el hueco y las fichas adyacentes. Tres dificultades.' },
+  { id: 'solitario', href: '/solitario', label: 'Solitario', desc: 'Klondike clásico. Mueve las 52 cartas a las cuatro fundaciones de As a Rey siguiendo el palo. Alterna colores en el tableau. Flechas para navegar entre pilas, Enter para seleccionar y colocar, A para enviar automáticamente a la fundación.' },
 ]
 
 export default async function Home() {
