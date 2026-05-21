@@ -67,7 +67,8 @@ const INSTRUCTIONS =
   'Flecha abajo para bajar más rápido. Espacio para caída instantánea. ' +
   'Completa líneas horizontales para eliminarlas y sumar puntos. ' +
   'Cada 10 líneas subes de nivel y las piezas caen más rápido. ' +
-  'P: pausar. R: leer estado completo. H: repetir instrucciones.'
+  'Tecla E: barrido sonoro de columnas de izquierda a derecha, tono agudo es columna libre y tono grave es columna llena; también anuncia cuántas celdas libres hay bajo la pieza actual y cuántas filas caerá. ' +
+  'P: pausar. R: leer estado. H: repetir instrucciones.'
 
 // ── Pure game logic (outside component) ───────────────────────────────────────
 
@@ -181,7 +182,7 @@ export default function TetrisPage() {
     const piece = spawnPiece(type)
     if (!fits(piece.matrix, piece.x, piece.y, boardRef.current)) return false
     currentRef.current = piece
-    announcePolite(`Pieza ${PIECE_NAMES[type]}. Siguiente: ${PIECE_NAMES[nextRef.current]}.`)
+    announcePolite(`Pieza ${PIECE_NAMES[type]}.`)
     return true
   }
 
@@ -365,6 +366,25 @@ export default function TetrisPage() {
 
   useEffect(() => () => { if (rafRef.current) cancelAnimationFrame(rafRef.current) }, [])
 
+  // Column height scan: sweeps all 10 columns left→right with panned tones.
+  // High pitch = column nearly empty; low pitch = column tall.
+  // Also returns an array of free-cell counts per column.
+  function scanColumns(): number[] {
+    const board = boardRef.current
+    const free: number[] = []
+    for (let c = 0; c < COLS; c++) {
+      let stackHeight = 0
+      for (let r = 0; r < ROWS; r++) {
+        if (board[r][c] !== 0) { stackHeight = ROWS - r; break }
+      }
+      free.push(ROWS - stackHeight)
+      const pan  = (c / (COLS - 1)) * 2 - 1          // -1 (col 0) → +1 (col 9)
+      const freq = 180 + (ROWS - stackHeight) * 32    // 180 Hz full → 820 Hz empty
+      setTimeout(() => audio.tetrisColHeight(freq, pan), c * 75)
+    }
+    return free
+  }
+
   // Playing controls
   useEffect(() => {
     if (phase !== 'playing') return
@@ -418,12 +438,28 @@ export default function TetrisPage() {
           syncPhase('paused')
           announcePolite('Pausado. Pulsa P para continuar.')
           break
+        case 'e': case 'E': {
+          e.preventDefault()
+          const p = currentRef.current
+          if (!p) break
+          const free = scanColumns()
+          // Columns occupied by the piece
+          const pieceCols = new Set<number>()
+          p.matrix.forEach((row, r) =>
+            row.forEach((v, c) => { if (v) pieceCols.add(p.x + c) })
+          )
+          const colInfo = [...pieceCols].sort((a, b) => a - b)
+            .map(c => `columna ${c + 1}: ${free[c]} libre${free[c] !== 1 ? 's' : ''}`)
+            .join(', ')
+          const drop = ghostY(p, board) - p.y
+          announcePolite(`${PIECE_NAMES[p.type]}, columna ${p.x + 1}. Caerá ${drop} fila${drop !== 1 ? 's' : ''}. ${colInfo}.`)
+          break
+        }
         case 'r': case 'R': {
           const p = currentRef.current
           announcePolite(
             `Puntos: ${scoreRef.current}. Líneas: ${linesRef.current}. Nivel: ${levelRef.current}. ` +
-            (p ? `Pieza: ${PIECE_NAMES[p.type]}, columna ${p.x + 1}. ` : '') +
-            `Siguiente: ${PIECE_NAMES[nextRef.current]}.`
+            (p ? `Pieza: ${PIECE_NAMES[p.type]}, columna ${p.x + 1}.` : '')
           )
           break
         }
