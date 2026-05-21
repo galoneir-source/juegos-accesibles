@@ -33,8 +33,11 @@ const INSTRUCTIONS =
   'En la carretera esquiva los coches; si te atropellan pierdes una vida. ' +
   'En el agua salta solo sobre los troncos: si caes al agua pierdes una vida. ' +
   'Los coches suenan con un rumor grave; los troncos con un toque agudo de madera. ' +
-  'Cuanto más cerca, más fuerte el sonido. Cuando estás subido en un tronco oyes un golpecito rítmico que confirma que estás a salvo. ' +
-  'Tecla E: escuchar los peligros en tu fila y las adyacentes con distancia exacta. ' +
+  'Cuanto más cerca, más fuerte; cuanto más a la izquierda o derecha, el sonido se desvía a ese lado. ' +
+  'La fila que tienes delante suena más alta que la de detrás para que puedas distinguirlas. ' +
+  'Cada medio segundo oirás un campaneo suave si la siguiente fila es segura para saltar. ' +
+  'Cuando estás subido en un tronco oyes un golpecito rítmico que confirma que estás a salvo. ' +
+  'Tecla E: escuchar los peligros y si el camino al frente está libre. ' +
   'Tienes 3 vidas y 45 segundos por intento. R: estado. H: instrucciones.'
 
 // ── Lane definitions ──────────────────────────────────────────────────────────
@@ -97,6 +100,7 @@ export default function FroggerPage() {
   const lastTimerRef = useRef(0)
   const lastScanRef  = useRef(0)
   const lastOnLogRef = useRef(0)   // confirmation pulse while riding a log
+  const lastSafeRef  = useRef(0)   // safe-path chime timer
   const canvasRef    = useRef<HTMLCanvasElement>(null)
 
   const syncPhase = useCallback((p: Phase) => {
@@ -157,15 +161,38 @@ export default function FroggerPage() {
 
   // ── Danger scan audio ───────────────────────────────────────────────────────
 
-  // Continuous scan: called every ~150 ms. Gain scales with X-proximity for
-  // both cars and logs, and covers current + adjacent rows.
+  // Max hearing range and pan divisor (steeper = wider stereo spread)
+  const HEAR_CELLS = 5
+  const PAN_CELLS  = 2   // 2 cells away = full ±1 pan; clamped beyond that
+
+  function panFor(cx: number, frogX: number) {
+    return Math.max(-1, Math.min(1, (cx - frogX) / (CELL * PAN_CELLS)))
+  }
+
+  // Returns true when the next row ahead (frogRow-1) is safe to jump into
+  function isNextRowSafe(frogX: number, frogRow: number): boolean {
+    const nextRow = frogRow - 1
+    if (nextRow <= 0) return true   // home row: attempt is always valid
+    const zone = rowZone(nextRow)
+    if (zone === 'safe' || zone === 'home') return true
+    if (zone === 'road') {
+      return !getVehicles(nextRow).some(v => Math.abs(v.x + v.w / 2 - frogX) < CELL * 1.5)
+    }
+    if (zone === 'water') {
+      return logUnder(frogX, nextRow) !== null
+    }
+    return false
+  }
+
+  // Continuous scan: called every ~150 ms.
+  // Current row: full gain. Front row (ahead): 60% gain. Back row: 18% (barely audible).
+  // Pan uses PAN_CELLS divisor for clear left/right separation.
   function scanDanger(frogX: number, frogRow: number) {
     const scanDefs: Array<[number, number]> = [
-      [frogRow,     1.0],
-      [frogRow - 1, 0.5],
-      [frogRow + 1, 0.5],
+      [frogRow,     1.00],
+      [frogRow - 1, 0.60],   // ahead — louder warning
+      [frogRow + 1, 0.18],   // behind — whisper
     ]
-    const HEAR_CELLS = 5
 
     for (const [r, mult] of scanDefs) {
       if (r <= 0 || r >= ROWS) continue
@@ -173,25 +200,16 @@ export default function FroggerPage() {
       const lane = LANE_DEFS.find(l => l.row === r)
       if (!vehs.length || !lane) continue
 
-      if (lane.type === 'road') {
-        for (const v of vehs) {
-          const cx   = v.x + v.w / 2
-          const dist = Math.abs(cx - frogX)
-          if (dist > CELL * HEAR_CELLS) continue
-          const gain = (1 - dist / (CELL * HEAR_CELLS)) * mult * 0.44
-          // Pan relative to frog: positive = right of frog, negative = left of frog
-          const pan = (cx - frogX) / (CELL * HEAR_CELLS)
-          audio.frogCar(pan, gain)
-        }
-      } else if (lane.type === 'water') {
-        // Ping every log within range — same proximity formula as cars
-        for (const v of vehs) {
-          const cx   = v.x + v.w / 2
-          const dist = Math.abs(cx - frogX)
-          if (dist > CELL * HEAR_CELLS) continue
-          const gain = (1 - dist / (CELL * HEAR_CELLS)) * mult * 0.38
-          const pan = (cx - frogX) / (CELL * HEAR_CELLS)
-          audio.frogLog(pan, gain)
+      for (const v of vehs) {
+        const cx   = v.x + v.w / 2
+        const dist = Math.abs(cx - frogX)
+        if (dist > CELL * HEAR_CELLS) continue
+        const proximity = 1 - dist / (CELL * HEAR_CELLS)
+        const pan = panFor(cx, frogX)
+        if (lane.type === 'road') {
+          audio.frogCar(pan, proximity * mult * 0.44)
+        } else if (lane.type === 'water') {
+          audio.frogLog(pan, proximity * mult * 0.38)
         }
       }
     }
@@ -201,6 +219,14 @@ export default function FroggerPage() {
   function scanDangerOnDemand(frogX: number, frogRow: number): string {
     const rows = [frogRow - 1, frogRow, frogRow + 1].filter(r => r > 0 && r < ROWS)
     const parts: string[] = []
+
+    // Safe-forward report (first in announcement)
+    const nextSafe = isNextRowSafe(frogX, frogRow)
+    if (nextSafe) {
+      audio.frogClear()
+      parts.push('Camino al frente libre')
+    }
+
     rows.forEach((r, i) => {
       const vehs = getVehicles(r)
       if (!vehs.length) return
@@ -210,12 +236,11 @@ export default function FroggerPage() {
         (a, b) => Math.abs(a.x + a.w / 2 - frogX) - Math.abs(b.x + b.w / 2 - frogX)
       )[0]
       const cx    = closest.x + closest.w / 2
-      // Pan relative to frog position
-      const pan   = Math.max(-1, Math.min(1, (cx - frogX) / (CELL * 4)))
+      const pan   = panFor(cx, frogX)
       const distCells = Math.round(Math.abs(cx - frogX) / CELL)
       const side  = cx < frogX - CELL * 0.4 ? 'izquierda' : cx > frogX + CELL * 0.4 ? 'derecha' : 'justo enfrente'
       const label = r === frogRow ? 'Tu fila' : r < frogRow ? 'Fila anterior' : 'Fila siguiente'
-      const delay = i * 100
+      const delay = (nextSafe ? 250 : 0) + i * 100
       if (lane.type === 'road') {
         setTimeout(() => audio.frogDanger(pan), delay)
         parts.push(`${label}: coche a ${distCells} celda${distCells !== 1 ? 's' : ''} a la ${side}`)
@@ -288,6 +313,12 @@ export default function FroggerPage() {
     if (now - lastScanRef.current >= 150) {
       lastScanRef.current = now
       scanDanger(frogXRef.current, row)
+    }
+
+    // Safe-path chime: soft ascending tone every 600 ms when next row is clear
+    if (now - lastSafeRef.current >= 600) {
+      lastSafeRef.current = now
+      if (isNextRowSafe(frogXRef.current, row)) audio.frogClear()
     }
 
     // Draw
@@ -487,6 +518,7 @@ export default function FroggerPage() {
     lastTimerRef.current = now
     lastScanRef.current  = 0
     lastOnLogRef.current = 0
+    lastSafeRef.current  = 0
 
     announcePolite(
       `Frogger. Lleva la rana a las ${TOTAL_HOMES} casas en lo alto. ` +

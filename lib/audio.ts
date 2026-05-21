@@ -249,6 +249,11 @@ export const audio = {
     playTone(280, 0.04, 'sawtooth', 0.3)
     playTone(180, 0.08, 'sine',     0.22, 0.04)
   },
+  // Frogger: brief chime — next row ahead is clear/safe to jump
+  frogClear() {
+    playTone(1047, 0.05, 'sine', 0.2)
+    playTone(1319, 0.04, 'sine', 0.16, 0.07)
+  },
   // Frogger: frog hop
   frogJump() {
     playTone(900, 0.02, 'sine', 0.18)
