@@ -35,6 +35,7 @@ const GAMES = [
   { id: 'buscaminas', href: '/buscaminas', label: 'Buscaminas', desc: 'Descubre todas las celdas sin minas. Navega con las flechas o WASD, revela con Enter y marca minas con F. Cada celda emite un tono al revelarla: agudo y suave si hay pocas minas alrededor, grave y áspero si hay muchas. Tecla E para escuchar la celda actual y sus ocho vecinas. Tres dificultades: 9×9, 12×12 y 16×16.' },
   { id: 'sokoban', href: '/sokoban', label: 'Sokoban', desc: 'Empuja las cajas hasta las metas. Usa las flechas o WASD para moverte y empujar. Z deshace el último movimiento, R reinicia el nivel, E describe el entorno. 10 niveles de dificultad creciente.' },
   { id: 'tragaperras', href: '/tragaperras', label: 'Tragaperras', desc: 'Máquina tragaperras con 3 rodillos y 5 símbolos. Gira con Espacio, retén rodillos con 1-2-3. Cada símbolo tiene un tono propio. Premio máximo: tres sietes, 250 créditos. Q para salir y guardar puntuación.' },
+  { id: 'quince', href: '/quince', label: 'Puzle Quince', desc: 'Puzle deslizante de 15 fichas en una cuadrícula 4×4. Desliza fichas hacia el hueco con las flechas hasta ordenarlas del 1 al 15. Cada ficha emite un tono al moverse, paneado a su columna de destino. E describe el hueco y las fichas adyacentes. Tres dificultades.' },
 ]
 
 export default async function Home() {
