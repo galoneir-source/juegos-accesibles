@@ -4,7 +4,7 @@ import { revalidatePath } from 'next/cache'
 import { auth } from '@/lib/auth'
 import { prisma } from '@/lib/db'
 
-export type GameId = 'hangman' | 'memory' | 'aventura' | 'aventura-espacio' | 'aventura-magica' | 'casa-encantada' | 'mastermind' | 'wordle' | 'mates-rapidas' | 'laberinto' | 'anagramas' | 'blackjack' | 'pong' | 'batalla-naval' | 'penaltis' | 'tres-en-raya' | 'gorillas' | 'misterio' | 'secuencias' | 'conecta4' | 'generala' | '2048' | 'bingo' | 'space-invaders' | 'tetris' | 'frogger' | 'asteroids' | 'buscaminas' | 'sokoban' | 'tragaperras' | 'quince' | 'solitario' | 'pirata' | 'egipto' | 'samurai' | 'vikingos' | 'abismo' | 'zona' | 'castillo' | 'corp' | 'templo' | 'inca' | 'grecia' | 'bagdad'
+export type GameId = 'hangman' | 'memory' | 'aventura' | 'aventura-espacio' | 'aventura-magica' | 'casa-encantada' | 'mastermind' | 'wordle' | 'mates-rapidas' | 'laberinto' | 'anagramas' | 'blackjack' | 'pong' | 'batalla-naval' | 'penaltis' | 'tres-en-raya' | 'gorillas' | 'misterio' | 'secuencias' | 'conecta4' | 'generala' | '2048' | 'bingo' | 'space-invaders' | 'tetris' | 'frogger' | 'asteroids' | 'buscaminas' | 'sokoban' | 'tragaperras' | 'quince' | 'solitario' | 'pirata' | 'egipto' | 'samurai' | 'vikingos' | 'abismo' | 'zona' | 'castillo' | 'corp' | 'templo' | 'inca' | 'grecia' | 'bagdad' | 'oeste'
 
 export async function saveScore(game: GameId, points: number) {
   const session = await auth()
@@ -29,7 +29,7 @@ export async function getLeaderboard(game: GameId) {
 }
 
 export async function getUserScores(userId: string) {
-  const games: GameId[] = ['hangman', 'memory', 'aventura', 'aventura-espacio', 'aventura-magica', 'casa-encantada', 'mastermind', 'wordle', 'mates-rapidas', 'laberinto', 'anagramas', 'blackjack', 'pong', 'batalla-naval', 'penaltis', 'tres-en-raya', 'gorillas', 'misterio', 'secuencias', 'conecta4', 'generala', '2048', 'bingo', 'space-invaders', 'tetris', 'frogger', 'asteroids', 'buscaminas', 'sokoban', 'tragaperras', 'quince', 'solitario', 'pirata', 'egipto', 'samurai', 'vikingos', 'abismo', 'zona', 'castillo', 'corp', 'templo', 'inca', 'grecia', 'bagdad']
+  const games: GameId[] = ['hangman', 'memory', 'aventura', 'aventura-espacio', 'aventura-magica', 'casa-encantada', 'mastermind', 'wordle', 'mates-rapidas', 'laberinto', 'anagramas', 'blackjack', 'pong', 'batalla-naval', 'penaltis', 'tres-en-raya', 'gorillas', 'misterio', 'secuencias', 'conecta4', 'generala', '2048', 'bingo', 'space-invaders', 'tetris', 'frogger', 'asteroids', 'buscaminas', 'sokoban', 'tragaperras', 'quince', 'solitario', 'pirata', 'egipto', 'samurai', 'vikingos', 'abismo', 'zona', 'castillo', 'corp', 'templo', 'inca', 'grecia', 'bagdad', 'oeste']
   const results: Record<string, number> = {}
   for (const game of games) {
     const best = await prisma.score.findFirst({
