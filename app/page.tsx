@@ -47,6 +47,7 @@ const GAMES = [
   { id: 'templo', href: '/templo', label: 'El Templo Perdido', desc: 'Aventura de texto arqueológica. Explora 49 zonas de la jungla y el templo maya perdido, descubre sus secretos y derrota al Dios Serpiente Kukulkán. Elige entre Explorador, Chamán o Arqueóloga.' },
   { id: 'inca', href: '/inca', label: 'El Imperio del Sol', desc: 'Aventura de texto en el Imperio Inca. Explora 49 zonas de los Andes y la ciudadela perdida, descubre sus secretos y derrota a Supay, el Dios de la Muerte. Elige entre Guerrero Inca, Sacerdotisa del Sol o Ladrón de Oro.' },
   { id: 'grecia', href: '/grecia', label: 'Las Puertas del Olimpo', desc: 'Aventura de texto en la Grecia antigua. Explora 49 zonas del laberinto del Olimpo, derrota criaturas mitológicas y enfrenta a Cronos, el Titán del Tiempo. Elige entre Héroe, Sacerdotisa de Atenea o Ladrón del Olimpo.' },
+  { id: 'bagdad', href: '/bagdad', label: 'Las Mil y Una Noches', desc: 'Aventura de texto en la Bagdad de los cuentos. Explora 49 zonas del palacio maldito, derrota djinns y guardianes, y enfrenta al Califa de las Sombras. Elige entre Guerrero del Desierto, Hechicera o Ladrón de Bagdad.' },
 ]
 
 export default async function Home() {
