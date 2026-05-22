@@ -44,6 +44,7 @@ const GAMES = [
   { id: 'tragaperras', href: '/tragaperras', label: 'Tragaperras', desc: 'Máquina tragaperras con 3 rodillos y 5 símbolos. Gira con Espacio, retén rodillos con 1-2-3. Cada símbolo tiene un tono propio. Premio máximo: tres sietes, 250 créditos. Q para salir y guardar puntuación.' },
   { id: 'quince', href: '/quince', label: 'Puzle Quince', desc: 'Puzle deslizante de 15 fichas en una cuadrícula 4×4. Desliza fichas hacia el hueco con las flechas hasta ordenarlas del 1 al 15. Cada ficha emite un tono al moverse, paneado a su columna de destino. E describe el hueco y las fichas adyacentes. Tres dificultades.' },
   { id: 'solitario', href: '/solitario', label: 'Solitario', desc: 'Klondike clásico. Mueve las 52 cartas a las cuatro fundaciones de As a Rey siguiendo el palo. Alterna colores en el tableau. Flechas para navegar entre pilas, Enter para seleccionar y colocar, A para enviar automáticamente a la fundación.' },
+  { id: 'templo', href: '/templo', label: 'El Templo Perdido', desc: 'Aventura de texto arqueológica. Explora 49 zonas de la jungla y el templo maya perdido, descubre sus secretos y derrota al Dios Serpiente Kukulkán. Elige entre Explorador, Chamán o Arqueóloga.' },
 ]
 
 export default async function Home() {
