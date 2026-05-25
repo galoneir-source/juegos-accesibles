@@ -48,6 +48,7 @@ const GAMES = [
   { id: 'inca', href: '/inca', label: 'El Imperio del Sol', desc: 'Aventura de texto en el Imperio Inca. Explora 49 zonas de los Andes y la ciudadela perdida, descubre sus secretos y derrota a Supay, el Dios de la Muerte. Elige entre Guerrero Inca, Sacerdotisa del Sol o Ladrón de Oro.' },
   { id: 'grecia', href: '/grecia', label: 'Las Puertas del Olimpo', desc: 'Aventura de texto en la Grecia antigua. Explora 49 zonas del laberinto del Olimpo, derrota criaturas mitológicas y enfrenta a Cronos, el Titán del Tiempo. Elige entre Héroe, Sacerdotisa de Atenea o Ladrón del Olimpo.' },
   { id: 'bagdad', href: '/bagdad', label: 'Las Mil y Una Noches', desc: 'Aventura de texto en la Bagdad de los cuentos. Explora 49 zonas del palacio maldito, derrota djinns y guardianes, y enfrenta al Califa de las Sombras. Elige entre Guerrero del Desierto, Hechicera o Ladrón de Bagdad.' },
+  { id: 'china', href: '/china', label: 'El Dragón del Cielo', desc: 'Aventura de texto en la China Imperial. Explora 49 zonas del Palacio Prohibido corrompido por la oscuridad, descubre sus secretos y derrota al Dragón del Cielo Oscuro. Elige entre Guerrero Imperial, Hechicera del Dragón o Espía de la Seda.' },
 ]
 
 export default async function Home() {
