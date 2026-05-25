@@ -49,6 +49,7 @@ const GAMES = [
   { id: 'grecia', href: '/grecia', label: 'Las Puertas del Olimpo', desc: 'Aventura de texto en la Grecia antigua. Explora 49 zonas del laberinto del Olimpo, derrota criaturas mitológicas y enfrenta a Cronos, el Titán del Tiempo. Elige entre Héroe, Sacerdotisa de Atenea o Ladrón del Olimpo.' },
   { id: 'bagdad', href: '/bagdad', label: 'Las Mil y Una Noches', desc: 'Aventura de texto en la Bagdad de los cuentos. Explora 49 zonas del palacio maldito, derrota djinns y guardianes, y enfrenta al Califa de las Sombras. Elige entre Guerrero del Desierto, Hechicera o Ladrón de Bagdad.' },
   { id: 'china', href: '/china', label: 'El Dragón del Cielo', desc: 'Aventura de texto en la China Imperial. Explora 49 zonas del Palacio Prohibido corrompido por la oscuridad, descubre sus secretos y derrota al Dragón del Cielo Oscuro. Elige entre Guerrero Imperial, Hechicera del Dragón o Espía de la Seda.' },
+  { id: 'rusia', href: '/rusia', label: 'El Último Bogatyr', desc: 'Aventura de texto en la Rusia Imperial y el folclore eslavo. Explora 49 zonas del palacio del Zar corrompido por Koschei el Inmortal, descubre sus secretos y derrota al hechicero de la muerte. Elige entre Bogatyr, Hechicera del Bosque o Ladrón del Zar.' },
 ]
 
 export default async function Home() {
