@@ -15,6 +15,7 @@ const GAMES = [
   { id: 'laberinto-audio', href: '/laberinto-audio', label: 'Laberinto de Audio', desc: 'Navega un laberinto guiándote solo por el sonido. La brújula de audio indica dirección y distancia a la salida. Usa las flechas o WASD para moverte.' },
   { id: 'anagramas', href: '/anagramas', label: 'Anagramas', desc: 'Se muestra una palabra con las letras desordenadas. Escribe la palabra original antes de que se agote el tiempo. Pide pistas si necesitas ayuda.' },
   { id: 'blackjack', href: '/blackjack', label: 'Blackjack', desc: 'Juego de cartas contra el dealer. Llega a 21 o acércate más que él sin pasarte. Teclas P, S y D para jugar.' },
+  { id: 'gin-rummy', href: '/gin-rummy', label: 'Gin Rummy', desc: 'Juego de cartas clásico. Forma combinaciones (tríos o escaleras) con tus 10 cartas y llama cuando tengas 10 puntos sueltos o menos. Roba con M o D, descarta con 1-0 y R.' },
   { id: 'pong-audio', href: '/pong-audio', label: 'Pong de Audio', desc: 'Pong totalmente accesible por sonido. La posición de la pelota se indica con sonido estéreo y tono. Usa las flechas o W S para mover tu paleta.' },
   { id: 'batalla-naval', href: '/batalla-naval', label: 'Batalla Naval', desc: 'Hunde la flota enemiga disparando en un tablero de 10×10. Coloca tus barcos con el teclado y recibe feedback sonoro: explosión para impactos, chapoteo para fallos.' },
   { id: 'penaltis', href: '/penaltis', label: 'Penaltis', desc: 'Tanda de 5 penaltis. Elige izquierda, centro o derecha para disparar o defender. El portero rival se adapta a tu historial de tiros.' },
