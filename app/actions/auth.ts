@@ -1,7 +1,7 @@
 'use server'
 
 import bcrypt from 'bcryptjs'
-import { redirect } from 'next/navigation'
+import { AuthError } from 'next-auth'
 import { prisma } from '@/lib/db'
 import { signIn } from '@/lib/auth'
 
@@ -28,16 +28,15 @@ export async function registerUser(_state: unknown, formData: FormData) {
 export async function loginUser(_state: unknown, formData: FormData) {
   const email = (formData.get('email') as string)?.trim().toLowerCase()
   const password = formData.get('password') as string
+  const raw = formData.get('callbackUrl') as string | null
+  const redirectTo = raw && raw.startsWith('/') ? raw : '/'
 
   try {
-    await signIn('credentials', { email, password, redirect: false })
+    await signIn('credentials', { email, password, redirectTo })
   } catch (error) {
-    // Re-throw redirect errors so Next.js can handle the navigation
-    if (error instanceof Error && (error as { digest?: string }).digest?.startsWith('NEXT_REDIRECT')) {
-      throw error
+    if (error instanceof AuthError) {
+      return { error: 'Correo o contraseña incorrectos.' }
     }
-    return { error: 'Correo o contraseña incorrectos.' }
+    throw error
   }
-
-  redirect('/')
 }

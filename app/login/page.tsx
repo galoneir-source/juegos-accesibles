@@ -10,6 +10,7 @@ function LoginForm() {
   const [state, action, pending] = useActionState(loginUser, undefined)
   const params = useSearchParams()
   const registered = params.get('registered')
+  const callbackUrl = params.get('callbackUrl') || '/'
 
   useEffect(() => {
     if (registered) announcePolite('Cuenta creada con éxito. Por favor inicia sesión.')
@@ -37,6 +38,7 @@ function LoginForm() {
         )}
 
         <form action={action} className="space-y-5">
+          <input type="hidden" name="callbackUrl" value={callbackUrl} />
           <div>
             <label htmlFor="email" className="block text-sm font-medium mb-1">
               Correo electrónico
