@@ -11,8 +11,10 @@ const securityHeaders = [
   {
     key: "Permissions-Policy",
     value:
-      "geolocation=(), camera=(), microphone=(), payment=(), usb=(), interest-cohort=()",
+      "geolocation=(), camera=(), microphone=(), payment=(), usb=(), browsing-topics=()",
   },
+  { key: "Cross-Origin-Opener-Policy", value: "same-origin" },
+  { key: "Cross-Origin-Resource-Policy", value: "same-origin" },
   {
     // La app no carga scripts, fuentes ni imágenes de terceros; 'unsafe-inline'
     // es necesario para los estilos e hidratación en línea de Next.
