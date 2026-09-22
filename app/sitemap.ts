@@ -35,12 +35,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: 'weekly',
       priority: 1.0,
     },
-    {
-      url: `${BASE_URL}/tabla-lideres`,
-      lastModified: now,
-      changeFrequency: 'daily',
-      priority: 0.5,
-    },
+    // /tabla-lideres requiere sesión (protegida por el middleware en
+    // proxy.ts, redirige a /login sin ella) — no va en el sitemap público.
     ...gameEntries,
   ]
 }
