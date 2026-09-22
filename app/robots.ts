@@ -7,9 +7,10 @@ export default function robots(): MetadataRoute.Robots {
     rules: {
       userAgent: '*',
       allow: '/',
-      // Páginas de cuenta (sin contenido indexable, /perfil redirige a
-      // /login sin sesión) y endpoints de API.
-      disallow: ['/login', '/register', '/perfil', '/api/'],
+      // Páginas de cuenta (sin contenido indexable, /perfil y /tabla-lideres
+      // requieren sesión — protegidas por el middleware en proxy.ts y
+      // redirigen a /login sin ella) y endpoints de API.
+      disallow: ['/login', '/register', '/perfil', '/tabla-lideres', '/api/'],
     },
     sitemap: `${BASE_URL}/sitemap.xml`,
   }
