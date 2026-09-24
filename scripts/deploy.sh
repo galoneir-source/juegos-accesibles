@@ -145,4 +145,4 @@ ls -1 "$BUILDS" | sort | grep -vx "$ID" | head -n -"$KEEP" | while read -r old; 
   rm -rf "${BUILDS:?}/$old"
 done
 
-log "Desplegado $ID ($(cut -c1-80 "$DIR/DEPLOY_COMMIT" | cut -d' ' -f2-))"
+log "Desplegado $ID ($(cut -d' ' -f2- "$DIR/DEPLOY_COMMIT"))"
