@@ -35,6 +35,10 @@ const securityHeaders = [
 ];
 
 const nextConfig: NextConfig = {
+  // scripts/deploy.sh compila en .builds/<id> (NEXT_DIST_DIR) para no pisar la
+  // build que está sirviendo producción; `next start` usa .next, que es un
+  // symlink a la build activa.
+  distDir: process.env.NEXT_DIST_DIR || ".next",
   async headers() {
     return [
       {
