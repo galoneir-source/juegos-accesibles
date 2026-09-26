@@ -46,3 +46,6 @@ next-env.d.ts
 
 # local databases
 *.db
+
+# logs de servidores de prueba (nunca en public/)
+nohup.out

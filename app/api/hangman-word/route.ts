@@ -1,3 +1,5 @@
+import { clientIp, hit } from '@/lib/rate-limit'
+
 const FALLBACK_WORDS = [
   { word: 'ELEFANTE', hint: 'Animal grande con trompa' },
   { word: 'MARIPOSA', hint: 'Insecto con alas coloridas' },
@@ -49,7 +51,18 @@ async function getDefinition(word: string): Promise<string | null> {
   }
 }
 
-export async function GET() {
+// Cada petición lanza llamadas a APIs externas: se limita por IP y se acota
+// cuántas definiciones se piden (en paralelo, así el peor caso es ~5 s + 4 s).
+const MAX_CANDIDATES = 8
+
+function fallbackWord() {
+  const fallback = FALLBACK_WORDS[Math.floor(Math.random() * FALLBACK_WORDS.length)]
+  return Response.json(fallback)
+}
+
+export async function GET(request: Request) {
+  if (!hit(`hangman:${clientIp(request.headers)}`, 20, 60 * 1000)) return fallbackWord()
+
   try {
     const res = await fetch(
       'https://random-word-api.herokuapp.com/word?lang=es&number=30',
@@ -58,18 +71,15 @@ export async function GET() {
     if (!res.ok) throw new Error('word API failed')
     const words: string[] = await res.json()
 
-    const candidates = words.filter(isValidWord)
-
-    for (const word of candidates) {
-      const hint = await getDefinition(word)
-      if (hint) {
-        return Response.json({ word: word.toUpperCase(), hint })
-      }
+    const candidates = words.filter(isValidWord).slice(0, MAX_CANDIDATES)
+    const hints = await Promise.all(candidates.map(getDefinition))
+    const i = hints.findIndex(Boolean)
+    if (i !== -1) {
+      return Response.json({ word: candidates[i].toUpperCase(), hint: hints[i] })
     }
   } catch {
     // fall through to fallback
   }
 
-  const fallback = FALLBACK_WORDS[Math.floor(Math.random() * FALLBACK_WORDS.length)]
-  return Response.json(fallback)
+  return fallbackWord()
 }
