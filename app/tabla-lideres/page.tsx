@@ -1,5 +1,7 @@
 import Link from 'next/link'
-import { getLeaderboard, type GameId } from '@/app/actions/scores'
+import { redirect } from 'next/navigation'
+import { auth } from '@/lib/auth'
+import { getLeaderboard, type GameId } from '@/lib/scores'
 
 const GAMES: { id: GameId; label: string }[] = [
   { id: 'hangman',       label: 'Ahorcado' },
@@ -11,6 +13,11 @@ const GAMES: { id: GameId; label: string }[] = [
 ]
 
 export default async function TablaLideresPage() {
+  // proxy.ts ya protege esta ruta; se comprueba también aquí por si el
+  // middleware se salta (Next.js ha tenido varios fallos de ese tipo).
+  const session = await auth()
+  if (!session?.user?.id) redirect('/login')
+
   const boards = await Promise.all(
     GAMES.map(async g => ({ ...g, entries: await getLeaderboard(g.id) }))
   )

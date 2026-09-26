@@ -40,6 +40,7 @@ export default function RegisterPage() {
               type="text"
               autoComplete="name"
               required
+              maxLength={50}
               className="w-full px-4 py-2.5 rounded bg-[#1a1a1a] border border-[#444] text-[#f0f0f0] text-base focus:outline-none focus:ring-2 focus:ring-[#ffd700]"
             />
           </div>
@@ -54,6 +55,7 @@ export default function RegisterPage() {
               type="email"
               autoComplete="email"
               required
+              maxLength={254}
               className="w-full px-4 py-2.5 rounded bg-[#1a1a1a] border border-[#444] text-[#f0f0f0] text-base focus:outline-none focus:ring-2 focus:ring-[#ffd700]"
             />
           </div>

@@ -1,7 +1,7 @@
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { auth } from '@/lib/auth'
-import { getUserScores } from '@/app/actions/scores'
+import { getUserScores } from '@/lib/scores'
 
 const GAME_LABELS: Record<string, string> = {
   hangman: 'Ahorcado',
