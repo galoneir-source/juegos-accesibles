@@ -178,12 +178,17 @@ export default function BuscaminasPage() {
 
   // ── Game loop ────────────────────────────────────────────────────────────────
 
+  // El bucle se reprograma a través de un ref: un useCallback no puede referenciarse a sí mismo.
+  const loopRef = useRef<FrameRequestCallback>(() => {})
+
   const loop = useCallback(() => {
     if (phaseRef.current !== 'playing') return
     draw()
-    rafRef.current = requestAnimationFrame(loop)
+    rafRef.current = requestAnimationFrame(loopRef.current)
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
+
+  useEffect(() => { loopRef.current = loop }, [loop])
 
   // ── Start ────────────────────────────────────────────────────────────────────
 
@@ -198,6 +203,8 @@ export default function BuscaminasPage() {
     curCRef.current   = Math.floor(cols / 2)
     minedRef.current  = false
     scoreRef.current  = 0
+    // startGame solo se ejecuta desde onClick, nunca durante el render.
+    // eslint-disable-next-line react-hooks/purity
     startTimeRef.current = performance.now()
 
     setScore(0)

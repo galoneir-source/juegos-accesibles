@@ -129,6 +129,9 @@ export default function SpaceInvadersPage() {
     }
   }
 
+  // El bucle se reprograma a través de un ref: un useCallback no puede referenciarse a sí mismo.
+  const tickRef = useRef<FrameRequestCallback>(() => {})
+
   const tick = useCallback(() => {
     if (phaseRef.current !== 'playing') return
 
@@ -281,7 +284,7 @@ export default function SpaceInvadersPage() {
 
     // ── Draw canvas ───────────────────────────────────────────────────────────
     const canvas = canvasRef.current
-    if (!canvas) { rafRef.current = requestAnimationFrame(tick); return }
+    if (!canvas) { rafRef.current = requestAnimationFrame(tickRef.current); return }
     const ctx = canvas.getContext('2d')!
 
     ctx.fillStyle = '#000'
@@ -355,8 +358,10 @@ export default function SpaceInvadersPage() {
     ctx.textAlign = 'right'
     ctx.fillText(`${scoreRef.current}`, W - 10, H - 12)
 
-    rafRef.current = requestAnimationFrame(tick)
+    rafRef.current = requestAnimationFrame(tickRef.current)
   }, [syncPhase])
+
+  useEffect(() => { tickRef.current = tick }, [tick])
 
   function startGame(lIdx: number) {
     if (rafRef.current) cancelAnimationFrame(rafRef.current)
@@ -376,6 +381,8 @@ export default function SpaceInvadersPage() {
     marchBeatRef.current  = 0
     invincibleRef.current = 0
 
+    // startGame solo se ejecuta desde onClick, nunca durante el render.
+    // eslint-disable-next-line react-hooks/purity
     const now = performance.now()
     lastMarchRef.current      = now
     lastAlienShootRef.current = now

@@ -295,8 +295,8 @@ export default function PenaltisPage() {
   }
 
   if (phase === 'end') {
-    const pg = playerGoalsRef.current
-    const ag = aiGoalsRef.current
+    const pg = playerGoals
+    const ag = aiGoals
     const result = pg > ag ? '¡Ganaste!' : pg === ag ? 'Empate' : '¡Perdiste!'
     const resultColor = pg > ag ? '#22c55e' : pg === ag ? '#ffd700' : '#ef4444'
     return (

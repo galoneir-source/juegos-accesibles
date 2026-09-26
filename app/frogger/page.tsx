@@ -252,83 +252,6 @@ export default function FroggerPage() {
     return parts.length ? parts.join('. ') + '.' : 'Sin vehículos cercanos.'
   }
 
-  // ── Main tick ───────────────────────────────────────────────────────────────
-
-  const tick = useCallback((now: number) => {
-    if (phaseRef.current !== 'playing') return
-
-    const dt = Math.min(now - lastTimeRef.current, 50)
-    lastTimeRef.current = now
-
-    // Timer
-    if (aliveRef.current && now - lastTimerRef.current >= 1000) {
-      lastTimerRef.current = now
-      const nt = timerRef.current - 1
-      timerRef.current = nt
-      setTimer(nt)
-      if (nt <= 5 && nt > 0) audio.tick()
-      if (nt <= 0) { die('splash'); rafRef.current = requestAnimationFrame(tick); return }
-    }
-
-    if (!aliveRef.current) { rafRef.current = requestAnimationFrame(tick); return }
-
-    // Move vehicles
-    LANE_DEFS.forEach((lane, li) => {
-      const vehs = veхsRef.current[li]
-      if (!vehs) return
-      const dx = lane.dir * lane.speed * dt / 1000
-      vehs.forEach(v => {
-        v.x += dx
-        if (lane.dir === 1  && v.x > W)       v.x = -v.w
-        if (lane.dir === -1 && v.x + v.w < 0) v.x = W
-      })
-    })
-
-    // Ride log
-    const row = frogRowRef.current
-    if (WATER_ROWS.includes(row)) {
-      const lane = LANE_DEFS.find(l => l.row === row)!
-      const log  = logUnder(frogXRef.current, row)
-      if (log) {
-        frogXRef.current += lane.dir * lane.speed * dt / 1000
-        if (frogXRef.current < CELL / 2 || frogXRef.current > W - CELL / 2) {
-          die('splash'); rafRef.current = requestAnimationFrame(tick); return
-        }
-        // Rhythmic confirmation pulse: "you are on a log" — center pan (frog is on the log)
-        if (now - lastOnLogRef.current >= 500) {
-          lastOnLogRef.current = now
-          audio.frogOnLog(0)
-        }
-      } else {
-        die('splash'); rafRef.current = requestAnimationFrame(tick); return
-      }
-    }
-
-    // Car collision (continuous)
-    if (ROAD_ROWS.includes(row) && hitByCar(frogXRef.current, row)) {
-      die('squish'); rafRef.current = requestAnimationFrame(tick); return
-    }
-
-    // Continuous proximity audio — 150 ms keeps tones crisp without overlap
-    if (now - lastScanRef.current >= 150) {
-      lastScanRef.current = now
-      scanDanger(frogXRef.current, row)
-    }
-
-    // Safe-path chime: soft ascending tone every 600 ms when next row is clear
-    if (now - lastSafeRef.current >= 600) {
-      lastSafeRef.current = now
-      if (isNextRowSafe(frogXRef.current, row)) audio.frogClear()
-    }
-
-    // Draw
-    const canvas = canvasRef.current
-    if (canvas) draw(canvas.getContext('2d')!)
-
-    rafRef.current = requestAnimationFrame(tick)
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [syncPhase])
-
   // ── Draw ────────────────────────────────────────────────────────────────────
 
   function draw(ctx: CanvasRenderingContext2D) {
@@ -428,6 +351,88 @@ export default function FroggerPage() {
     ctx.fillStyle = pct > 0.4 ? '#22c55e' : pct > 0.2 ? '#eab308' : '#ef4444'
     ctx.fillRect(0, H - 5, W * pct, 5)
   }
+
+  // ── Main tick ───────────────────────────────────────────────────────────────
+
+  // El bucle se reprograma a través de un ref: un useCallback no puede referenciarse a sí mismo.
+  const tickRef = useRef<FrameRequestCallback>(() => {})
+
+  const tick = useCallback((now: number) => {
+    if (phaseRef.current !== 'playing') return
+
+    const dt = Math.min(now - lastTimeRef.current, 50)
+    lastTimeRef.current = now
+
+    // Timer
+    if (aliveRef.current && now - lastTimerRef.current >= 1000) {
+      lastTimerRef.current = now
+      const nt = timerRef.current - 1
+      timerRef.current = nt
+      setTimer(nt)
+      if (nt <= 5 && nt > 0) audio.tick()
+      if (nt <= 0) { die('splash'); rafRef.current = requestAnimationFrame(tickRef.current); return }
+    }
+
+    if (!aliveRef.current) { rafRef.current = requestAnimationFrame(tickRef.current); return }
+
+    // Move vehicles
+    LANE_DEFS.forEach((lane, li) => {
+      const vehs = veхsRef.current[li]
+      if (!vehs) return
+      const dx = lane.dir * lane.speed * dt / 1000
+      vehs.forEach(v => {
+        v.x += dx
+        if (lane.dir === 1  && v.x > W)       v.x = -v.w
+        if (lane.dir === -1 && v.x + v.w < 0) v.x = W
+      })
+    })
+
+    // Ride log
+    const row = frogRowRef.current
+    if (WATER_ROWS.includes(row)) {
+      const lane = LANE_DEFS.find(l => l.row === row)!
+      const log  = logUnder(frogXRef.current, row)
+      if (log) {
+        frogXRef.current += lane.dir * lane.speed * dt / 1000
+        if (frogXRef.current < CELL / 2 || frogXRef.current > W - CELL / 2) {
+          die('splash'); rafRef.current = requestAnimationFrame(tickRef.current); return
+        }
+        // Rhythmic confirmation pulse: "you are on a log" — center pan (frog is on the log)
+        if (now - lastOnLogRef.current >= 500) {
+          lastOnLogRef.current = now
+          audio.frogOnLog(0)
+        }
+      } else {
+        die('splash'); rafRef.current = requestAnimationFrame(tickRef.current); return
+      }
+    }
+
+    // Car collision (continuous)
+    if (ROAD_ROWS.includes(row) && hitByCar(frogXRef.current, row)) {
+      die('squish'); rafRef.current = requestAnimationFrame(tickRef.current); return
+    }
+
+    // Continuous proximity audio — 150 ms keeps tones crisp without overlap
+    if (now - lastScanRef.current >= 150) {
+      lastScanRef.current = now
+      scanDanger(frogXRef.current, row)
+    }
+
+    // Safe-path chime: soft ascending tone every 600 ms when next row is clear
+    if (now - lastSafeRef.current >= 600) {
+      lastSafeRef.current = now
+      if (isNextRowSafe(frogXRef.current, row)) audio.frogClear()
+    }
+
+    // Draw
+    const canvas = canvasRef.current
+    if (canvas) draw(canvas.getContext('2d')!)
+
+    rafRef.current = requestAnimationFrame(tickRef.current)
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [syncPhase])
+
+  useEffect(() => { tickRef.current = tick }, [tick])
 
   // ── Jump handler ────────────────────────────────────────────────────────────
 

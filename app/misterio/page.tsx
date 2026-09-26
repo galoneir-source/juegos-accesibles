@@ -86,6 +86,8 @@ export default function MisterioPage() {
   const [histIdx,   setHistIdx]    = useState(-1)
   const [saved,     setSaved]      = useState(false)
   const [saveError, setSaveError]  = useState('')
+  // Copia en estado de gameRef para el render (los refs no se leen al renderizar).
+  const [currentGame, setCurrentGame] = useState<GeneratedGame | null>(null)
 
   const inputRef  = useRef<HTMLInputElement>(null)
   const historyEl = useRef<HTMLDivElement>(null)
@@ -300,6 +302,7 @@ export default function MisterioPage() {
   function startGame() {
     const game = generateGame()
     gameRef.current       = game
+    setCurrentGame(game)
     locationRef.current   = 'entrada'
     cluesRef.current      = new Set()
     scoreRef.current      = 0
@@ -386,7 +389,7 @@ export default function MisterioPage() {
   }
 
   if (phase === 'won' || phase === 'lost') {
-    const game = gameRef.current!
+    const game = currentGame!
     const keyFound = KEY_EVIDENCE.filter(c => clues.includes(c)).length
     return (
       <GameShell title="Detective: El Caso Blackwood" instructions={INSTRUCTIONS} score={score}>
@@ -416,7 +419,7 @@ export default function MisterioPage() {
   }
 
   // Playing state
-  const game = gameRef.current!
+  const game = currentGame!
   const currentLoc = game.locations[location]
 
   return (

@@ -74,6 +74,9 @@ export default function PongAudioPage() {
     setPhase(p)
   }, [])
 
+  // El bucle se reprograma a través de un ref: un useCallback no puede referenciarse a sí mismo.
+  const tickRef = useRef<FrameRequestCallback>(() => {})
+
   const tick = useCallback(() => {
     if (phaseRef.current !== 'playing') return
 
@@ -256,8 +259,10 @@ export default function PongAudioPage() {
       ctx.fill()
     }
 
-    rafRef.current = requestAnimationFrame(tick)
+    rafRef.current = requestAnimationFrame(tickRef.current)
   }, [syncPhase])
+
+  useEffect(() => { tickRef.current = tick }, [tick])
 
   function startGame(lIdx: number) {
     if (rafRef.current) cancelAnimationFrame(rafRef.current)
@@ -272,7 +277,10 @@ export default function PongAudioPage() {
     paddleAtEdgeRef.current = null
     lastPaddlePingRef.current = 0
 
+    // startGame solo se ejecuta desde onClick, nunca durante el render.
+    // eslint-disable-next-line react-hooks/purity
     const angleAbs = Math.PI / 9 + Math.random() * (Math.PI / 12)
+    // eslint-disable-next-line react-hooks/purity
     const vertSign = Math.random() < 0.5 ? 1 : -1
     ballRef.current = {
       x: W / 2, y: H / 2,
@@ -288,6 +296,8 @@ export default function PongAudioPage() {
     setSaveError('')
     syncPhase('playing')
     audio.start()
+    // startGame solo se ejecuta desde onClick, nunca durante el render.
+    // eslint-disable-next-line react-hooks/purity
     lastPingRef.current = performance.now()
     announcePolite(`Pong ${lv.name}. Marca ${WIN_SCORE} puntos para ganar. La pelota viene hacia ti.`)
     rafRef.current = requestAnimationFrame(tick)
@@ -398,9 +408,9 @@ export default function PongAudioPage() {
 
           <p className="text-xl font-mono" aria-live="polite">
             Resultado:{' '}
-            <span className="text-[#ffd700]">{playerScoreRef.current}</span>
+            <span className="text-[#ffd700]">{playerScore}</span>
             {' – '}
-            <span className="text-[#ef4444]">{aiScoreRef.current}</span>
+            <span className="text-[#ef4444]">{aiScore}</span>
           </p>
 
           {phase === 'won' && (

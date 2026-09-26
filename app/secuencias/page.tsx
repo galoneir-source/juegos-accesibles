@@ -26,7 +26,7 @@ const INSTRUCTIONS =
 
 function playTone(hz: number, dur = 0.35) {
   try {
-    const ctx = new (window.AudioContext || (window as any).webkitAudioContext)()
+    const ctx = new (window.AudioContext || (window as Window & { webkitAudioContext?: typeof AudioContext }).webkitAudioContext!)()
     const osc  = ctx.createOscillator()
     const gain = ctx.createGain()
     osc.connect(gain)

@@ -370,6 +370,8 @@ export default function RusiaPage() {
   const cmdHistRef   = useRef<string[]>([])
   const inventoryRef = useRef<string[]>([])
   const classRef     = useRef<CharacterClass>('guerrero')
+  // Copia en estado de classRef para el render (los refs no se leen al renderizar).
+  const [charClass, setCharClass] = useState<CharacterClass>('guerrero')
   const magicCdRef   = useRef(0)
   const phaseRef     = useRef<Phase>('idle')
 
@@ -393,6 +395,8 @@ export default function RusiaPage() {
 
   function goPhase(p: Phase) { phaseRef.current = p; setPhaseState(p) }
 
+  // Solo tras montar: la página se prerenderiza y localStorage no existe en el servidor.
+  // eslint-disable-next-line react-hooks/set-state-in-effect
   useEffect(() => { setHasSaveData(readSave() !== null) }, [])
 
   useEffect(() => {
@@ -743,6 +747,7 @@ export default function RusiaPage() {
   function resetRefs(cl: CharacterClass) {
     const def = CLASS_DEFS[cl]
     classRef.current     = cl
+    setCharClass(cl)
     maxHpRef.current     = def.maxHp
     healthRef.current    = def.maxHp
     scoreRef.current     = 0
@@ -798,6 +803,7 @@ export default function RusiaPage() {
     roomIdRef.current    = save.roomId
     prevIdRef.current    = save.prevId
     classRef.current     = cl
+    setCharClass(cl)
     maxHpRef.current     = CLASS_DEFS[cl].maxHp
     healthRef.current    = save.health
     scoreRef.current     = save.score
@@ -972,8 +978,8 @@ export default function RusiaPage() {
             </strong>
             /{maxHp}
           </span>
-          <span className="text-[#555] text-xs">{CLASS_DEFS[classRef.current].name}</span>
-          {classRef.current === 'hechicera' && magicCD > 0 && (
+          <span className="text-[#555] text-xs">{CLASS_DEFS[charClass].name}</span>
+          {charClass === 'hechicera' && magicCD > 0 && (
             <span className="text-[#a78bfa] text-xs" aria-live="polite">Pájaro en {magicCD}t</span>
           )}
           {inventory.length > 0 && (
@@ -1011,7 +1017,7 @@ export default function RusiaPage() {
             <Button className="flex-1" onClick={() => { processCommand('atacar'); setInput('') }}>
               Atacar
             </Button>
-            {classRef.current === 'hechicera' && (
+            {charClass === 'hechicera' && (
               <Button
                 className="flex-1"
                 variant="secondary"
