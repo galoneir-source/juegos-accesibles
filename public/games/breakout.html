@@ -51,6 +51,10 @@
       border-radius: 4px;
       display: block;
       outline: none;
+      /* En pantallas más estrechas que el lienzo se encoge en vez de cortarse
+         (el body tiene overflow: hidden y no se puede desplazar). */
+      max-width: 100%;
+      height: auto;
     }
     #canvas:focus { border-color: #00e5ff; }
     #message {
@@ -86,6 +90,9 @@
        el marcador. */
     @media (max-width: 760px) {
       body { padding-top: 40px; }
+    }
+    @media (max-width: 520px) {
+      #hud { gap: 16px; font-size: 14px; letter-spacing: 1px; }
     }
     #live, .sr-only {
       position: absolute;
@@ -338,7 +345,10 @@ document.addEventListener('keyup', e => { keys[e.key] = false; });
 
 canvas.addEventListener('mousemove', e => {
   const rect = canvas.getBoundingClientRect();
-  paddle.x = clamp(e.clientX - rect.left - paddle.w/2, 0, W - paddle.w);
+  // El lienzo puede estar escalado por CSS: se pasa de píxeles de pantalla a
+  // coordenadas del juego (clientLeft/clientWidth descuentan el borde).
+  const x = (e.clientX - rect.left - canvas.clientLeft) * (W / canvas.clientWidth);
+  paddle.x = clamp(x - paddle.w/2, 0, W - paddle.w);
   if (state === 'start') syncBall();
 });
 canvas.addEventListener('click', () => { getAC(); activateFromClick(); });

@@ -47,8 +47,8 @@ export default function GameShell({ title, instructions, score, children, onHelp
       </header>
 
       <div className="bg-[#111] px-6 py-2 text-sm text-[#888] border-b border-[#222]" role="note">
-        Tecla <kbd className="bg-[#333] px-1 rounded">H</kbd> = instrucciones &nbsp;|&nbsp;
-        Tecla <kbd className="bg-[#333] px-1 rounded">R</kbd> = releer estado
+        Tecla <kbd className="bg-[#333] text-[#f0f0f0] px-1 rounded">H</kbd> = instrucciones &nbsp;|&nbsp;
+        Tecla <kbd className="bg-[#333] text-[#f0f0f0] px-1 rounded">R</kbd> = releer estado
       </div>
 
       <main id="main-content" className="flex-1 px-6 py-8 max-w-2xl mx-auto w-full">
