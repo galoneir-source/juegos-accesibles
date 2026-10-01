@@ -1,3 +1,4 @@
+import type { Metadata } from 'next'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { auth } from '@/lib/auth'
@@ -7,6 +8,11 @@ const GAME_LABELS: Record<string, string> = {
   hangman: 'Ahorcado',
   memory: 'Memory de Sonidos',
   aventura: 'Aventura de Texto',
+}
+
+export const metadata: Metadata = {
+  title: 'Mi perfil',
+  robots: { index: false, follow: true },
 }
 
 export default async function PerfilPage() {

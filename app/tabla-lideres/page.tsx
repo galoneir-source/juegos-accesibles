@@ -1,3 +1,4 @@
+import type { Metadata } from 'next'
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
 import { auth } from '@/lib/auth'
@@ -11,6 +12,11 @@ const GAMES: { id: GameId; label: string }[] = [
   { id: 'wordle',        label: 'Wordle' },
   { id: 'mates-rapidas', label: 'Matemáticas Rápidas' },
 ]
+
+export const metadata: Metadata = {
+  title: 'Tabla de líderes',
+  robots: { index: false, follow: true },
+}
 
 export default async function TablaLideresPage() {
   // proxy.ts ya protege esta ruta; se comprueba también aquí por si el

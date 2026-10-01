@@ -39,6 +39,21 @@ const nextConfig: NextConfig = {
   // build que está sirviendo producción; `next start` usa .next, que es un
   // symlink a la build activa.
   distDir: process.env.NEXT_DIST_DIR || ".next",
+  // Breakout y Mazmorra Oscura son HTML estáticos de public/games; se sirven
+  // en una ruta limpia como el resto de juegos y la URL antigua redirige.
+  async rewrites() {
+    return [
+      { source: "/breakout", destination: "/games/breakout.html" },
+      { source: "/mazmorra-oscura", destination: "/games/rpg/index.html" },
+    ];
+  },
+  async redirects() {
+    return [
+      { source: "/games/breakout.html", destination: "/breakout", permanent: true },
+      { source: "/games/rpg", destination: "/mazmorra-oscura", permanent: true },
+      { source: "/games/rpg/index.html", destination: "/mazmorra-oscura", permanent: true },
+    ];
+  },
   async headers() {
     return [
       {
