@@ -7,10 +7,11 @@ export default function robots(): MetadataRoute.Robots {
     rules: {
       userAgent: '*',
       allow: '/',
-      // Páginas de cuenta (sin contenido indexable, /perfil y /tabla-lideres
-      // requieren sesión — protegidas por el middleware en proxy.ts y
-      // redirigen a /login sin ella) y endpoints de API.
-      disallow: ['/login', '/register', '/perfil', '/tabla-lideres', '/api/'],
+      // Las páginas de cuenta (/login, /register, /perfil, /tabla-lideres) no
+      // se bloquean aquí: llevan `noindex` en su metadata, y un buscador solo
+      // puede leerlo si se le permite rastrearlas. Bloqueadas, la URL podía
+      // acabar indexada sin contenido.
+      disallow: ['/api/'],
     },
     sitemap: `${BASE_URL}/sitemap.xml`,
   }

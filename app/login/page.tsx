@@ -21,10 +21,7 @@ function LoginForm() {
   }, [state])
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center px-6">
-      <main id="main-content" className="w-full max-w-sm">
-        <h1 className="text-2xl font-bold text-[#ffd700] mb-6">Iniciar sesión</h1>
-
+    <>
         {registered && (
           <p role="status" className="mb-4 p-3 rounded bg-[#1a3a1a] border border-[#22c55e] text-[#22c55e] text-sm">
             Cuenta creada con éxito. Por favor inicia sesión.
@@ -91,15 +88,21 @@ function LoginForm() {
             ← Volver al lobby
           </Link>
         </p>
-      </main>
-    </div>
+    </>
   )
 }
 
 export default function LoginPage() {
+  // El h1 va fuera del Suspense: LoginForm usa useSearchParams y solo se
+  // renderiza en el cliente, así el HTML inicial ya trae el encabezado.
   return (
-    <Suspense>
-      <LoginForm />
-    </Suspense>
+    <div className="min-h-screen flex flex-col items-center justify-center px-6">
+      <main id="main-content" className="w-full max-w-sm">
+        <h1 className="text-2xl font-bold text-[#ffd700] mb-6">Iniciar sesión</h1>
+        <Suspense>
+          <LoginForm />
+        </Suspense>
+      </main>
+    </div>
   )
 }
