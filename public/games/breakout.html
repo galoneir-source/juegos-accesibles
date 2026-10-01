@@ -55,6 +55,8 @@
          (el body tiene overflow: hidden y no se puede desplazar). */
       max-width: 100%;
       height: auto;
+      /* Arrastrar sobre el lienzo mueve la paleta, no desplaza la página. */
+      touch-action: none;
     }
     #canvas:focus { border-color: #00e5ff; }
     #message {
@@ -343,14 +345,18 @@ document.addEventListener('keydown', e => {
 });
 document.addEventListener('keyup', e => { keys[e.key] = false; });
 
-canvas.addEventListener('mousemove', e => {
+// Eventos de puntero y no de ratón: en pantallas táctiles `mousemove` solo se
+// emite al tocar, no al arrastrar, y la paleta no seguía al dedo.
+function movePaddleToPointer(e) {
   const rect = canvas.getBoundingClientRect();
   // El lienzo puede estar escalado por CSS: se pasa de píxeles de pantalla a
   // coordenadas del juego (clientLeft/clientWidth descuentan el borde).
   const x = (e.clientX - rect.left - canvas.clientLeft) * (W / canvas.clientWidth);
   paddle.x = clamp(x - paddle.w/2, 0, W - paddle.w);
   if (state === 'start') syncBall();
-});
+}
+canvas.addEventListener('pointermove', movePaddleToPointer);
+canvas.addEventListener('pointerdown', movePaddleToPointer);
 canvas.addEventListener('click', () => { getAC(); activateFromClick(); });
 
 function handleKey(e) {
