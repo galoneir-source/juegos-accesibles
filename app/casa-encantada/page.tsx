@@ -363,6 +363,8 @@ export default function CasaEncantadaPage() {
   const cmdHistRef       = useRef<string[]>([])
   const inventoryRef     = useRef<string[]>([])
   const classRef         = useRef<CharacterClass>('cazador')
+  // Copia en estado de classRef para el render (los refs no se leen al renderizar).
+  const [charClass, setCharClass] = useState<CharacterClass>('cazador')
   const ritualCdRef      = useRef(0)
   const phaseRef         = useRef<Phase>('idle')
 
@@ -388,6 +390,8 @@ export default function CasaEncantadaPage() {
 
   function goPhase(p: Phase) { phaseRef.current = p; setPhaseState(p) }
 
+  // Solo tras montar: la página se prerenderiza y localStorage no existe en el servidor.
+  // eslint-disable-next-line react-hooks/set-state-in-effect
   useEffect(() => { setHasSaveData(readSave() !== null) }, [])
 
   useEffect(() => {
@@ -778,6 +782,7 @@ export default function CasaEncantadaPage() {
   function resetRefs(cl: CharacterClass) {
     const def = CLASS_DEFS[cl]
     classRef.current     = cl
+    setCharClass(cl)
     maxHpRef.current     = def.maxHp
     maxSanityRef.current = def.maxSanity
     healthRef.current    = def.maxHp
@@ -840,6 +845,7 @@ export default function CasaEncantadaPage() {
     roomIdRef.current        = save.roomId
     prevIdRef.current        = save.prevId
     classRef.current         = cl
+    setCharClass(cl)
     maxHpRef.current         = CLASS_DEFS[cl].maxHp
     maxSanityRef.current     = CLASS_DEFS[cl].maxSanity
     healthRef.current        = save.health
@@ -1025,8 +1031,8 @@ export default function CasaEncantadaPage() {
             Cordura:{' '}
             <strong style={{ color: sanityColor }}>{sanity}</strong>/{maxSanity}
           </span>
-          <span className="text-[#555] text-xs">{CLASS_DEFS[classRef.current].name}</span>
-          {classRef.current === 'medium' && ritualCD > 0 && (
+          <span className="text-[#555] text-xs">{CLASS_DEFS[charClass].name}</span>
+          {charClass === 'medium' && ritualCD > 0 && (
             <span className="text-[#a78bfa] text-xs" aria-live="polite">Ritual en {ritualCD}t</span>
           )}
           {inventory.length > 0 && (
@@ -1064,7 +1070,7 @@ export default function CasaEncantadaPage() {
             <Button className="flex-1" onClick={() => { processCommand('atacar'); setInput('') }}>
               Atacar
             </Button>
-            {classRef.current === 'medium' && (
+            {charClass === 'medium' && (
               <Button
                 variant={ritualCD === 0 ? 'primary' : 'secondary'}
                 className="flex-1"

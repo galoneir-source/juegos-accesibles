@@ -335,6 +335,32 @@ export default function BatallaNavalPage() {
 
   // ── Keyboard ──────────────────────────────────────────────────────────────
 
+  // Cursor helpers called from handleKey — all state via gs.current or setters
+
+  function placeCursor(nr: number, nc: number, pb: Board, si: number, h: boolean) {
+    setCursor([nr, nc])
+    const pan = (nc / (COLS - 1)) * 2 - 1
+    audio.compass(pan, 350 + nr * 32, 0.12)
+    if (si < FLEET.length) {
+      const def = FLEET[si]
+      const ok = canPlace(pb, nr, nc, def.size, h)
+      announcePolite(`${coord(nr, nc)} — ${ok ? 'puede colocar' : 'inválido'}`)
+    } else {
+      announcePolite(coord(nr, nc))
+    }
+  }
+
+  function playCursor(nr: number, nc: number, eb: Board) {
+    setCursor([nr, nc])
+    const pan = (nc / (COLS - 1)) * 2 - 1
+    audio.compass(pan, 350 + nr * 32, 0.12)
+    const cell = eb.cells[nr][nc]
+    const statuses: Record<CellState, string> = {
+      empty: 'sin disparar', ship: 'sin disparar', hit: 'impacto', miss: 'fallo', sunk: 'hundido',
+    }
+    announcePolite(`${coord(nr, nc)}: ${statuses[cell]}`)
+  }
+
   const handleKey = useCallback((e: KeyboardEvent) => {
     if ((e.target as HTMLElement).tagName === 'INPUT') return
     const { phase: ph, cursor: [r, c], shipIdx: si, horizontal: h, playerBoard: pb, playerTurn: pt } = gs.current
@@ -432,33 +458,6 @@ export default function BatallaNavalPage() {
       }
     }
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
-
-  // Cursor helpers called from handleKey — all state via gs.current or setters
-
-  function placeCursor(nr: number, nc: number, pb: Board, si: number, h: boolean) {
-    setCursor([nr, nc])
-    const pan = (nc / (COLS - 1)) * 2 - 1
-    audio.compass(pan, 350 + nr * 32, 0.12)
-    if (si < FLEET.length) {
-      const def = FLEET[si]
-      const ok = canPlace(pb, nr, nc, def.size, h)
-      announcePolite(`${coord(nr, nc)} — ${ok ? 'puede colocar' : 'inválido'}`)
-    } else {
-      announcePolite(coord(nr, nc))
-    }
-  }
-
-  function playCursor(nr: number, nc: number, eb: Board) {
-    setCursor([nr, nc])
-    const pan = (nc / (COLS - 1)) * 2 - 1
-    audio.compass(pan, 350 + nr * 32, 0.12)
-    const cell = eb.cells[nr][nc]
-    const statuses: Record<CellState, string> = {
-      empty: 'sin disparar', ship: 'sin disparar', hit: 'impacto', miss: 'fallo', sunk: 'hundido',
-    }
-    announcePolite(`${coord(nr, nc)}: ${statuses[cell]}`)
-  }
-
   useEffect(() => {
     window.addEventListener('keydown', handleKey)
     return () => window.removeEventListener('keydown', handleKey)

@@ -136,6 +136,8 @@ export default function ParchisPage() {
     const { phase: ph, playerPieces: pp } = stateRef.current
     if (ph !== 'player_roll') return
 
+    // Tirada del dado: solo se ejecuta en manejadores y temporizadores, nunca durante el render.
+    // eslint-disable-next-line react-hooks/purity
     const d = Math.floor(Math.random() * 6) + 1
     setDice(d)
     audio.deal()
@@ -231,6 +233,8 @@ export default function ParchisPage() {
   }
 
   function runAiStep(pp: number[], ap: number[]) {
+    // Tirada del dado: solo se ejecuta en manejadores y temporizadores, nunca durante el render.
+    // eslint-disable-next-line react-hooks/purity
     const d = Math.floor(Math.random() * 6) + 1
     const idx = aiPickPiece([...ap], [...pp], d)
 

@@ -38,30 +38,12 @@ export default function HangmanPage() {
 
   const displayed = wordData.word.split('').map(l => (guessed.has(l) ? l : '_'))
   const remaining = MAX_ERRORS - errors
-  const isWon = displayed.every(l => l !== '_')
-  const isLost = errors >= MAX_ERRORS
 
   const readState = useCallback(() => {
     const progress = displayed.join(' ')
     const used = Array.from(guessed).join(', ') || 'ninguna'
     announcePolite(`Palabra: ${progress}. Letras usadas: ${used}. Intentos restantes: ${remaining}.`)
   }, [displayed, guessed, remaining])
-
-  useEffect(() => {
-    if (!started || finished) return
-    if (isWon) {
-      const pts = Math.max(0, 100 + remaining * 10 - (hintUsed ? 5 : 0))
-      setScore(s => s + pts)
-      setWon(true)
-      setFinished(true)
-      audio.correct()
-      announceAssertive(`¡Ganaste! La palabra era ${wordData.word}. +${pts} puntos.`)
-    } else if (isLost) {
-      setFinished(true)
-      audio.gameOver()
-      announceAssertive(`Perdiste. La palabra era ${wordData.word}.`)
-    }
-  }, [isWon, isLost, started, finished, remaining, wordData.word, hintUsed])
 
   useEffect(() => {
     if (!started || finished) return
@@ -80,7 +62,9 @@ export default function HangmanPage() {
     const next = new Set(guessed)
     next.add(letter)
     setGuessed(next)
-    if (wordData.word.includes(letter)) {
+    const hit = wordData.word.includes(letter)
+    const newErrors = hit ? errors : errors + 1
+    if (hit) {
       audio.correct()
       const count = wordData.word.split('').filter(l => l === letter).length
       announceAssertive(`¡Correcto! La letra ${letter} aparece ${count} ${count === 1 ? 'vez' : 'veces'}.`)
@@ -88,6 +72,20 @@ export default function HangmanPage() {
       audio.incorrect()
       setErrors(e => e + 1)
       announceAssertive(`Incorrecto. La letra ${letter} no está en la palabra. Intentos restantes: ${MAX_ERRORS - errors - 1}.`)
+    }
+
+    // Fin de partida: se decide aquí, en el mismo evento, en vez de en un efecto.
+    if (wordData.word.split('').every(l => next.has(l))) {
+      const pts = Math.max(0, 100 + (MAX_ERRORS - newErrors) * 10 - (hintUsed ? 5 : 0))
+      setScore(s => s + pts)
+      setWon(true)
+      setFinished(true)
+      audio.correct()
+      announceAssertive(`¡Ganaste! La palabra era ${wordData.word}. +${pts} puntos.`)
+    } else if (newErrors >= MAX_ERRORS) {
+      setFinished(true)
+      audio.gameOver()
+      announceAssertive(`Perdiste. La palabra era ${wordData.word}.`)
     }
   }
 
