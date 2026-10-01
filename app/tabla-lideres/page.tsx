@@ -40,7 +40,7 @@ export default async function TablaLideresPage() {
           <section key={id} aria-labelledby={`title-${id}`}>
             <h2 id={`title-${id}`} className="text-lg font-bold text-[#ffd700] mb-4">{label}</h2>
             {entries.length === 0 ? (
-              <p className="text-[#555] text-sm">Aún no hay puntuaciones registradas.</p>
+              <p className="text-[#999] text-sm">Aún no hay puntuaciones registradas.</p>
             ) : (
               <table className="w-full border-collapse" aria-label={`Tabla de líderes de ${label}`}>
                 <thead>
@@ -53,7 +53,7 @@ export default async function TablaLideresPage() {
                 <tbody>
                   {entries.map((e, i) => (
                     <tr key={e.id} className="border-b border-[#222]">
-                      <td className="py-2.5 text-[#555] text-sm">{i + 1}</td>
+                      <td className="py-2.5 text-[#999] text-sm">{i + 1}</td>
                       <td className="py-2.5">{e.user.name}</td>
                       <td className="py-2.5 text-right font-mono text-[#ffd700] font-bold">{e.points}</td>
                     </tr>

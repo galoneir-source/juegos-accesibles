@@ -369,7 +369,7 @@ export default function ParchisPage() {
             <div
               aria-hidden="true"
               className={`w-14 h-14 rounded-lg border-2 flex items-center justify-center text-2xl font-bold select-none ${
-                dice !== null ? 'border-[#ffd700] text-[#ffd700]' : 'border-[#444] text-[#555]'
+                dice !== null ? 'border-[#ffd700] text-[#ffd700]' : 'border-[#444] text-[#999]'
               }`}
             >
               {dice ?? '?'}
@@ -470,7 +470,7 @@ export default function ParchisPage() {
           </div>
         )}
 
-        <p className="text-xs text-[#555]">
+        <p className="text-xs text-[#999]">
           R: lanzar dado · 1-4: mover ficha · I: estado · N: nueva partida
         </p>
       </div>

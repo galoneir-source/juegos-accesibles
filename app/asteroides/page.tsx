@@ -528,7 +528,7 @@ export default function AsteroidsPage() {
           className="block mx-auto border border-[#333] rounded bg-black"
           style={{ maxWidth: '100%' }}
         />
-        <p className="text-xs text-[#555] text-center">
+        <p className="text-xs text-[#999] text-center">
           ← → / A D — girar &nbsp;|&nbsp; ↑ / W — propulsar &nbsp;|&nbsp; Espacio — disparar &nbsp;|&nbsp; E — escanear &nbsp;|&nbsp; R — estado
         </p>
       </div>

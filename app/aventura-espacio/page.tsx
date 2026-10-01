@@ -902,7 +902,7 @@ export default function AventuraEspacioPage() {
                     {def.name}
                   </span>
                   <span className="block text-xs text-[#888] leading-relaxed">{def.desc}</span>
-                  <span className="block text-xs text-[#555] mt-2">Vida: {def.maxHp}</span>
+                  <span className="block text-xs text-[#999] mt-2">Vida: {def.maxHp}</span>
                 </button>
               )
             })}
@@ -964,7 +964,7 @@ export default function AventuraEspacioPage() {
             </strong>
             /{maxHp}
           </span>
-          <span className="text-[#555] text-xs">{CLASS_DEFS[charClass].name}</span>
+          <span className="text-[#999] text-xs">{CLASS_DEFS[charClass].name}</span>
           {charClass === 'ingeniero' && magicCD > 0 && (
             <span className="text-[#a78bfa] text-xs" aria-live="polite">Hackeo en {magicCD}t</span>
           )}
@@ -1037,7 +1037,7 @@ export default function AventuraEspacioPage() {
           <Button type="submit">Enviar</Button>
         </form>
 
-        <p className="mt-2 text-xs text-[#555]">
+        <p className="mt-2 text-xs text-[#999]">
           Flechas ↑↓ para historial · Misión guardada automáticamente
         </p>
       </div>

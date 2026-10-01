@@ -962,7 +962,7 @@ export default function CasaEncantadaPage() {
                     {def.name}
                   </span>
                   <span className="block text-xs text-[#888] leading-relaxed">{def.desc}</span>
-                  <span className="block text-xs text-[#555] mt-2">Vida: {def.maxHp} · Cordura: {def.maxSanity}</span>
+                  <span className="block text-xs text-[#999] mt-2">Vida: {def.maxHp} · Cordura: {def.maxSanity}</span>
                 </button>
               )
             })}
@@ -1031,7 +1031,7 @@ export default function CasaEncantadaPage() {
             Cordura:{' '}
             <strong style={{ color: sanityColor }}>{sanity}</strong>/{maxSanity}
           </span>
-          <span className="text-[#555] text-xs">{CLASS_DEFS[charClass].name}</span>
+          <span className="text-[#999] text-xs">{CLASS_DEFS[charClass].name}</span>
           {charClass === 'medium' && ritualCD > 0 && (
             <span className="text-[#a78bfa] text-xs" aria-live="polite">Ritual en {ritualCD}t</span>
           )}
@@ -1104,7 +1104,7 @@ export default function CasaEncantadaPage() {
           <Button type="submit">Enviar</Button>
         </form>
 
-        <p className="mt-2 text-xs text-[#555]">
+        <p className="mt-2 text-xs text-[#999]">
           Flechas ↑↓ para historial · Partida guardada automáticamente
         </p>
       </div>

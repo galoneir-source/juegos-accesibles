@@ -343,7 +343,7 @@ export default function SecuenciasPage() {
         )}
 
         {phase === 'playing' && (
-          <p className="text-xs text-[#555]">← → o A/D para saltar</p>
+          <p className="text-xs text-[#999]">← → o A/D para saltar</p>
         )}
       </div>
     </GameShell>

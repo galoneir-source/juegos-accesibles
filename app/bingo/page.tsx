@@ -232,17 +232,17 @@ export default function BingoPage() {
         <div className="text-center min-h-[5rem] flex flex-col items-center justify-center">
           {lastBall ? (
             <>
-              <p className="text-[#555] text-xs tracking-widest">ÚLTIMO NÚMERO</p>
+              <p className="text-[#999] text-xs tracking-widest">ÚLTIMO NÚMERO</p>
               <p
                 className="text-5xl font-bold font-mono text-[#ffd700] leading-none mt-1"
                 aria-live="assertive"
               >
                 {letter(lastBall)}-{lastBall}
               </p>
-              <p className="text-[#555] text-xs mt-1">{callCount} / 75 cantados</p>
+              <p className="text-[#999] text-xs mt-1">{callCount} / 75 cantados</p>
             </>
           ) : (
-            <p className="text-[#555] text-sm">Pulsa Espacio para el primer número</p>
+            <p className="text-[#999] text-sm">Pulsa Espacio para el primer número</p>
           )}
         </div>
 
@@ -294,12 +294,12 @@ export default function BingoPage() {
         {/* Recent numbers */}
         {recent.length > 0 && (
           <div className="text-center" aria-hidden="true">
-            <p className="text-[#444] text-xs mb-1">Últimas bolas</p>
+            <p className="text-[#999] text-xs mb-1">Últimas bolas</p>
             <div className="flex gap-1.5 flex-wrap justify-center max-w-xs">
               {recent.map((n, i) => (
                 <span
                   key={i}
-                  className={`text-xs font-mono px-1.5 py-0.5 rounded ${i === 0 ? 'bg-[#ffd700] text-black font-bold' : 'bg-[#1a2a3a] text-[#666]'}`}
+                  className={`text-xs font-mono px-1.5 py-0.5 rounded ${i === 0 ? 'bg-[#ffd700] text-black font-bold' : 'bg-[#1a2a3a] text-[#999]'}`}
                 >
                   {letter(n)}{n}
                 </span>
@@ -318,7 +318,7 @@ export default function BingoPage() {
             >
               {callCount >= 75 ? 'Sin más bolas' : 'Siguiente número'}
             </Button>
-            <p className="text-xs text-[#555]">Espacio o Enter para el siguiente número</p>
+            <p className="text-xs text-[#999]">Espacio o Enter para el siguiente número</p>
           </>
         )}
 

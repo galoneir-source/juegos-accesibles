@@ -146,7 +146,7 @@ function aiRespondTruco(aiHand: Card[], level: number): 'accept' | 'raise' | 're
 function CardVisual({ card, hidden }: { card?: Card | null; hidden?: boolean }) {
   if (hidden || !card) {
     return (
-      <div aria-hidden="true" className="w-10 h-14 rounded border border-[#444] bg-[#1e1e2e] flex items-center justify-center text-[#555] select-none">?</div>
+      <div aria-hidden="true" className="w-10 h-14 rounded border border-[#444] bg-[#1e1e2e] flex items-center justify-center text-[#999] select-none">?</div>
     )
   }
   const red = card.suit === 'Oros' || card.suit === 'Copas'
@@ -717,7 +717,7 @@ export default function TrucoPage() {
             <span>Tú: <strong className="text-[#ffd700]">{playerScore}</strong> / {WIN_SCORE}</span>
             <span>IA: <strong className="text-[#888]">{aiScore}</strong> / {WIN_SCORE}</span>
             <span>Bazas: <strong>{pw}</strong> - <strong>{aw}</strong></span>
-            <span className="text-[#555] text-xs">{phaseLabel[phase]}</span>
+            <span className="text-[#999] text-xs">{phaseLabel[phase]}</span>
           </div>
           {(trucoAccepted || trucoLevel > 0) && (
             <p className="text-xs text-[#ffd700] mt-1">
@@ -847,7 +847,7 @@ export default function TrucoPage() {
           </div>
         )}
 
-        <p className="text-xs text-[#555]">
+        <p className="text-xs text-[#999]">
           I: estado · E: Envido · T: Truco · S: aceptar · N: rechazar/nueva mano · 1/2/3: jugar carta
         </p>
       </div>

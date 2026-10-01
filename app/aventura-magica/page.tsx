@@ -1082,7 +1082,7 @@ export default function AventuraMagicaPage() {
                     {def.name}
                   </span>
                   <span className="block text-xs text-[#888] leading-relaxed">{def.desc}</span>
-                  <span className="block text-xs text-[#555] mt-2">Vida: {def.maxHp}</span>
+                  <span className="block text-xs text-[#999] mt-2">Vida: {def.maxHp}</span>
                 </button>
               )
             })}
@@ -1152,7 +1152,7 @@ export default function AventuraMagicaPage() {
           >
             Fragmentos: {shards.length}/3
           </span>
-          <span className="text-[#555] text-xs">{CLASS_DEFS[charClass].name}</span>
+          <span className="text-[#999] text-xs">{CLASS_DEFS[charClass].name}</span>
           {charClass === 'hechicera' && specialCD > 0 && (
             <span className="text-[#a78bfa] text-xs" aria-live="polite">Hechizo en {specialCD}t</span>
           )}
@@ -1243,7 +1243,7 @@ export default function AventuraMagicaPage() {
           <Button type="submit">Enviar</Button>
         </form>
 
-        <p className="mt-2 text-xs text-[#555]">
+        <p className="mt-2 text-xs text-[#999]">
           Flechas ↑↓ para historial · Partida guardada automáticamente
         </p>
       </div>

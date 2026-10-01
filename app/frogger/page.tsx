@@ -638,7 +638,7 @@ export default function FroggerPage() {
           className="block mx-auto border border-[#333] rounded bg-black"
           style={{ maxWidth: '100%' }}
         />
-        <p className="text-xs text-[#555] text-center">
+        <p className="text-xs text-[#999] text-center">
           ↑ ↓ ← → / WASD — saltar &nbsp;|&nbsp; E — escuchar peligros &nbsp;|&nbsp; R — estado &nbsp;|&nbsp; H — instrucciones
         </p>
       </div>

@@ -916,7 +916,7 @@ export default function RusiaPage() {
                     {def.name}
                   </span>
                   <span className="block text-xs text-[#888] leading-relaxed">{def.desc}</span>
-                  <span className="block text-xs text-[#555] mt-2">Vida: {def.maxHp}</span>
+                  <span className="block text-xs text-[#999] mt-2">Vida: {def.maxHp}</span>
                 </button>
               )
             })}
@@ -978,7 +978,7 @@ export default function RusiaPage() {
             </strong>
             /{maxHp}
           </span>
-          <span className="text-[#555] text-xs">{CLASS_DEFS[charClass].name}</span>
+          <span className="text-[#999] text-xs">{CLASS_DEFS[charClass].name}</span>
           {charClass === 'hechicera' && magicCD > 0 && (
             <span className="text-[#a78bfa] text-xs" aria-live="polite">Pájaro en {magicCD}t</span>
           )}

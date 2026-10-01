@@ -274,13 +274,13 @@ export default function AnagramasPage() {
           aria-label={loading ? 'Cargando siguiente palabra' : `Palabra desordenada: ${scrambledWord}`}
         >
           {loading ? (
-            <p className="text-[#555] text-sm" aria-live="polite">Cargando palabra…</p>
+            <p className="text-[#999] text-sm" aria-live="polite">Cargando palabra…</p>
           ) : (
             <>
               <p className="text-4xl font-mono font-bold tracking-widest text-[#f0f0f0]" aria-hidden="true">
                 {scrambledWord}
               </p>
-              <p className="text-xs text-[#555] mt-3" aria-hidden="true">
+              <p className="text-xs text-[#999] mt-3" aria-hidden="true">
                 {wordData?.word.length} letras
               </p>
             </>
