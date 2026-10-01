@@ -500,7 +500,7 @@ export default function ConectaCuatroPage() {
           </Button>
         </div>
 
-        <p className="text-xs text-[#555]">← → o A/D para mover · Enter o Espacio para soltar · I para leer la columna</p>
+        <p className="text-xs text-[#999]">← → o A/D para mover · Enter o Espacio para soltar · I para leer la columna</p>
       </div>
     </GameShell>
   )

@@ -297,7 +297,7 @@ export default function TresEnRayaPage() {
           ))}
         </div>
 
-        <p className="text-xs text-[#555] text-center">
+        <p className="text-xs text-[#999] text-center">
           Flechas: mover &nbsp;|&nbsp; Enter: colocar &nbsp;|&nbsp; R: leer celda &nbsp;|&nbsp; H: instrucciones
         </p>
       </div>

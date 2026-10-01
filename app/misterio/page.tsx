@@ -379,7 +379,7 @@ export default function MisterioPage() {
             Lord Edmund Blackwood ha sido hallado muerto envenenado. Cinco sospechosos.
             El culpable cambia en cada partida.
           </p>
-          <p className="text-[#555] text-xs">
+          <p className="text-[#999] text-xs">
             Explora las estancias, interroga a los sospechosos, recoge pistas y acusa al culpable.
           </p>
           <Button size="lg" onClick={startGame}>Iniciar investigación</Button>
@@ -401,7 +401,7 @@ export default function MisterioPage() {
             {phase === 'won' ? game.resolution : `El culpable era ${SUSPECT_NAMES[game.culprit]}. ${game.resolution}`}
           </p>
           <p className="text-3xl font-mono font-bold" aria-live="polite">Puntuación: {score}</p>
-          <p className="text-[#555] text-xs">
+          <p className="text-[#999] text-xs">
             Pistas clave encontradas: {keyFound} / {KEY_EVIDENCE.length}
           </p>
           {!saved ? (
@@ -500,7 +500,7 @@ export default function MisterioPage() {
           <Button type="submit">Enviar</Button>
         </form>
 
-        <p className="mt-2 text-xs text-[#555]">
+        <p className="mt-2 text-xs text-[#999]">
           Flechas ↑↓ para historial · H = instrucciones · R = releer sala
         </p>
       </div>

@@ -45,7 +45,7 @@
       max-height: 100vh;
     }
     #info {
-      color: #555;
+      color: #999;
       font-size: 11px;
       margin-top: 8px;
     }
@@ -54,7 +54,7 @@
       align-items: center;
       gap: 8px;
       margin-top: 6px;
-      color: #777;
+      color: #999;
       font-size: 11px;
     }
     #foot-vol {
@@ -73,6 +73,11 @@
       width: 1px;
       height: 1px;
       overflow: hidden;
+    }
+    /* El enlace "Volver al lobby" va en posición absoluta arriba a la
+       izquierda: se le deja hueco cuando el lienzo llega hasta él. */
+    @media (max-width: 1300px) {
+      body { padding-top: 40px; }
     }
     /* Foco visible para navegación de teclado */
     #gameCanvas:focus {

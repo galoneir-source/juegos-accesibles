@@ -554,7 +554,7 @@ export default function SpaceInvadersPage() {
               <span className="sr-only">{lives}</span>
             </strong>
           </span>
-          <span className="text-[#555]">{lv.name}</span>
+          <span className="text-[#999]">{lv.name}</span>
         </div>
         <canvas
           ref={canvasRef}
@@ -563,7 +563,7 @@ export default function SpaceInvadersPage() {
           aria-hidden="true"
           className="w-full max-w-[560px] border border-[#333] rounded block mx-auto bg-black"
         />
-        <p className="text-xs text-[#555] text-center">
+        <p className="text-xs text-[#999] text-center">
           ← → / A D — mover &nbsp;|&nbsp; Espacio — disparar &nbsp;|&nbsp; E — ubicar nave y aliens &nbsp;|&nbsp; R — estado &nbsp;|&nbsp; H — instrucciones
         </p>
       </div>

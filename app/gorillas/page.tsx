@@ -544,7 +544,7 @@ export default function GorillasPage() {
           </div>
         )}
 
-        <p className="text-xs text-[#555] text-center">
+        <p className="text-xs text-[#999] text-center">
           Intro en cualquier campo para lanzar &nbsp;|&nbsp; H: instrucciones
         </p>
       </div>

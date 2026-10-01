@@ -291,7 +291,7 @@ export default function GeneralaPage() {
             13 turnos · 5 dados · hasta 3 tiradas por turno.
             Rellena todas las categorías para maximizar tu puntuación.
           </p>
-          <ul className="text-left text-[#666] text-xs max-w-xs mx-auto space-y-0.5">
+          <ul className="text-left text-[#999] text-xs max-w-xs mx-auto space-y-0.5">
             <li>R / Espacio → tirar dados</li>
             <li>1-5 → guardar / liberar un dado</li>
             <li>↑↓ → navegar categorías</li>
@@ -401,7 +401,7 @@ export default function GeneralaPage() {
                     ? 'bg-yellow-500/20 border-yellow-400 text-yellow-300 shadow-[0_0_10px_2px_rgba(250,204,21,0.3)]'
                     : hasRolled
                       ? 'bg-[#0d1b2a] border-[#334] text-[#ddd] hover:border-[#556] cursor-pointer'
-                      : 'bg-[#080f18] border-[#222] text-[#444] cursor-default'
+                      : 'bg-[#080f18] border-[#222] text-[#999] cursor-default'
                   }
                 `}
               >
@@ -412,7 +412,7 @@ export default function GeneralaPage() {
 
           {/* Key hints */}
           {hasRolled && (
-            <p className="text-[#444] text-xs text-center">
+            <p className="text-[#999] text-xs text-center">
               {held.map((h, i) => h ? `[${i + 1}✓]` : `[${i + 1}]`).join(' ')}
             </p>
           )}
@@ -427,7 +427,7 @@ export default function GeneralaPage() {
           </Button>
 
           {hasRolled && (
-            <p className="text-[#444] text-xs text-center">
+            <p className="text-[#999] text-xs text-center">
               ↑↓ categoría · Enter anotar
             </p>
           )}
@@ -441,11 +441,11 @@ export default function GeneralaPage() {
             <div>
               <div className="flex items-center justify-between mb-1">
                 <p className="text-[#ffd700] text-xs font-bold tracking-wide">SECCIÓN SUPERIOR</p>
-                <p className="text-[#666] text-xs" aria-live="polite">
+                <p className="text-[#999] text-xs" aria-live="polite">
                   {upperSum}/{UPPER_BONUS_MIN}
                   {bonusEarned
                     ? <span className="text-[#22c55e] ml-1">+{UPPER_BONUS}</span>
-                    : <span className="text-[#666] ml-1">({UPPER_BONUS_MIN - upperSum} para bonus)</span>
+                    : <span className="text-[#999] ml-1">({UPPER_BONUS_MIN - upperSum} para bonus)</span>
                   }
                 </p>
               </div>
@@ -464,7 +464,7 @@ export default function GeneralaPage() {
                     aria-label={`${cat.label}: ${scored !== null ? scored + ' pts (anotada)' : potential !== null ? potential + ' pts potenciales' : 'disponible'}`}
                     onKeyDown={e => e.key === 'Enter' && scoreCategory(cat.id)}
                   >
-                    <span className={scored !== null ? 'text-[#666]' : 'text-[#ccc]'}>{cat.label}</span>
+                    <span className={scored !== null ? 'text-[#999]' : 'text-[#ccc]'}>{cat.label}</span>
                     <span className="font-mono ml-2 shrink-0">
                       {scored !== null
                         ? <span className="text-[#888]">{scored}</span>
@@ -496,12 +496,12 @@ export default function GeneralaPage() {
                     aria-label={`${cat.label}: ${scored !== null ? scored + ' pts (anotada)' : potential !== null ? potential + ' pts potenciales' : 'disponible'}. ${cat.hint}.`}
                     onKeyDown={e => e.key === 'Enter' && scoreCategory(cat.id)}
                   >
-                    <span className={scored !== null ? 'text-[#666]' : 'text-[#ccc]'}>{cat.label}</span>
+                    <span className={scored !== null ? 'text-[#999]' : 'text-[#ccc]'}>{cat.label}</span>
                     <span className="font-mono ml-2 shrink-0">
                       {scored !== null
                         ? <span className="text-[#888]">{scored}</span>
                         : potential !== null
-                          ? <span className={potential > 0 ? 'text-[#22c55e]' : 'text-[#555]'}>{potential}</span>
+                          ? <span className={potential > 0 ? 'text-[#22c55e]' : 'text-[#999]'}>{potential}</span>
                           : <span className="text-[#333]">—</span>
                       }
                     </span>

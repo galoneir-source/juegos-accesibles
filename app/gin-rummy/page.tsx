@@ -179,7 +179,7 @@ function CardVisual({ card, selected, hidden }: { card: Card; selected?: boolean
     return (
       <div
         aria-hidden="true"
-        className="w-12 h-16 rounded border border-[#444] bg-[#1e1e2e] flex items-center justify-center text-[#555] text-xl select-none"
+        className="w-12 h-16 rounded border border-[#444] bg-[#1e1e2e] flex items-center justify-center text-[#999] text-xl select-none"
       >
         ?
       </div>
@@ -625,7 +625,7 @@ export default function GinRummyPage() {
               onClick={drawFromDeck}
               disabled={!isPlaying || turnStep !== 'draw'}
               aria-label={`Robar del mazo (${deck.length} cartas) — tecla M`}
-              className="w-12 h-16 rounded border-2 border-[#555] bg-[#1e1e2e] flex items-center justify-center text-[#555] text-xs hover:border-[#ffd700] disabled:opacity-40 transition-colors"
+              className="w-12 h-16 rounded border-2 border-[#555] bg-[#1e1e2e] flex items-center justify-center text-[#999] text-xs hover:border-[#ffd700] disabled:opacity-40 transition-colors"
             >
               M
             </button>
@@ -738,7 +738,7 @@ export default function GinRummyPage() {
           </div>
         )}
 
-        <p className="text-xs text-[#555]">
+        <p className="text-xs text-[#999]">
           I: instrucciones · H: leer mano · M: robar mazo · D: robar descarte · 1-0: seleccionar carta · R: descartar · L: llamar · G: Gin · N: nueva partida
         </p>
       </div>

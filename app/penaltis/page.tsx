@@ -53,7 +53,7 @@ function GoalVisual({ shot, keeper, label }: {
 }) {
   return (
     <div className="my-4" aria-hidden="true">
-      <p className="text-xs text-[#555] text-center mb-1">{label}</p>
+      <p className="text-xs text-[#999] text-center mb-1">{label}</p>
       <div className="flex border border-[#444] rounded overflow-hidden max-w-xs mx-auto">
         {DIRS.map(dir => {
           const isShot   = shot   === dir
@@ -68,7 +68,7 @@ function GoalVisual({ shot, keeper, label }: {
                 isGoal  ? 'bg-[#052e16] text-[#22c55e]'  :
                 isSaved ? 'bg-[#450a0a] text-[#f87171]'  :
                 isKeeper && !isShot ? 'bg-[#1a1a2e] text-[#818cf8]' :
-                'bg-[#0d0d0d] text-[#555]',
+                'bg-[#0d0d0d] text-[#999]',
               ].join(' ')}
             >
               <span className="text-base">{DIR_ARROW[dir]}</span>
@@ -89,7 +89,7 @@ function ScoreBar({ round, playerGoals, aiGoals }: { round: number; playerGoals:
   return (
     <div className="flex items-center justify-between text-sm mb-4" aria-live="polite">
       <span className="text-[#ffd700] font-bold text-lg">{playerGoals}</span>
-      <span className="text-[#555] text-xs">
+      <span className="text-[#999] text-xs">
         Tanda {Math.min(round, ROUNDS)} de {ROUNDS}
       </span>
       <span className="text-[#888] font-bold text-lg">{aiGoals}</span>
@@ -305,7 +305,7 @@ export default function PenaltisPage() {
           <h2 className="text-3xl font-bold" style={{ color: resultColor }}>{result}</h2>
           <p className="text-xl">
             <span className="text-[#ffd700]">{pg}</span>
-            <span className="text-[#555] mx-3">—</span>
+            <span className="text-[#999] mx-3">—</span>
             <span className="text-[#888]">{ag}</span>
           </p>
           <p className="text-[#888] text-sm">{playerSaves} paradas realizadas</p>
@@ -330,7 +330,7 @@ export default function PenaltisPage() {
   return (
     <GameShell title="Penaltis" instructions={INSTRUCTIONS} score={score} disableKeyShortcuts>
       <div className="space-y-2">
-        <div className="flex justify-between text-xs text-[#555] mb-1">
+        <div className="flex justify-between text-xs text-[#999] mb-1">
           <span>TÚ</span>
           <span>RIVAL</span>
         </div>
@@ -364,7 +364,7 @@ export default function PenaltisPage() {
           </div>
         )}
 
-        <p className="text-xs text-[#555] text-center mt-3">
+        <p className="text-xs text-[#999] text-center mt-3">
           ← izquierda &nbsp;|&nbsp; ↓ / espacio — centro &nbsp;|&nbsp; → derecha
         </p>
       </div>

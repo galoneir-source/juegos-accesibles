@@ -181,7 +181,7 @@ export default function HangmanPage() {
           aria-label={`Palabra: ${displayed.join(' ')}`}
         >
           {displayed.map((l, i) => (
-            <span key={i} className={l === '_' ? 'text-[#444]' : 'text-[#ffd700]'}>{l}</span>
+            <span key={i} className={l === '_' ? 'text-[#999]' : 'text-[#ffd700]'}>{l}</span>
           ))}
         </div>
 
@@ -228,7 +228,7 @@ export default function HangmanPage() {
           ))}
         </div>
 
-        <p className="text-sm text-[#555]">
+        <p className="text-sm text-[#999]">
           Presiona la tecla de la letra en tu teclado, o haz click en el botón.
         </p>
       </div>

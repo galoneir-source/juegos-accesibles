@@ -45,7 +45,7 @@ export default async function PerfilPage() {
               <tr key={id} className="border-b border-[#222]">
                 <td className="py-3 text-base">{label}</td>
                 <td className="py-3 text-right font-mono text-[#ffd700] text-lg">
-                  {scores[id] > 0 ? scores[id] : <span className="text-[#555] text-sm">Sin jugar</span>}
+                  {scores[id] > 0 ? scores[id] : <span className="text-[#999] text-sm">Sin jugar</span>}
                 </td>
               </tr>
             ))}

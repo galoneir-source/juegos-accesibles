@@ -88,7 +88,7 @@ function CardVisual({ card, hidden }: { card: Card; hidden?: boolean }) {
     return (
       <div
         aria-hidden="true"
-        className="w-14 h-20 rounded border border-[#444] bg-[#1e1e2e] flex items-center justify-center text-[#555] text-2xl select-none"
+        className="w-14 h-20 rounded border border-[#444] bg-[#1e1e2e] flex items-center justify-center text-[#999] text-2xl select-none"
       >
         ?
       </div>
@@ -363,7 +363,7 @@ export default function BlackjackPage() {
           </div>
         )}
 
-        <p className="text-xs text-[#555]">Tecla I: instrucciones · Tecla R: releer mano · Tecla N: nueva partida</p>
+        <p className="text-xs text-[#999]">Tecla I: instrucciones · Tecla R: releer mano · Tecla N: nueva partida</p>
       </div>
     </GameShell>
   )

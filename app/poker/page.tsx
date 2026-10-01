@@ -210,7 +210,7 @@ function estimatePreflop(hand: Card[]): number {
 function CardVisual({ card, hidden }: { card?: Card; hidden?: boolean }) {
   if (hidden || !card) {
     return (
-      <div aria-hidden="true" className="w-12 h-16 rounded border border-[#444] bg-[#1e1e2e] flex items-center justify-center text-[#555] text-xl select-none">?</div>
+      <div aria-hidden="true" className="w-12 h-16 rounded border border-[#444] bg-[#1e1e2e] flex items-center justify-center text-[#999] text-xl select-none">?</div>
     )
   }
   const isRed = RED_SUITS.has(card.suit)
@@ -649,7 +649,7 @@ export default function PokerPage() {
             <span>Tú: <strong className="text-[#ffd700]">{playerChips}</strong> fichas</span>
             <span>IA: <strong className="text-[#888]">{aiChips}</strong> fichas</span>
             <span>Bote: <strong className="text-white">{pot}</strong></span>
-            <span className="text-[#555]">{streetLabel[street]}</span>
+            <span className="text-[#999]">{streetLabel[street]}</span>
           </div>
         </section>
 
@@ -733,7 +733,7 @@ export default function PokerPage() {
           </div>
         )}
 
-        <p className="text-xs text-[#555]">
+        <p className="text-xs text-[#999]">
           I: estado · F: retirarme · C: igualar/pasar · R: subir · +/−: ajustar subida · N: nueva mano
         </p>
       </div>

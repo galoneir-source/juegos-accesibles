@@ -456,7 +456,7 @@ export default function PongAudioPage() {
           <span className="text-[#ffd700]">
             Tú: <strong>{playerScore}</strong>
           </span>
-          <span className="text-[#555] text-sm self-center">— meta: {WIN_SCORE} —</span>
+          <span className="text-[#999] text-sm self-center">— meta: {WIN_SCORE} —</span>
           <span className="text-[#ef4444]">
             Rival: <strong>{aiScore}</strong>
           </span>
@@ -470,7 +470,7 @@ export default function PongAudioPage() {
           className="w-full max-w-[560px] border border-[#333] rounded block mx-auto bg-[#0a0a0a]"
         />
 
-        <p className="text-xs text-[#555] text-center">
+        <p className="text-xs text-[#999] text-center">
           ↑↓ / W S — mover paleta &nbsp;|&nbsp; Espacio — escuchar pelota &nbsp;|&nbsp; R — leer estado &nbsp;|&nbsp; H — instrucciones
         </p>
       </div>

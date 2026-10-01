@@ -544,13 +544,13 @@ export default function BatallaNavalPage() {
             className="border border-[#333] rounded block"
           />
 
-          <p className="text-xs text-[#555]">
+          <p className="text-xs text-[#999]">
             Flechas: mover &nbsp;|&nbsp; R: rotar &nbsp;|&nbsp; Enter: colocar &nbsp;|&nbsp; A: auto-colocar todo
           </p>
 
           <ul className="space-y-1 text-sm" aria-label="Estado de la flota">
             {FLEET.map((def, i) => (
-              <li key={def.name} className={i < shipIdx ? 'text-[#22c55e]' : i === shipIdx ? 'text-[#ffd700]' : 'text-[#555]'}>
+              <li key={def.name} className={i < shipIdx ? 'text-[#22c55e]' : i === shipIdx ? 'text-[#ffd700]' : 'text-[#999]'}>
                 {i < shipIdx ? '✓' : i === shipIdx ? '▶' : '○'}{' '}
                 {def.name} ({def.size} celdas)
               </li>
@@ -583,16 +583,16 @@ export default function BatallaNavalPage() {
 
         <div className="flex gap-4 flex-wrap">
           <div>
-            <p className="text-xs text-[#555] mb-1" aria-hidden="true">Tu flota</p>
+            <p className="text-xs text-[#999] mb-1" aria-hidden="true">Tu flota</p>
             <canvas ref={pCanvas} width={CW} height={CH} aria-hidden="true" className="border border-[#333] rounded block" />
           </div>
           <div>
-            <p className="text-xs text-[#555] mb-1" aria-hidden="true">Océano enemigo</p>
+            <p className="text-xs text-[#999] mb-1" aria-hidden="true">Océano enemigo</p>
             <canvas ref={eCanvas} width={CW} height={CH} aria-hidden="true" className="border border-[#333] rounded block" />
           </div>
         </div>
 
-        <p className="text-xs text-[#555]">
+        <p className="text-xs text-[#999]">
           Flechas: mover cursor &nbsp;|&nbsp; Enter: disparar &nbsp;|&nbsp; R: leer estado &nbsp;|&nbsp; H: instrucciones
         </p>
       </div>

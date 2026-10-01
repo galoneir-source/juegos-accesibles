@@ -310,7 +310,7 @@ export default function Page2048() {
 
         {/* Controls hint */}
         {phase === 'playing' && (
-          <p className="text-xs text-[#555]">
+          <p className="text-xs text-[#999]">
             Flechas o WASD para deslizar · R para releer el estado
           </p>
         )}

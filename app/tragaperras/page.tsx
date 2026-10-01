@@ -319,7 +319,7 @@ export default function Tragaperras() {
           <p className="text-[#aaa]">
             Haz girar los 3 rodillos y consigue tres símbolos iguales en la línea central. Apuesta: {BET} créditos por tirada.
           </p>
-          <p className="text-[#666] text-sm leading-relaxed">
+          <p className="text-[#999] text-sm leading-relaxed">
             Espacio: girar · 1 / 2 / 3: retener rodillo (solo tras perder) · Q: salir y guardar puntuación
           </p>
           <div className="border border-[#333] rounded p-3 text-sm text-[#888] space-y-1">
@@ -361,13 +361,13 @@ export default function Tragaperras() {
             </div>
             <div>
               <p className="text-[#888] text-xs uppercase tracking-wider">Último</p>
-              <p className={`text-sm mt-1 ${lastWinAmt > 0 ? 'text-[#4CAF50]' : 'text-[#666]'}`}>
+              <p className={`text-sm mt-1 ${lastWinAmt > 0 ? 'text-[#4CAF50]' : 'text-[#999]'}`}>
                 {lastResult || '—'}
               </p>
             </div>
           </div>
 
-          <p className="text-[#555] text-xs">
+          <p className="text-[#999] text-xs">
             Espacio: girar · 1/2/3: retener (solo tras perder) · Q: salir
           </p>
         </div>
