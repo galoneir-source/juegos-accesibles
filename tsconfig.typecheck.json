@@ -1,0 +1,8 @@
+{
+  // Para `npm run typecheck`. tsconfig.json incluye .next/types, pero .next es
+  // un symlink a .builds/<id> (scripts/deploy.sh) y esos tipos generados usan
+  // rutas relativas que no resuelven vistas desde .next.
+  "extends": "./tsconfig.json",
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "**/*.mts"],
+  "exclude": ["node_modules", ".builds", ".next"]
+}

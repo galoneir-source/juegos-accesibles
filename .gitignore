@@ -14,7 +14,9 @@
 /coverage
 
 # next.js
-/.next/
+/.next
+/.next.tmp
+/.builds/
 /out/
 
 # production
@@ -44,3 +46,6 @@ next-env.d.ts
 
 # local databases
 *.db
+
+# logs de servidores de prueba (nunca en public/)
+nohup.out

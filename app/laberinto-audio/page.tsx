@@ -395,7 +395,7 @@ export default function LaberintoAudioPage() {
           className="w-full max-w-[420px] border border-[#333] rounded block mx-auto"
         />
 
-        <p className="text-xs text-[#555] text-center">
+        <p className="text-xs text-[#999] text-center">
           Flechas / WASD — moverse &nbsp;|&nbsp; Espacio — brújula &nbsp;|&nbsp; R — releer posición
         </p>
       </div>

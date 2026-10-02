@@ -3,7 +3,27 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Breakout Accesible</title>
+  <title>Breakout accesible para ciegos — Juegos Accesibles</title>
+  <meta name="description" content="Breakout, juego gratis y accesible para personas ciegas, con teclado y lector de pantalla. Rompe todos los bloques con la paleta.">
+  <link rel="canonical" href="https://juegos.dvillalon.com/breakout">
+  <meta name="theme-color" content="#0a0a0a">
+  <link rel="icon" href="/favicon.ico" sizes="any">
+  <link rel="apple-touch-icon" href="/apple-icon.png">
+  <link rel="manifest" href="/manifest.webmanifest">
+  <meta property="og:title" content="Breakout accesible para ciegos — Juegos Accesibles">
+  <meta property="og:description" content="Breakout, juego gratis y accesible para personas ciegas, con teclado y lector de pantalla. Rompe todos los bloques con la paleta.">
+  <meta property="og:url" content="https://juegos.dvillalon.com/breakout">
+  <meta property="og:site_name" content="Juegos Accesibles">
+  <meta property="og:locale" content="es_ES">
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="https://juegos.dvillalon.com/og-image.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="Juegos Accesibles — más de 50 juegos gratis para personas ciegas">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Breakout accesible para ciegos — Juegos Accesibles">
+  <meta name="twitter:description" content="Breakout, juego gratis y accesible para personas ciegas, con teclado y lector de pantalla. Rompe todos los bloques con la paleta.">
+  <meta name="twitter:image" content="https://juegos.dvillalon.com/og-image.png">
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
@@ -31,6 +51,12 @@
       border-radius: 4px;
       display: block;
       outline: none;
+      /* En pantallas más estrechas que el lienzo se encoge en vez de cortarse
+         (el body tiene overflow: hidden y no se puede desplazar). */
+      max-width: 100%;
+      height: auto;
+      /* Arrastrar sobre el lienzo mueve la paleta, no desplaza la página. */
+      touch-action: none;
     }
     #canvas:focus { border-color: #00e5ff; }
     #message {
@@ -38,8 +64,9 @@
       text-align: center;
       pointer-events: none;
     }
-    #message h1 {
+    #msgTitle {
       font-size: 42px;
+      font-weight: bold;
       letter-spacing: 6px;
       text-shadow: 0 0 20px currentColor;
     }
@@ -60,7 +87,16 @@
       pointer-events: none;
       transition: opacity 0.4s;
     }
-    #live {
+    /* El enlace "Volver al lobby" va en posición absoluta arriba a la
+       izquierda: en pantallas estrechas se le deja hueco para que no tape
+       el marcador. */
+    @media (max-width: 760px) {
+      body { padding-top: 40px; }
+    }
+    @media (max-width: 520px) {
+      #hud { gap: 16px; font-size: 14px; letter-spacing: 1px; }
+    }
+    #live, .sr-only {
       position: absolute;
       width: 1px; height: 1px;
       overflow: hidden;
@@ -70,7 +106,7 @@
     #kbd-legend {
       margin-top: 10px;
       font-size: 11px;
-      color: #555;
+      color: #999;
       text-align: center;
       line-height: 2;
     }
@@ -89,6 +125,8 @@
 
 <a href="/" style="position:absolute;top:10px;left:16px;color:#ffd700;font-size:14px;text-decoration:underline;font-family:monospace;z-index:100;">← Volver al lobby</a>
 
+<h1 class="sr-only">Breakout accesible</h1>
+
 <!-- ARIA live region: screen readers announce this -->
 <div id="live" role="status" aria-live="assertive" aria-atomic="true"></div>
 
@@ -105,7 +143,7 @@
 </canvas>
 
 <div id="message">
-  <h1 id="msgTitle"></h1>
+  <div id="msgTitle"></div>
   <p id="msgSub"></p>
 </div>
 <div id="levelBanner"></div>
@@ -307,11 +345,18 @@ document.addEventListener('keydown', e => {
 });
 document.addEventListener('keyup', e => { keys[e.key] = false; });
 
-canvas.addEventListener('mousemove', e => {
+// Eventos de puntero y no de ratón: en pantallas táctiles `mousemove` solo se
+// emite al tocar, no al arrastrar, y la paleta no seguía al dedo.
+function movePaddleToPointer(e) {
   const rect = canvas.getBoundingClientRect();
-  paddle.x = clamp(e.clientX - rect.left - paddle.w/2, 0, W - paddle.w);
+  // El lienzo puede estar escalado por CSS: se pasa de píxeles de pantalla a
+  // coordenadas del juego (clientLeft/clientWidth descuentan el borde).
+  const x = (e.clientX - rect.left - canvas.clientLeft) * (W / canvas.clientWidth);
+  paddle.x = clamp(x - paddle.w/2, 0, W - paddle.w);
   if (state === 'start') syncBall();
-});
+}
+canvas.addEventListener('pointermove', movePaddleToPointer);
+canvas.addEventListener('pointerdown', movePaddleToPointer);
 canvas.addEventListener('click', () => { getAC(); activateFromClick(); });
 
 function handleKey(e) {

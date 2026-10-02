@@ -375,6 +375,8 @@ export default function AventuraMagicaPage() {
   const inventoryRef  = useRef<string[]>([])
   const shardsRef     = useRef<string[]>([])
   const classRef      = useRef<CharacterClass>('paladin')
+  // Copia en estado de classRef para el render (los refs no se leen al renderizar).
+  const [charClass, setCharClass] = useState<CharacterClass>('paladin')
   const specialCdRef  = useRef(0)
   const healUsedRef   = useRef(false)
   const sigiloUsedRef = useRef(false)
@@ -402,6 +404,8 @@ export default function AventuraMagicaPage() {
 
   function goPhase(p: Phase) { phaseRef.current = p; setPhaseState(p) }
 
+  // Solo tras montar: la página se prerenderiza y localStorage no existe en el servidor.
+  // eslint-disable-next-line react-hooks/set-state-in-effect
   useEffect(() => { setHasSaveData(readSave() !== null) }, [])
 
   useEffect(() => {
@@ -895,6 +899,7 @@ export default function AventuraMagicaPage() {
   function resetRefs(cl: CharacterClass) {
     const def = CLASS_DEFS[cl]
     classRef.current      = cl
+    setCharClass(cl)
     maxHpRef.current      = def.maxHp
     healthRef.current     = def.maxHp
     scoreRef.current      = 0
@@ -959,6 +964,7 @@ export default function AventuraMagicaPage() {
     roomIdRef.current     = save.roomId
     prevIdRef.current     = save.prevId
     classRef.current      = cl
+    setCharClass(cl)
     maxHpRef.current      = CLASS_DEFS[cl].maxHp
     healthRef.current     = save.health
     scoreRef.current      = save.score
@@ -1076,7 +1082,7 @@ export default function AventuraMagicaPage() {
                     {def.name}
                   </span>
                   <span className="block text-xs text-[#888] leading-relaxed">{def.desc}</span>
-                  <span className="block text-xs text-[#555] mt-2">Vida: {def.maxHp}</span>
+                  <span className="block text-xs text-[#999] mt-2">Vida: {def.maxHp}</span>
                 </button>
               )
             })}
@@ -1146,8 +1152,8 @@ export default function AventuraMagicaPage() {
           >
             Fragmentos: {shards.length}/3
           </span>
-          <span className="text-[#555] text-xs">{CLASS_DEFS[classRef.current].name}</span>
-          {classRef.current === 'hechicera' && specialCD > 0 && (
+          <span className="text-[#999] text-xs">{CLASS_DEFS[charClass].name}</span>
+          {charClass === 'hechicera' && specialCD > 0 && (
             <span className="text-[#a78bfa] text-xs" aria-live="polite">Hechizo en {specialCD}t</span>
           )}
           {inventory.length > 0 && (
@@ -1185,7 +1191,7 @@ export default function AventuraMagicaPage() {
             <Button className="flex-1" onClick={() => { processCommand('atacar'); setInput('') }}>
               Atacar
             </Button>
-            {classRef.current === 'hechicera' && (
+            {charClass === 'hechicera' && (
               <Button
                 variant={specialCD === 0 ? 'primary' : 'secondary'}
                 className="flex-1"
@@ -1194,7 +1200,7 @@ export default function AventuraMagicaPage() {
                 {specialCD === 0 ? 'Hechizo' : `Hechizo (${specialCD}t)`}
               </Button>
             )}
-            {classRef.current === 'paladin' && (
+            {charClass === 'paladin' && (
               <Button
                 variant={!healUsed ? 'primary' : 'secondary'}
                 className="flex-1"
@@ -1203,7 +1209,7 @@ export default function AventuraMagicaPage() {
                 {!healUsed ? 'Curar' : 'Curar (usado)'}
               </Button>
             )}
-            {classRef.current === 'ladron' && (
+            {charClass === 'ladron' && (
               <Button
                 variant="secondary"
                 className="flex-1"
@@ -1237,7 +1243,7 @@ export default function AventuraMagicaPage() {
           <Button type="submit">Enviar</Button>
         </form>
 
-        <p className="mt-2 text-xs text-[#555]">
+        <p className="mt-2 text-xs text-[#999]">
           Flechas ↑↓ para historial · Partida guardada automáticamente
         </p>
       </div>

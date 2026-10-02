@@ -368,6 +368,8 @@ export default function SamuraiPage() {
   const cmdHistRef   = useRef<string[]>([])
   const inventoryRef = useRef<string[]>([])
   const classRef     = useRef<CharacterClass>('samurai')
+  // Copia en estado de classRef para el render (los refs no se leen al renderizar).
+  const [charClass, setCharClass] = useState<CharacterClass>('samurai')
   const magicCdRef   = useRef(0)
   const phaseRef     = useRef<Phase>('idle')
 
@@ -391,6 +393,8 @@ export default function SamuraiPage() {
 
   function goPhase(p: Phase) { phaseRef.current = p; setPhaseState(p) }
 
+  // Solo tras montar: la página se prerenderiza y localStorage no existe en el servidor.
+  // eslint-disable-next-line react-hooks/set-state-in-effect
   useEffect(() => { setHasSaveData(readSave() !== null) }, [])
 
   useEffect(() => {
@@ -740,6 +744,7 @@ export default function SamuraiPage() {
   function resetRefs(cl: CharacterClass) {
     const def = CLASS_DEFS[cl]
     classRef.current     = cl
+    setCharClass(cl)
     maxHpRef.current     = def.maxHp
     healthRef.current    = def.maxHp
     scoreRef.current     = 0
@@ -794,6 +799,7 @@ export default function SamuraiPage() {
     roomIdRef.current    = save.roomId
     prevIdRef.current    = save.prevId
     classRef.current     = cl
+    setCharClass(cl)
     maxHpRef.current     = CLASS_DEFS[cl].maxHp
     healthRef.current    = save.health
     scoreRef.current     = save.score
@@ -906,7 +912,7 @@ export default function SamuraiPage() {
                     {def.name}
                   </span>
                   <span className="block text-xs text-[#888] leading-relaxed">{def.desc}</span>
-                  <span className="block text-xs text-[#555] mt-2">Vida: {def.maxHp}</span>
+                  <span className="block text-xs text-[#999] mt-2">Vida: {def.maxHp}</span>
                 </button>
               )
             })}
@@ -968,8 +974,8 @@ export default function SamuraiPage() {
             </strong>
             /{maxHp}
           </span>
-          <span className="text-[#555] text-xs">{CLASS_DEFS[classRef.current].name}</span>
-          {classRef.current === 'ninja' && magicCD > 0 && (
+          <span className="text-[#999] text-xs">{CLASS_DEFS[charClass].name}</span>
+          {charClass === 'ninja' && magicCD > 0 && (
             <span className="text-[#a78bfa] text-xs" aria-live="polite">Técnica en {magicCD}t</span>
           )}
           {inventory.length > 0 && (
@@ -1007,7 +1013,7 @@ export default function SamuraiPage() {
             <Button className="flex-1" onClick={() => { processCommand('atacar'); setInput('') }}>
               Atacar
             </Button>
-            {classRef.current === 'ninja' && (
+            {charClass === 'ninja' && (
               <Button
                 className="flex-1"
                 variant="secondary"

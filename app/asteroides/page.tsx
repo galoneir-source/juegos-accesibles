@@ -157,7 +157,81 @@ export default function AsteroidsPage() {
     }
   }
 
+  // ── Draw ────────────────────────────────────────────────────────────────────
+
+  function draw(ctx: CanvasRenderingContext2D, now: number) {
+    ctx.fillStyle = '#000'
+    ctx.fillRect(0, 0, W, H)
+
+    // Decorative stars
+    ctx.fillStyle = '#2a2a2a'
+    for (let i = 0; i < 48; i++) {
+      ctx.fillRect((i * 179 + 37) % W, (i * 113 + 61) % H, 1, 1)
+    }
+
+    // Asteroids
+    for (const a of asteroidsRef.current) {
+      const r = RADII[a.size]
+      ctx.save()
+      ctx.translate(a.x, a.y)
+      ctx.rotate(a.rot * Math.PI / 180)
+      ctx.strokeStyle = a.size === 'large' ? '#777' : a.size === 'medium' ? '#999' : '#bbb'
+      ctx.lineWidth = 2
+      const sides = a.size === 'large' ? 10 : a.size === 'medium' ? 8 : 6
+      ctx.beginPath()
+      for (let i = 0; i < sides; i++) {
+        const ang = (i / sides) * Math.PI * 2
+        const jag = r * (0.76 + ((a.id * (i + 7) * 11) % 24) / 100)
+        const px  = Math.cos(ang) * jag
+        const py  = Math.sin(ang) * jag
+        i === 0 ? ctx.moveTo(px, py) : ctx.lineTo(px, py)
+      }
+      ctx.closePath()
+      ctx.stroke()
+      ctx.restore()
+    }
+
+    // Bullets
+    ctx.fillStyle = '#ffffaa'
+    for (const b of bulletsRef.current) {
+      ctx.beginPath()
+      ctx.arc(b.x, b.y, 2.5, 0, Math.PI * 2)
+      ctx.fill()
+    }
+
+    // Ship (blinks when invincible)
+    const blink = now < invincibleRef.current && Math.floor(now / 110) % 2 === 0
+    if (!blink) {
+      const ship = shipRef.current
+      ctx.save()
+      ctx.translate(ship.x, ship.y)
+      ctx.rotate(ship.angle * Math.PI / 180)
+      ctx.strokeStyle = '#4ade80'
+      ctx.lineWidth = 2
+      ctx.beginPath()
+      ctx.moveTo(0, -16)
+      ctx.lineTo(11, 13)
+      ctx.lineTo(0, 7)
+      ctx.lineTo(-11, 13)
+      ctx.closePath()
+      ctx.stroke()
+      if (isThrustRef.current) {
+        ctx.strokeStyle = '#f97316'
+        ctx.lineWidth = 1.5
+        ctx.beginPath()
+        ctx.moveTo(-5, 9)
+        ctx.lineTo(0, 19 + Math.random() * 7)
+        ctx.lineTo(5, 9)
+        ctx.stroke()
+      }
+      ctx.restore()
+    }
+  }
+
   // ── Main tick ───────────────────────────────────────────────────────────────
+
+  // El bucle se reprograma a través de un ref: un useCallback no puede referenciarse a sí mismo.
+  const tickRef = useRef<FrameRequestCallback>(() => {})
 
   const tick = useCallback((now: number) => {
     if (phaseRef.current !== 'playing') return
@@ -277,80 +351,11 @@ export default function AsteroidsPage() {
     const canvas = canvasRef.current
     if (canvas) draw(canvas.getContext('2d')!, now)
 
-    rafRef.current = requestAnimationFrame(tick)
+    rafRef.current = requestAnimationFrame(tickRef.current)
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [syncPhase])
 
-  // ── Draw ────────────────────────────────────────────────────────────────────
-
-  function draw(ctx: CanvasRenderingContext2D, now: number) {
-    ctx.fillStyle = '#000'
-    ctx.fillRect(0, 0, W, H)
-
-    // Decorative stars
-    ctx.fillStyle = '#2a2a2a'
-    for (let i = 0; i < 48; i++) {
-      ctx.fillRect((i * 179 + 37) % W, (i * 113 + 61) % H, 1, 1)
-    }
-
-    // Asteroids
-    for (const a of asteroidsRef.current) {
-      const r = RADII[a.size]
-      ctx.save()
-      ctx.translate(a.x, a.y)
-      ctx.rotate(a.rot * Math.PI / 180)
-      ctx.strokeStyle = a.size === 'large' ? '#777' : a.size === 'medium' ? '#999' : '#bbb'
-      ctx.lineWidth = 2
-      const sides = a.size === 'large' ? 10 : a.size === 'medium' ? 8 : 6
-      ctx.beginPath()
-      for (let i = 0; i < sides; i++) {
-        const ang = (i / sides) * Math.PI * 2
-        const jag = r * (0.76 + ((a.id * (i + 7) * 11) % 24) / 100)
-        const px  = Math.cos(ang) * jag
-        const py  = Math.sin(ang) * jag
-        i === 0 ? ctx.moveTo(px, py) : ctx.lineTo(px, py)
-      }
-      ctx.closePath()
-      ctx.stroke()
-      ctx.restore()
-    }
-
-    // Bullets
-    ctx.fillStyle = '#ffffaa'
-    for (const b of bulletsRef.current) {
-      ctx.beginPath()
-      ctx.arc(b.x, b.y, 2.5, 0, Math.PI * 2)
-      ctx.fill()
-    }
-
-    // Ship (blinks when invincible)
-    const blink = now < invincibleRef.current && Math.floor(now / 110) % 2 === 0
-    if (!blink) {
-      const ship = shipRef.current
-      ctx.save()
-      ctx.translate(ship.x, ship.y)
-      ctx.rotate(ship.angle * Math.PI / 180)
-      ctx.strokeStyle = '#4ade80'
-      ctx.lineWidth = 2
-      ctx.beginPath()
-      ctx.moveTo(0, -16)
-      ctx.lineTo(11, 13)
-      ctx.lineTo(0, 7)
-      ctx.lineTo(-11, 13)
-      ctx.closePath()
-      ctx.stroke()
-      if (isThrustRef.current) {
-        ctx.strokeStyle = '#f97316'
-        ctx.lineWidth = 1.5
-        ctx.beginPath()
-        ctx.moveTo(-5, 9)
-        ctx.lineTo(0, 19 + Math.random() * 7)
-        ctx.lineTo(5, 9)
-        ctx.stroke()
-      }
-      ctx.restore()
-    }
-  }
+  useEffect(() => { tickRef.current = tick }, [tick])
 
   // ── Start ────────────────────────────────────────────────────────────────────
 
@@ -523,7 +528,7 @@ export default function AsteroidsPage() {
           className="block mx-auto border border-[#333] rounded bg-black"
           style={{ maxWidth: '100%' }}
         />
-        <p className="text-xs text-[#555] text-center">
+        <p className="text-xs text-[#999] text-center">
           ← → / A D — girar &nbsp;|&nbsp; ↑ / W — propulsar &nbsp;|&nbsp; Espacio — disparar &nbsp;|&nbsp; E — escanear &nbsp;|&nbsp; R — estado
         </p>
       </div>

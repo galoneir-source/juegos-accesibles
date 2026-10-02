@@ -10,23 +10,32 @@ function LoginForm() {
   const [state, action, pending] = useActionState(loginUser, undefined)
   const params = useSearchParams()
   const registered = params.get('registered')
+  const deleted = params.get('deleted')
+  const callbackUrl = params.get('callbackUrl') || '/'
 
   useEffect(() => {
     if (registered) announcePolite('Cuenta creada con éxito. Por favor inicia sesión.')
   }, [registered])
 
   useEffect(() => {
+    if (deleted) announcePolite('Tu cuenta y tus puntuaciones se han eliminado.')
+  }, [deleted])
+
+  useEffect(() => {
     if (state?.error) announceAssertive(`Error: ${state.error}`)
   }, [state])
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center px-6">
-      <main id="main-content" className="w-full max-w-sm">
-        <h1 className="text-2xl font-bold text-[#ffd700] mb-6">Iniciar sesión</h1>
-
+    <>
         {registered && (
           <p role="status" className="mb-4 p-3 rounded bg-[#1a3a1a] border border-[#22c55e] text-[#22c55e] text-sm">
             Cuenta creada con éxito. Por favor inicia sesión.
+          </p>
+        )}
+
+        {deleted && (
+          <p role="status" className="mb-4 p-3 rounded bg-[#1a3a1a] border border-[#22c55e] text-[#22c55e] text-sm">
+            Tu cuenta y tus puntuaciones se han eliminado.
           </p>
         )}
 
@@ -37,6 +46,7 @@ function LoginForm() {
         )}
 
         <form action={action} className="space-y-5">
+          <input type="hidden" name="callbackUrl" value={callbackUrl} />
           <div>
             <label htmlFor="email" className="block text-sm font-medium mb-1">
               Correo electrónico
@@ -89,15 +99,21 @@ function LoginForm() {
             ← Volver al lobby
           </Link>
         </p>
-      </main>
-    </div>
+    </>
   )
 }
 
 export default function LoginPage() {
+  // El h1 va fuera del Suspense: LoginForm usa useSearchParams y solo se
+  // renderiza en el cliente, así el HTML inicial ya trae el encabezado.
   return (
-    <Suspense>
-      <LoginForm />
-    </Suspense>
+    <div className="min-h-screen flex flex-col items-center justify-center px-6">
+      <main id="main-content" className="w-full max-w-sm">
+        <h1 className="text-2xl font-bold text-[#ffd700] mb-6">Iniciar sesión</h1>
+        <Suspense>
+          <LoginForm />
+        </Suspense>
+      </main>
+    </div>
   )
 }

@@ -176,7 +176,7 @@ function describePile(state: GameState, pile: PileId): string {
 function CardVis({ card, mini }: { card: Card; mini?: boolean }) {
   const sz = mini ? 'w-8 h-12 text-xs' : 'w-12 h-16 text-sm'
   if (!card.faceUp) return (
-    <div aria-hidden="true" className={`${sz} rounded border border-[#444] bg-[#1e1e2e] flex items-center justify-center text-[#555]`}>░</div>
+    <div aria-hidden="true" className={`${sz} rounded border border-[#444] bg-[#1e1e2e] flex items-center justify-center text-[#999]`}>░</div>
   )
   const red = RED_SUITS.has(card.suit)
   return (
@@ -388,7 +388,7 @@ export default function SolitarioPage() {
             <p className="text-xs text-[#888] mb-1">Mazo</p>
             {state.stock.length > 0
               ? <div aria-hidden="true" className="w-12 h-16 rounded border border-[#444] bg-[#1e1e2e] flex items-center justify-center text-[#888] text-sm font-mono">{state.stock.length}</div>
-              : <div aria-hidden="true" className="w-12 h-16 rounded border border-dashed border-[#444] flex items-center justify-center text-[#444] text-xl">↺</div>
+              : <div aria-hidden="true" className="w-12 h-16 rounded border border-dashed border-[#444] flex items-center justify-center text-[#999] text-xl">↺</div>
             }
           </button>
 
@@ -411,7 +411,7 @@ export default function SolitarioPage() {
                 <p className="text-xs text-[#888] mb-1">{SUIT_SYM[suit]}</p>
                 {found.length > 0
                   ? <CardVis card={found[found.length - 1]} />
-                  : <div aria-hidden="true" className={`w-12 h-16 rounded border border-dashed border-[#333] flex items-center justify-center text-2xl ${RED_SUITS.has(suit) ? 'text-[#7f2222]' : 'text-[#444]'}`}>{SUIT_SYM[suit]}</div>
+                  : <div aria-hidden="true" className={`w-12 h-16 rounded border border-dashed border-[#333] flex items-center justify-center text-2xl ${RED_SUITS.has(suit) ? 'text-[#7f2222]' : 'text-[#999]'}`}>{SUIT_SYM[suit]}</div>
                 }
               </button>
             )
@@ -433,7 +433,7 @@ export default function SolitarioPage() {
               >
                 <p className="text-xs text-[#888] mb-1 text-center">{ci+1}</p>
                 {col.length === 0
-                  ? <div aria-hidden="true" className="mx-auto w-8 h-12 rounded border border-dashed border-[#333] flex items-center justify-center text-[#444] text-xs">K</div>
+                  ? <div aria-hidden="true" className="mx-auto w-8 h-12 rounded border border-dashed border-[#333] flex items-center justify-center text-[#999] text-xs">K</div>
                   : <div className="flex flex-col" style={{ gap: 0 }}>
                       {col.map((card, i) => (
                         <div
@@ -479,7 +479,7 @@ export default function SolitarioPage() {
           </p>
         )}
 
-        <p className="text-xs text-[#555]">← →: mover foco · 1-7: columna · S: mazo · W: descarte · F: fundaciones · Enter: seleccionar/colocar · A: auto-fundación · D: robar · Esc: cancelar · R: describir</p>
+        <p className="text-xs text-[#999]">← →: mover foco · 1-7: columna · S: mazo · W: descarte · F: fundaciones · Enter: seleccionar/colocar · A: auto-fundación · D: robar · Esc: cancelar · R: describir</p>
       </div>
     </GameShell>
   )

@@ -335,6 +335,32 @@ export default function BatallaNavalPage() {
 
   // ── Keyboard ──────────────────────────────────────────────────────────────
 
+  // Cursor helpers called from handleKey — all state via gs.current or setters
+
+  function placeCursor(nr: number, nc: number, pb: Board, si: number, h: boolean) {
+    setCursor([nr, nc])
+    const pan = (nc / (COLS - 1)) * 2 - 1
+    audio.compass(pan, 350 + nr * 32, 0.12)
+    if (si < FLEET.length) {
+      const def = FLEET[si]
+      const ok = canPlace(pb, nr, nc, def.size, h)
+      announcePolite(`${coord(nr, nc)} — ${ok ? 'puede colocar' : 'inválido'}`)
+    } else {
+      announcePolite(coord(nr, nc))
+    }
+  }
+
+  function playCursor(nr: number, nc: number, eb: Board) {
+    setCursor([nr, nc])
+    const pan = (nc / (COLS - 1)) * 2 - 1
+    audio.compass(pan, 350 + nr * 32, 0.12)
+    const cell = eb.cells[nr][nc]
+    const statuses: Record<CellState, string> = {
+      empty: 'sin disparar', ship: 'sin disparar', hit: 'impacto', miss: 'fallo', sunk: 'hundido',
+    }
+    announcePolite(`${coord(nr, nc)}: ${statuses[cell]}`)
+  }
+
   const handleKey = useCallback((e: KeyboardEvent) => {
     if ((e.target as HTMLElement).tagName === 'INPUT') return
     const { phase: ph, cursor: [r, c], shipIdx: si, horizontal: h, playerBoard: pb, playerTurn: pt } = gs.current
@@ -432,33 +458,6 @@ export default function BatallaNavalPage() {
       }
     }
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
-
-  // Cursor helpers called from handleKey — all state via gs.current or setters
-
-  function placeCursor(nr: number, nc: number, pb: Board, si: number, h: boolean) {
-    setCursor([nr, nc])
-    const pan = (nc / (COLS - 1)) * 2 - 1
-    audio.compass(pan, 350 + nr * 32, 0.12)
-    if (si < FLEET.length) {
-      const def = FLEET[si]
-      const ok = canPlace(pb, nr, nc, def.size, h)
-      announcePolite(`${coord(nr, nc)} — ${ok ? 'puede colocar' : 'inválido'}`)
-    } else {
-      announcePolite(coord(nr, nc))
-    }
-  }
-
-  function playCursor(nr: number, nc: number, eb: Board) {
-    setCursor([nr, nc])
-    const pan = (nc / (COLS - 1)) * 2 - 1
-    audio.compass(pan, 350 + nr * 32, 0.12)
-    const cell = eb.cells[nr][nc]
-    const statuses: Record<CellState, string> = {
-      empty: 'sin disparar', ship: 'sin disparar', hit: 'impacto', miss: 'fallo', sunk: 'hundido',
-    }
-    announcePolite(`${coord(nr, nc)}: ${statuses[cell]}`)
-  }
-
   useEffect(() => {
     window.addEventListener('keydown', handleKey)
     return () => window.removeEventListener('keydown', handleKey)
@@ -545,13 +544,13 @@ export default function BatallaNavalPage() {
             className="border border-[#333] rounded block"
           />
 
-          <p className="text-xs text-[#555]">
+          <p className="text-xs text-[#999]">
             Flechas: mover &nbsp;|&nbsp; R: rotar &nbsp;|&nbsp; Enter: colocar &nbsp;|&nbsp; A: auto-colocar todo
           </p>
 
           <ul className="space-y-1 text-sm" aria-label="Estado de la flota">
             {FLEET.map((def, i) => (
-              <li key={def.name} className={i < shipIdx ? 'text-[#22c55e]' : i === shipIdx ? 'text-[#ffd700]' : 'text-[#555]'}>
+              <li key={def.name} className={i < shipIdx ? 'text-[#22c55e]' : i === shipIdx ? 'text-[#ffd700]' : 'text-[#999]'}>
                 {i < shipIdx ? '✓' : i === shipIdx ? '▶' : '○'}{' '}
                 {def.name} ({def.size} celdas)
               </li>
@@ -584,16 +583,16 @@ export default function BatallaNavalPage() {
 
         <div className="flex gap-4 flex-wrap">
           <div>
-            <p className="text-xs text-[#555] mb-1" aria-hidden="true">Tu flota</p>
+            <p className="text-xs text-[#999] mb-1" aria-hidden="true">Tu flota</p>
             <canvas ref={pCanvas} width={CW} height={CH} aria-hidden="true" className="border border-[#333] rounded block" />
           </div>
           <div>
-            <p className="text-xs text-[#555] mb-1" aria-hidden="true">Océano enemigo</p>
+            <p className="text-xs text-[#999] mb-1" aria-hidden="true">Océano enemigo</p>
             <canvas ref={eCanvas} width={CW} height={CH} aria-hidden="true" className="border border-[#333] rounded block" />
           </div>
         </div>
 
-        <p className="text-xs text-[#555]">
+        <p className="text-xs text-[#999]">
           Flechas: mover cursor &nbsp;|&nbsp; Enter: disparar &nbsp;|&nbsp; R: leer estado &nbsp;|&nbsp; H: instrucciones
         </p>
       </div>

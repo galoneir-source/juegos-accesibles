@@ -428,7 +428,7 @@ export default function Sokoban() {
           <p className="text-[#aaa]">
             Empuja las cajas marrones hasta las metas doradas. Cuando todas las cajas estén en su meta, el nivel se completa.
           </p>
-          <p className="text-[#666] text-sm leading-relaxed">
+          <p className="text-[#999] text-sm leading-relaxed">
             Flechas o WASD: mover / empujar<br />
             Z: deshacer último movimiento<br />
             R: reiniciar nivel<br />
@@ -456,7 +456,7 @@ export default function Sokoban() {
             className="border border-[#333] rounded"
             style={{ maxWidth: '100%' }}
           />
-          <p className="text-[#555] text-xs text-center">
+          <p className="text-[#999] text-xs text-center">
             Flechas/WASD: mover · Z: deshacer · R: reiniciar · N: siguiente nivel · E: explorar
           </p>
         </div>

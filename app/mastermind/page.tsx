@@ -207,7 +207,7 @@ export default function MastermindPage() {
               <ol className="space-y-1">
                 {attempts.map((a, i) => (
                   <li key={i} className="font-mono text-sm flex gap-4">
-                    <span className="text-[#555] w-4">{i + 1}.</span>
+                    <span className="text-[#999] w-4">{i + 1}.</span>
                     <span className="text-[#f0f0f0] tracking-widest">{a.guess}</span>
                     <span className="text-[#ffd700]">{a.bulls}T</span>
                     <span className="text-[#888]">{a.cows}V</span>
@@ -268,7 +268,7 @@ export default function MastermindPage() {
                 {error}
               </p>
             ) : (
-              <p id="input-hint" className="text-[#555] text-xs mt-1">
+              <p id="input-hint" className="text-[#999] text-xs mt-1">
                 Presiona Enter o el botón para intentar
               </p>
             )}
@@ -294,7 +294,7 @@ export default function MastermindPage() {
                   className="flex gap-4 items-center font-mono text-base border border-[#222] rounded px-3 py-2 bg-[#0a0a0a]"
                   aria-label={`Intento ${i + 1}: ${a.guess.split('').join(' ')}, ${a.bulls} toros, ${a.cows} vacas`}
                 >
-                  <span className="text-[#555] text-sm w-5">{i + 1}.</span>
+                  <span className="text-[#999] text-sm w-5">{i + 1}.</span>
                   <span className="tracking-widest text-[#f0f0f0]">{a.guess}</span>
                   <span
                     className="text-[#ffd700] font-bold"
@@ -311,7 +311,7 @@ export default function MastermindPage() {
                 </li>
               ))}
             </ol>
-            <p className="text-xs text-[#555] mt-2">T = Toro (posición correcta) · V = Vaca (posición incorrecta)</p>
+            <p className="text-xs text-[#999] mt-2">T = Toro (posición correcta) · V = Vaca (posición incorrecta)</p>
           </section>
         )}
       </div>

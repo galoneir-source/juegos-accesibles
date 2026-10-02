@@ -363,6 +363,8 @@ export default function CasaEncantadaPage() {
   const cmdHistRef       = useRef<string[]>([])
   const inventoryRef     = useRef<string[]>([])
   const classRef         = useRef<CharacterClass>('cazador')
+  // Copia en estado de classRef para el render (los refs no se leen al renderizar).
+  const [charClass, setCharClass] = useState<CharacterClass>('cazador')
   const ritualCdRef      = useRef(0)
   const phaseRef         = useRef<Phase>('idle')
 
@@ -388,6 +390,8 @@ export default function CasaEncantadaPage() {
 
   function goPhase(p: Phase) { phaseRef.current = p; setPhaseState(p) }
 
+  // Solo tras montar: la página se prerenderiza y localStorage no existe en el servidor.
+  // eslint-disable-next-line react-hooks/set-state-in-effect
   useEffect(() => { setHasSaveData(readSave() !== null) }, [])
 
   useEffect(() => {
@@ -778,6 +782,7 @@ export default function CasaEncantadaPage() {
   function resetRefs(cl: CharacterClass) {
     const def = CLASS_DEFS[cl]
     classRef.current     = cl
+    setCharClass(cl)
     maxHpRef.current     = def.maxHp
     maxSanityRef.current = def.maxSanity
     healthRef.current    = def.maxHp
@@ -840,6 +845,7 @@ export default function CasaEncantadaPage() {
     roomIdRef.current        = save.roomId
     prevIdRef.current        = save.prevId
     classRef.current         = cl
+    setCharClass(cl)
     maxHpRef.current         = CLASS_DEFS[cl].maxHp
     maxSanityRef.current     = CLASS_DEFS[cl].maxSanity
     healthRef.current        = save.health
@@ -903,14 +909,14 @@ export default function CasaEncantadaPage() {
     combat:    'text-[#f97316]',
     item:      'text-[#a78bfa]',
     narrative: 'text-[#38bdf8]',
-    terror:    'text-[#c026d3]',
+    terror:    'text-[#d946ef]',
   }
 
   if (phase === 'idle') {
     return (
       <GameShell title="Casa Encantada" instructions={INSTRUCTIONS} score={0}>
         <div className="text-center space-y-6">
-          <h2 className="text-xl text-[#c026d3]">Casa Encantada: La Mansión Voss</h2>
+          <h2 className="text-xl text-[#d946ef]">Casa Encantada: La Mansión Voss</h2>
           <p className="text-[#888] text-sm">
             Explora 36 habitaciones de una mansión maldita. Descubre el secreto del Espectro del Amo y destrúyelo para escapar.
             Cuida tu vida <em>y</em> tu cordura.
@@ -933,7 +939,7 @@ export default function CasaEncantadaPage() {
     return (
       <GameShell title="Casa Encantada" instructions={INSTRUCTIONS} score={0}>
         <div className="space-y-6">
-          <h2 className="text-xl text-[#c026d3] text-center">Elige tu personaje</h2>
+          <h2 className="text-xl text-[#d946ef] text-center">Elige tu personaje</h2>
           <div
             className="grid grid-cols-1 sm:grid-cols-3 gap-4"
             role="radiogroup"
@@ -948,15 +954,15 @@ export default function CasaEncantadaPage() {
                   role="radio"
                   aria-checked={sel}
                   onClick={() => setSelectedClass(cl)}
-                  className={`p-4 rounded-lg border text-left transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#c026d3] cursor-pointer ${
-                    sel ? 'border-[#c026d3] bg-[#1a0a1a]' : 'border-[#333] bg-[#111] hover:border-[#555]'
+                  className={`p-4 rounded-lg border text-left transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#d946ef] cursor-pointer ${
+                    sel ? 'border-[#d946ef] bg-[#1a0a1a]' : 'border-[#333] bg-[#111] hover:border-[#555]'
                   }`}
                 >
-                  <span className={`block text-base font-bold mb-2 ${sel ? 'text-[#c026d3]' : 'text-[#e0d0ff]'}`}>
+                  <span className={`block text-base font-bold mb-2 ${sel ? 'text-[#d946ef]' : 'text-[#e0d0ff]'}`}>
                     {def.name}
                   </span>
                   <span className="block text-xs text-[#888] leading-relaxed">{def.desc}</span>
-                  <span className="block text-xs text-[#555] mt-2">Vida: {def.maxHp} · Cordura: {def.maxSanity}</span>
+                  <span className="block text-xs text-[#999] mt-2">Vida: {def.maxHp} · Cordura: {def.maxSanity}</span>
                 </button>
               )
             })}
@@ -998,7 +1004,7 @@ export default function CasaEncantadaPage() {
   }
 
   const sanityPct = Math.round((sanity / maxSanity) * 100)
-  const sanityColor = sanityPct <= 25 ? '#c026d3' : sanityPct <= 50 ? '#f97316' : '#22c55e'
+  const sanityColor = sanityPct <= 25 ? '#d946ef' : sanityPct <= 50 ? '#f97316' : '#22c55e'
 
   return (
     <GameShell
@@ -1025,8 +1031,8 @@ export default function CasaEncantadaPage() {
             Cordura:{' '}
             <strong style={{ color: sanityColor }}>{sanity}</strong>/{maxSanity}
           </span>
-          <span className="text-[#555] text-xs">{CLASS_DEFS[classRef.current].name}</span>
-          {classRef.current === 'medium' && ritualCD > 0 && (
+          <span className="text-[#999] text-xs">{CLASS_DEFS[charClass].name}</span>
+          {charClass === 'medium' && ritualCD > 0 && (
             <span className="text-[#a78bfa] text-xs" aria-live="polite">Ritual en {ritualCD}t</span>
           )}
           {inventory.length > 0 && (
@@ -1064,7 +1070,7 @@ export default function CasaEncantadaPage() {
             <Button className="flex-1" onClick={() => { processCommand('atacar'); setInput('') }}>
               Atacar
             </Button>
-            {classRef.current === 'medium' && (
+            {charClass === 'medium' && (
               <Button
                 variant={ritualCD === 0 ? 'primary' : 'secondary'}
                 className="flex-1"
@@ -1092,13 +1098,13 @@ export default function CasaEncantadaPage() {
             onChange={e => setInput(e.target.value)}
             onKeyDown={handleInputKeyDown}
             placeholder={enemy ? 'atacar...' : 'ir norte, tomar, acechar...'}
-            className="flex-1 px-4 py-2.5 rounded bg-[#0a0010] border border-[#3a1a3a] text-[#e0d0ff] font-mono text-sm focus:outline-none focus:ring-2 focus:ring-[#c026d3]"
+            className="flex-1 px-4 py-2.5 rounded bg-[#0a0010] border border-[#3a1a3a] text-[#e0d0ff] font-mono text-sm focus:outline-none focus:ring-2 focus:ring-[#d946ef]"
             autoComplete="off"
           />
           <Button type="submit">Enviar</Button>
         </form>
 
-        <p className="mt-2 text-xs text-[#555]">
+        <p className="mt-2 text-xs text-[#999]">
           Flechas ↑↓ para historial · Partida guardada automáticamente
         </p>
       </div>

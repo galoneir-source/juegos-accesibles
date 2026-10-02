@@ -261,7 +261,7 @@ export default function Quince() {
           <p className="text-[#aaa]">
             Ordena las 15 fichas del 1 al 15 deslizándolas hacia el hueco. La meta es la secuencia 1–4 en la primera fila, 5–8 en la segunda, 9–12 en la tercera y 13–15 en la cuarta con el hueco al final.
           </p>
-          <p className="text-[#666] text-sm leading-relaxed">
+          <p className="text-[#999] text-sm leading-relaxed">
             Flechas o WASD: mover hueco · E: leer hueco y vecinos · B: leer tablero completo · R: reiniciar
           </p>
           <p className="text-[#888] text-sm font-semibold">Elige dificultad:</p>
@@ -289,7 +289,7 @@ export default function Quince() {
             </div>
             <div>
               <p className="text-[#888] text-xs uppercase tracking-wider">En posición</p>
-              <p className="text-3xl font-bold">{correctCount}<span className="text-lg text-[#666]">/15</span></p>
+              <p className="text-3xl font-bold">{correctCount}<span className="text-lg text-[#999]">/15</span></p>
             </div>
             <div>
               <p className="text-[#888] text-xs uppercase tracking-wider">Puntos est.</p>
@@ -305,7 +305,7 @@ export default function Quince() {
             className="border border-[#333] rounded"
             style={{ maxWidth: '100%' }}
           />
-          <p className="text-[#555] text-xs">
+          <p className="text-[#999] text-xs">
             Flechas/WASD: deslizar · E: explorar hueco · B: leer tablero · R: reiniciar
           </p>
         </div>

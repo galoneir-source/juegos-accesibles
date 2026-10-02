@@ -74,14 +74,14 @@ function scoreForAttempt(attempt: number): number {
 const STATE_CELL: Record<LetterState, string> = {
   correct: 'bg-[#22c55e] border-[#22c55e] text-black',
   present: 'bg-[#f59e0b] border-[#f59e0b] text-black',
-  absent:  'bg-[#2a2a2a] border-[#2a2a2a] text-[#777]',
+  absent:  'bg-[#2a2a2a] border-[#2a2a2a] text-[#999]',
   empty:   'bg-transparent border-[#444] text-[#f0f0f0]',
 }
 
 const STATE_KEY: Record<string, string> = {
   correct: 'bg-[#22c55e] text-black border-[#22c55e]',
   present: 'bg-[#f59e0b] text-black border-[#f59e0b]',
-  absent:  'bg-[#2a2a2a] text-[#666] border-[#2a2a2a]',
+  absent:  'bg-[#2a2a2a] text-[#999] border-[#2a2a2a]',
 }
 
 const KEY_ROWS = [
@@ -359,7 +359,7 @@ export default function WordlePage() {
           ))}
         </div>
 
-        <p className="text-xs text-[#555]">Teclado físico o botones en pantalla</p>
+        <p className="text-xs text-[#999]">Teclado físico o botones en pantalla</p>
       </div>
     </GameShell>
   )

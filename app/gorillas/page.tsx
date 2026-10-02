@@ -230,6 +230,20 @@ export default function GorillasPage() {
 
   // ── Animation loop ────────────────────────────────────────────────────────
 
+  function animateExplosion(onDone: () => void) {
+    let r = 5
+    function expand() {
+      r += 4
+      explosionRef.current = { ...explosionRef.current!, r }
+      draw()
+      if (r < 40) { animRef.current = requestAnimationFrame(expand) }
+      else {
+        explosionRef.current = null; draw(); onDone()
+      }
+    }
+    animRef.current = requestAnimationFrame(expand)
+  }
+
   const runAnimation = useCallback((
     start: BPos, bldgs: Bldg[],
     tx: number, ty: number,
@@ -269,21 +283,6 @@ export default function GorillasPage() {
     }
     animRef.current = requestAnimationFrame(tick)
   }, [draw])
-
-  function animateExplosion(onDone: () => void) {
-    let r = 5
-    function expand() {
-      r += 4
-      explosionRef.current = { ...explosionRef.current!, r }
-      draw()
-      if (r < 40) { animRef.current = requestAnimationFrame(expand) }
-      else {
-        explosionRef.current = null; draw(); onDone()
-      }
-    }
-    animRef.current = requestAnimationFrame(expand)
-  }
-
   // ── Setup round ───────────────────────────────────────────────────────────
 
   const setupRound = useCallback(() => {
@@ -545,7 +544,7 @@ export default function GorillasPage() {
           </div>
         )}
 
-        <p className="text-xs text-[#555] text-center">
+        <p className="text-xs text-[#999] text-center">
           Intro en cualquier campo para lanzar &nbsp;|&nbsp; H: instrucciones
         </p>
       </div>

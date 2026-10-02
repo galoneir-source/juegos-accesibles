@@ -332,7 +332,7 @@ export default function MatesRapidasPage() {
             <p className="text-5xl font-mono font-bold text-[#f0f0f0]" aria-hidden="true">
               {question.display}
             </p>
-            <p className="text-2xl text-[#555] mt-3" aria-hidden="true">= ?</p>
+            <p className="text-2xl text-[#999] mt-3" aria-hidden="true">= ?</p>
           </div>
         )}
 

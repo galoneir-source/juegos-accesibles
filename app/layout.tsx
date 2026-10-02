@@ -1,11 +1,17 @@
-import type { Metadata } from 'next'
+import type { Metadata, Viewport } from 'next'
 import './globals.css'
 import SkipLink from '@/components/accessibility/SkipLink'
 import Announcer from '@/components/accessibility/Announcer'
 
 export const metadata: Metadata = {
-  title: 'Juegos Accesibles',
+  metadataBase: new URL('https://juegos.dvillalon.com'),
+  title: { default: 'Juegos Accesibles', template: '%s — Juegos Accesibles' },
   description: 'Sitio de juegos completamente accesible para personas con discapacidad visual. Navegación por teclado y compatible con lectores de pantalla.',
+  applicationName: 'Juegos Accesibles',
+}
+
+export const viewport: Viewport = {
+  themeColor: '#0a0a0a',
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

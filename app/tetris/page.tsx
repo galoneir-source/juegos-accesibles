@@ -186,6 +186,20 @@ export default function TetrisPage() {
     return true
   }
 
+  function drawCell(ctx: CanvasRenderingContext2D, x: number, y: number, color: string) {
+    ctx.fillStyle = color
+    ctx.fillRect(x + 1, y + 1, CELL - 2, CELL - 2)
+    ctx.fillStyle = 'rgba(255,255,255,0.18)'
+    ctx.fillRect(x + 1, y + 1, CELL - 2, 3)
+    ctx.fillRect(x + 1, y + 1, 3, CELL - 2)
+    ctx.fillStyle = 'rgba(0,0,0,0.2)'
+    ctx.fillRect(x + 1, y + CELL - 4, CELL - 2, 3)
+    ctx.fillRect(x + CELL - 4, y + 1, 3, CELL - 2)
+  }
+
+  // El bucle se reprograma a través de un ref: un useCallback no puede referenciarse a sí mismo.
+  const tickRef = useRef<FrameRequestCallback>(() => {})
+
   const tick = useCallback(() => {
     if (phaseRef.current !== 'playing') return
 
@@ -195,7 +209,7 @@ export default function TetrisPage() {
     if (now - lastDropRef.current >= interval) {
       lastDropRef.current = now
       const piece = currentRef.current
-      if (!piece) { rafRef.current = requestAnimationFrame(tick); return }
+      if (!piece) { rafRef.current = requestAnimationFrame(tickRef.current); return }
 
       if (fits(piece.matrix, piece.x, piece.y + 1, boardRef.current)) {
         currentRef.current = { ...piece, y: piece.y + 1 }
@@ -241,7 +255,7 @@ export default function TetrisPage() {
 
     // ── Draw ──────────────────────────────────────────────────────────────────
     const canvas = canvasRef.current
-    if (!canvas) { rafRef.current = requestAnimationFrame(tick); return }
+    if (!canvas) { rafRef.current = requestAnimationFrame(tickRef.current); return }
     const ctx = canvas.getContext('2d')!
 
     ctx.fillStyle = '#000'
@@ -330,19 +344,10 @@ export default function TetrisPage() {
     ctx.font = 'bold 14px monospace'
     ctx.fillText(`${levelRef.current}`, sx, 236)
 
-    rafRef.current = requestAnimationFrame(tick)
+    rafRef.current = requestAnimationFrame(tickRef.current)
   }, [syncPhase])
 
-  function drawCell(ctx: CanvasRenderingContext2D, x: number, y: number, color: string) {
-    ctx.fillStyle = color
-    ctx.fillRect(x + 1, y + 1, CELL - 2, CELL - 2)
-    ctx.fillStyle = 'rgba(255,255,255,0.18)'
-    ctx.fillRect(x + 1, y + 1, CELL - 2, 3)
-    ctx.fillRect(x + 1, y + 1, 3, CELL - 2)
-    ctx.fillStyle = 'rgba(0,0,0,0.2)'
-    ctx.fillRect(x + 1, y + CELL - 4, CELL - 2, 3)
-    ctx.fillRect(x + CELL - 4, y + 1, 3, CELL - 2)
-  }
+  useEffect(() => { tickRef.current = tick }, [tick])
 
   function startGame() {
     if (rafRef.current) cancelAnimationFrame(rafRef.current)
@@ -580,7 +585,7 @@ export default function TetrisPage() {
           className="block mx-auto border border-[#333] rounded bg-black"
           style={{ maxWidth: '100%' }}
         />
-        <p className="text-xs text-[#555] text-center">
+        <p className="text-xs text-[#999] text-center">
           ← → mover &nbsp;|&nbsp; ↑ / X rotar &nbsp;|&nbsp; ↓ bajar &nbsp;|&nbsp; Espacio caída &nbsp;|&nbsp; P pausa &nbsp;|&nbsp; R estado
         </p>
       </div>
