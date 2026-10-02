@@ -1,6 +1,6 @@
 'use client'
 
-import { useActionState, useEffect, useRef } from 'react'
+import { useActionState, useEffect } from 'react'
 import { changePassword, deleteAccount, updateProfile } from '@/app/actions/account'
 import { announceAssertive, announcePolite } from '@/lib/announce'
 
@@ -10,19 +10,21 @@ const ERROR = 'mb-4 p-3 rounded bg-[#3a1a1a] border border-[#ef4444] text-[#ef44
 const FOCUS_RING =
   'focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-[#ffd700] focus-visible:ring-offset-2 focus-visible:ring-offset-black'
 
-export default function AccountForms({ name, email }: { name: string; email: string }) {
+const PASSWORD_CHANGED = 'Contraseña cambiada. Se ha cerrado la sesión en tus otros dispositivos.'
+
+export default function AccountForms({ name, email, passwordChanged }: { name: string; email: string; passwordChanged: boolean }) {
   const [profileState, profileAction, profilePending] = useActionState(updateProfile, undefined)
   const [pwState, pwAction, pwPending] = useActionState(changePassword, undefined)
   const [delState, delAction, delPending] = useActionState(deleteAccount, undefined)
-  const pwForm = useRef<HTMLFormElement>(null)
 
   useEffect(() => {
     if (pwState?.error) announceAssertive(`Error: ${pwState.error}`)
-    if (pwState?.success) {
-      announcePolite('Contraseña cambiada.')
-      pwForm.current?.reset()
-    }
   }, [pwState])
+
+  // Tras cambiar la contraseña el servidor redirige a /perfil?cambiada=1.
+  useEffect(() => {
+    if (passwordChanged) announcePolite(PASSWORD_CHANGED)
+  }, [passwordChanged])
 
   useEffect(() => {
     if (profileState?.error) announceAssertive(`Error: ${profileState.error}`)
@@ -120,13 +122,13 @@ export default function AccountForms({ name, email }: { name: string; email: str
         </h3>
 
         {pwState?.error && <p role="alert" className={ERROR}>{pwState.error}</p>}
-        {pwState?.success && (
+        {passwordChanged && !pwState?.error && (
           <p role="status" className="mb-4 p-3 rounded bg-[#1a3a1a] border border-[#22c55e] text-[#22c55e] text-sm">
-            Contraseña cambiada.
+            {PASSWORD_CHANGED}
           </p>
         )}
 
-        <form ref={pwForm} action={pwAction} className="space-y-5">
+        <form action={pwAction} className="space-y-5">
           <div>
             <label htmlFor="currentPassword" className="block text-sm font-medium mb-1">
               Contraseña actual
@@ -151,6 +153,9 @@ export default function AccountForms({ name, email }: { name: string; email: str
               Mínimo 6 caracteres
             </span>
           </div>
+          <p className="text-xs text-[#999]">
+            Al cambiarla se cerrará la sesión en tus otros dispositivos.
+          </p>
           <button
             type="submit"
             disabled={pwPending}

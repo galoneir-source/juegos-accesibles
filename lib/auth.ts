@@ -1,3 +1,4 @@
+import { createHash } from 'node:crypto'
 import NextAuth, { CredentialsSignin } from 'next-auth'
 import Credentials from 'next-auth/providers/credentials'
 import bcrypt from 'bcryptjs'
@@ -6,6 +7,13 @@ import { authConfig } from './auth.config'
 import { clientIp, hit } from './rate-limit'
 
 const LOGIN_WINDOW_MS = 15 * 60 * 1000
+
+// Huella de la contraseña que se guarda en el token de sesión. Si la contraseña
+// cambia (o la cuenta se elimina), los tokens emitidos antes dejan de valer:
+// así cambiar la contraseña cierra las sesiones abiertas en otros dispositivos.
+function passwordVersion(passwordHash: string) {
+  return createHash('sha256').update(passwordHash).digest('hex').slice(0, 16)
+}
 
 export class TooManyAttempts extends CredentialsSignin {
   code = 'too_many_attempts'
@@ -41,8 +49,19 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
   ],
   session: { strategy: 'jwt' },
   callbacks: {
-    jwt({ token, user }) {
+    // Se ejecuta en cada comprobación de sesión: una consulta por clave
+    // primaria a la base de datos local.
+    async jwt({ token, user }) {
       if (user) token.id = user.id
+      if (typeof token.id !== 'string') return token
+
+      const current = await prisma.user.findUnique({ where: { id: token.id }, select: { password: true } })
+      if (!current) return null // cuenta eliminada
+      const version = passwordVersion(current.password)
+      // Al iniciar sesión, y en los tokens anteriores a este cambio (sin
+      // huella), se anota la actual; en el resto debe coincidir.
+      if (user || token.pv === undefined) token.pv = version
+      else if (token.pv !== version) return null
       return token
     },
     session({ session, token }) {
