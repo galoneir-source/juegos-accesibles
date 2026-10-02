@@ -1,12 +1,16 @@
 'use server'
 
 import bcrypt from 'bcryptjs'
+import { revalidatePath } from 'next/cache'
 import { auth, signOut } from '@/lib/auth'
 import { prisma } from '@/lib/db'
 import { hit } from '@/lib/rate-limit'
 
 type Result = { error?: string; success?: boolean }
 
+const MAX_NAME = 50
+const MAX_EMAIL = 254
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 const MIN_PASSWORD = 6
 const MAX_PASSWORD = 72 // bcrypt ignora lo que pase de 72 bytes
 const ATTEMPTS = 10
@@ -26,6 +30,41 @@ async function checkPassword(userId: string, password: unknown): Promise<Result 
     return { error: 'La contraseña actual no es correcta.' }
   }
   return null
+}
+
+// Cambia el nombre y el correo. El correo es el identificador de inicio de
+// sesión, así que cambiarlo exige la contraseña actual; el nombre solo, no.
+// El sitio no envía correos: el nuevo no se verifica, igual que en el registro.
+export async function updateProfile(_state: unknown, formData: FormData): Promise<Result> {
+  const session = await auth()
+  if (!session?.user?.id) return { error: 'Debes iniciar sesión.' }
+  const userId = session.user.id
+
+  const name = (formData.get('name') as string | null)?.trim()
+  const email = (formData.get('email') as string | null)?.trim().toLowerCase()
+  if (!name || !email) return { error: 'El nombre y el correo no pueden quedar vacíos.' }
+  if (name.length > MAX_NAME) {
+    return { error: `El nombre no puede tener más de ${MAX_NAME} caracteres.` }
+  }
+  if (email.length > MAX_EMAIL || !EMAIL_RE.test(email)) {
+    return { error: 'Introduce un correo electrónico válido.' }
+  }
+
+  const user = await prisma.user.findUnique({ where: { id: userId }, select: { email: true } })
+  if (!user) return { error: 'Tu sesión ya no es válida. Vuelve a iniciar sesión.' }
+
+  if (email !== user.email) {
+    const failed = await checkPassword(userId, formData.get('currentPassword'))
+    if (failed) return failed
+    const taken = await prisma.user.findUnique({ where: { email }, select: { id: true } })
+    if (taken) return { error: 'Ya existe una cuenta con ese correo electrónico.' }
+  }
+
+  await prisma.user.update({ where: { id: userId }, data: { name, email } })
+  revalidatePath('/')
+  revalidatePath('/perfil')
+  revalidatePath('/tabla-lideres')
+  return { success: true }
 }
 
 export async function changePassword(_state: unknown, formData: FormData): Promise<Result> {

@@ -101,8 +101,8 @@ export default function PrivacidadPage() {
         <section aria-labelledby="derechos">
           <h2 id="derechos" className="text-lg font-bold mb-2">Tus derechos</h2>
           <p>
-            Puedes ver tus datos, cambiar tu contraseña y eliminar tu cuenta desde{' '}
-            <Link href="/perfil" className={LINK}>tu perfil</Link>. Para cambiar tu nombre o tu correo, pedir una
+            Puedes ver tus datos, cambiar tu nombre, tu correo y tu contraseña, y eliminar tu cuenta desde{' '}
+            <Link href="/perfil" className={LINK}>tu perfil</Link>. Para pedir una
             copia de tus datos o ejercer cualquier otro derecho (acceso, rectificación, supresión, oposición,
             limitación y portabilidad), escribe a <a href={`mailto:${CONTACT}`} className={LINK}>{CONTACT}</a>.
           </p>

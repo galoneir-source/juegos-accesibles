@@ -68,7 +68,7 @@ export default async function PerfilPage() {
           </Link>
         </p>
 
-        <AccountForms />
+        <AccountForms name={user.name} email={user.email} />
 
         <p className="mt-12 text-sm text-center">
           <Link href="/privacidad" className="text-[#ffd700] underline hover:text-white">
