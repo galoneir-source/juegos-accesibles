@@ -14,8 +14,13 @@ export async function saveScore(game: GameId, points: number) {
     return { error: 'Puntuación no válida.' }
   }
 
+  // La sesión (JWT) sigue siendo válida en otros dispositivos después de
+  // eliminar la cuenta; sin esta comprobación el create fallaría con un 500.
+  const user = await prisma.user.findUnique({ where: { id: session.user.id }, select: { id: true } })
+  if (!user) return { error: 'Tu sesión ya no es válida. Vuelve a iniciar sesión.' }
+
   await prisma.score.create({
-    data: { userId: session.user.id, game, points },
+    data: { userId: user.id, game, points },
   })
 
   revalidatePath('/perfil')

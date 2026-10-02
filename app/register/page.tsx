@@ -89,6 +89,14 @@ export default function RegisterPage() {
           </button>
         </form>
 
+        <p className="mt-4 text-sm text-[#999]">
+          Tu nombre y tus puntuaciones se verán en la tabla de líderes; tu correo no. Consulta la{' '}
+          <Link href="/privacidad" className="text-[#ffd700] underline hover:text-white">
+            política de privacidad
+          </Link>
+          .
+        </p>
+
         <p className="mt-6 text-sm text-[#888] text-center">
           ¿Ya tienes cuenta?{' '}
           <Link href="/login" className="text-[#ffd700] underline hover:text-white">

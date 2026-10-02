@@ -20,6 +20,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: 'weekly',
       priority: 1.0,
     },
+    {
+      url: `${BASE_URL}/privacidad`,
+      lastModified: now,
+      changeFrequency: 'yearly',
+      priority: 0.2,
+    },
     // /tabla-lideres requiere sesión (protegida por el middleware en
     // proxy.ts, redirige a /login sin ella) — no va en el sitemap público.
     ...gameEntries,
