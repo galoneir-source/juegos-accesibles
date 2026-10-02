@@ -30,7 +30,11 @@ export function sendMail({ to, subject, text }: { to: string; subject: string; t
   ].join('\n')
 
   return new Promise((resolve, reject) => {
-    const child = spawn(SENDMAIL, ['-i', '-f', FROM_ADDRESS, '--', to], { stdio: ['pipe', 'ignore', 'pipe'] })
+    // turbopackIgnore: la ruta del binario es externa al proyecto; sin el
+    // comentario, Turbopack avisa de que traza el proyecto entero.
+    const child = spawn(/*turbopackIgnore: true*/ SENDMAIL, ['-i', '-f', FROM_ADDRESS, '--', to], {
+      stdio: ['pipe', 'ignore', 'pipe'],
+    })
     let stderr = ''
     child.stderr.on('data', (chunk) => { stderr += chunk })
     child.on('error', reject)
