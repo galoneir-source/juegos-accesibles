@@ -168,7 +168,7 @@ export default function PenaltisPage() {
     setShotDir(dir)
     setKeeperDir(keeper)
 
-    setTimeout(() => { isGoal ? audio.penaltyGoal() : audio.penaltySave() }, 350)
+    setTimeout(() => { if (isGoal) audio.penaltyGoal(); else audio.penaltySave() }, 350)
 
     const msg = isGoal
       ? `¡GOL! Disparaste a la ${DIR_NAME[dir]}. El portero fue a la ${DIR_NAME[keeper]}.`
@@ -207,7 +207,7 @@ export default function PenaltisPage() {
     setShotDir(kickDir)
     setKeeperDir(dir)
 
-    setTimeout(() => { isSave ? audio.penaltySave() : audio.penaltyGoal() }, 350)
+    setTimeout(() => { if (isSave) audio.penaltySave(); else audio.penaltyGoal() }, 350)
 
     const msg = isSave
       ? `¡Parado! El rival disparó a la ${DIR_NAME[kickDir]}. Tú fuiste a la ${DIR_NAME[dir]}.`

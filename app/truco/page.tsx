@@ -329,7 +329,7 @@ export default function TrucoPage() {
     const handDone = newTricks.length === 3 || pw >= 2 || aw >= 2
 
     if (handDone) {
-      const { playerIsMano: pim, playerScore: ps, aiScore: as, envidoDone: ed } = stateRef.current
+      const { playerIsMano: pim, playerScore: ps, aiScore: as } = stateRef.current
       const winner = handWinner(newTricks, pim)
       const trucoPts = ta ? TRUCO_WIN_PTS[tl] : TRUCO_WIN_PTS[0]
 
@@ -366,7 +366,7 @@ export default function TrucoPage() {
 
   function playerCallEnvido() {
     const { phase: ph, envidoAvail: ea, envidoDone: ed, envidoLevel: el,
-      envidoCalledBy: ecb, aiHand: ah, playerHand: phand, playerScore: ps, aiScore: as } = stateRef.current
+      aiHand: ah, playerHand: phand, playerScore: ps, aiScore: as } = stateRef.current
     if (ph !== 'player_turn' || !ea || ed) return
 
     const nextLvl = el + 1
@@ -425,7 +425,7 @@ export default function TrucoPage() {
   // ── responder envido de la IA ─────────────────────────────────────────────
 
   function respondEnvido(action: 'accept' | 'reject' | 'raise') {
-    const { envidoLevel: el, envidoCalledBy: ecb, playerHand: ph, aiHand: ah,
+    const { envidoLevel: el, playerHand: ph, aiHand: ah,
       playerScore: ps, aiScore: as } = stateRef.current
 
     if (action === 'raise') {
@@ -511,7 +511,7 @@ export default function TrucoPage() {
 
   function playerCallTruco() {
     const { phase: ph, trucoLevel: tl, trucoAccepted: ta, aiHand: ah,
-      playerScore: ps, aiScore: as, tricks: tr, playerHand: phand } = stateRef.current
+      playerScore: ps } = stateRef.current
     if (ph !== 'player_turn') return
     if (tl >= 3) { announceAssertive('Ya estás en Vale Cuatro, no puedes subir más.'); return }
     if (ta && tl >= 3) return
@@ -559,8 +559,8 @@ export default function TrucoPage() {
   // ── responder truco de la IA ──────────────────────────────────────────────
 
   function respondTruco(action: 'accept' | 'reject' | 'raise') {
-    const { trucoLevel: tl, aiHand: ah, playerHand: ph, playerScore: ps,
-      aiScore: as, tricks: tr, trucoAccepted: ta, playerIsMano: pim } = stateRef.current
+    const { trucoLevel: tl, aiHand: ah, playerScore: ps,
+      aiScore: as } = stateRef.current
 
     if (action === 'raise') {
       if (tl >= 3) { announceAssertive('Ya está en Vale Cuatro.'); return }
@@ -634,8 +634,7 @@ export default function TrucoPage() {
     function handleKey(e: KeyboardEvent) {
       if (e.target instanceof HTMLInputElement) return
       const key = e.key.toLowerCase()
-      const { phase: ph, playerHand: phand, envidoAvail: ea, envidoDone: ed,
-        envidoLevel: el, trucoLevel: tl, trucoAccepted: ta } = stateRef.current
+      const { phase: ph, playerHand: phand, envidoAvail: ea, envidoDone: ed } = stateRef.current
 
       switch (key) {
         case 'i': readStatus(); break

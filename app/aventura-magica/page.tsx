@@ -244,16 +244,6 @@ const ITEM_KEY: ItemDef = {
   desc: 'Abre pasajes sellados con magia.',
 }
 
-const EVENT_LABELS: Partial<Record<Room['event'], string>> = {
-  treasure: 'posible tesoro',
-  trap:     'peligro',
-  enemy:    'presencia hostil',
-  healing:  'aura curativa',
-  item:     'objeto en el suelo',
-  boss:     '¡guarida del Dragón!',
-  shard:    '¡energía cristalina!',
-  narrative:'punto de interés',
-}
 
 const INSTRUCTIONS =
   'Aventura Mágica: El Cristal Eterno. Recorre el reino, reúne los 3 Fragmentos del Cristal y derrota al Dragón de las Sombras. ' +

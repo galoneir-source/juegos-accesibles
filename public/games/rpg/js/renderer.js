@@ -88,7 +88,6 @@ function drawChest(ctx, sx, sy, opened) {
 }
 
 export function renderEntities(ctx, dungeon, player, camera) {
-  const dropsToRemove = [];
 
   for (const e of dungeon.enemies) {
     if (e.dead) {

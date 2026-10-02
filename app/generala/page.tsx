@@ -258,7 +258,9 @@ export default function GeneralaPage() {
     }
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
-  }, [])
+  // Sin array de dependencias: se vuelve a suscribir en cada render para que
+  // el manejador llame siempre a la versión actual de las funciones del juego.
+  })
 
   async function handleSaveScore() {
     const result = await saveScore('generala', total)
@@ -449,7 +451,7 @@ export default function GeneralaPage() {
                   }
                 </p>
               </div>
-              {CATS.filter(c => c.section === 'upper').map((cat, _) => {
+              {CATS.filter(c => c.section === 'upper').map((cat) => {
                 const gi = CATS.indexOf(cat)
                 const scored = scorecard[cat.id]
                 const potential = hasRolled && scored === null

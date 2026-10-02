@@ -182,7 +182,9 @@ export default function SecuenciasPage() {
     }
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
-  }, [])
+  // Sin array de dependencias: se vuelve a suscribir en cada render para que
+  // el manejador llame siempre a la versión actual de las funciones del juego.
+  })
 
   async function handleSaveScore() {
     const result = await saveScore('secuencias', score)

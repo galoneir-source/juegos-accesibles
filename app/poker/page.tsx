@@ -336,17 +336,16 @@ export default function PokerPage() {
     const {
       phase: ph, street: st, isPlayerTurn: ipt, playerChips: pc, aiChips: ac,
       pot: p, playerBet: pb, aiBet: ab, deck: d, community: com,
-      aiHand: ah, playerHand: plh, raiseAmount: ra, playerIsDealer: pid, handNum: hn,
+      aiHand: ah, playerHand: plh, raiseAmount: ra,
     } = stateRef.current
     if (ph !== 'betting' || !ipt) return
 
     const needed = toCallAmount(pb, ab, true)
 
     if (action === 'fold') {
-      const aiWins = Math.min(p, ac + ab)
       audio.gameOver()
       announceAssertive(`Te retiras. La IA gana el bote de ${p} fichas.`)
-      endHand(false, p, pc, ac, ph, hn)
+      endHand(false, p, pc, ac)
       return
     }
 
@@ -384,14 +383,13 @@ export default function PokerPage() {
 
     // turno de la IA tras breve pausa
     setTimeout(() => {
-      aiAct(plh, ah, com, d, st, newPot, newPc, ac, newPb, ab, pid, hn)
+      aiAct(plh, ah, com, d, st, newPot, newPc, ac, newPb, ab)
     }, 700)
   }
 
   function aiAct(
     plh: Card[], ah: Card[], com: Card[], d: Card[], st: Street,
-    pot: number, pc: number, ac: number, pb: number, ab: number,
-    pid: boolean, hn: number
+    pot: number, pc: number, ac: number, pb: number, ab: number
   ) {
     const needed = toCallAmount(ab, pb, false)
     const { action, raiseAmount: ra } = aiDecide(ah, com, pot, needed, st)
@@ -403,7 +401,7 @@ export default function PokerPage() {
     if (action === 'fold') {
       audio.gameOver()
       announceAssertive(`La IA se retira. Ganas el bote de ${pot} fichas.`)
-      endHand(true, pot, pc, ac, 'betting', hn)
+      endHand(true, pot, pc, ac)
       return
     }
 
@@ -429,9 +427,6 @@ export default function PokerPage() {
     setAiBet(newAb)
     setPot(newPot)
 
-    // avanzar calle si ambos igualaron
-    const equalBets = newAb === pb || (action !== 'raise' && toCallAmount(pb, newAb, true) === 0)
-
     if (action === 'raise') {
       // jugador debe responder de nuevo
       setIsPlayerTurn(true)
@@ -439,13 +434,12 @@ export default function PokerPage() {
     }
 
     // avanzar calle
-    setTimeout(() => advanceStreet(plh, ah, com, d, st, newPot, pc, newAc, pb, newAb, pid, hn), 500)
+    setTimeout(() => advanceStreet(plh, ah, com, d, st, newPot, pc, newAc), 500)
   }
 
   function advanceStreet(
     plh: Card[], ah: Card[], com: Card[], d: Card[], st: Street,
-    pot: number, pc: number, ac: number, pb: number, ab: number,
-    pid: boolean, hn: number
+    pot: number, pc: number, ac: number
   ) {
     const nextStreets: Partial<Record<Street, Street>> = {
       preflop: 'flop', flop: 'turn', turn: 'river', river: 'showdown',
@@ -454,7 +448,7 @@ export default function PokerPage() {
     if (!next) return
 
     if (next === 'showdown') {
-      doShowdown(plh, ah, com, pot, pc, ac, hn)
+      doShowdown(plh, ah, com, pot, pc, ac)
       return
     }
 
@@ -492,7 +486,7 @@ export default function PokerPage() {
 
   function doShowdown(
     plh: Card[], ah: Card[], com: Card[], pot: number,
-    pc: number, ac: number, hn: number
+    pc: number, ac: number
   ) {
     const pResult = evaluateHand([...plh, ...com])
     const aResult = evaluateHand([...ah, ...com])
@@ -506,19 +500,19 @@ export default function PokerPage() {
       announceAssertive(
         `Showdown. Tú: ${pResult.name} (${plh.map(cardLabel).join(', ')}). IA: ${aResult.name} (${ah.map(cardLabel).join(', ')}). ¡Ganas el bote de ${pot}!`
       )
-      endHand(true, pot, pc, ac, 'betting', hn)
+      endHand(true, pot, pc, ac)
     } else if (cmp < 0) {
       announceAssertive(
         `Showdown. Tú: ${pResult.name}. IA: ${aResult.name}. La IA gana el bote de ${pot}.`
       )
-      endHand(false, pot, pc, ac, 'betting', hn)
+      endHand(false, pot, pc, ac)
     } else {
       announceAssertive(`Showdown. Empate: ${pResult.name}. El bote se divide.`)
-      endHand(null, pot, pc, ac, 'betting', hn)
+      endHand(null, pot, pc, ac)
     }
   }
 
-  function endHand(playerWins: boolean | null, pot: number, pc: number, ac: number, _ph: string, hn: number) {
+  function endHand(playerWins: boolean | null, pot: number, pc: number, ac: number) {
     let newPc = pc
     let newAc = ac
     let earned = 0
@@ -569,7 +563,7 @@ export default function PokerPage() {
     function handleKey(e: KeyboardEvent) {
       if (e.target instanceof HTMLInputElement) return
       const key = e.key.toLowerCase()
-      const { isPlayerTurn: ipt, phase: ph, playerChips: pc, raiseAmount: ra } = stateRef.current
+      const { isPlayerTurn: ipt, phase: ph } = stateRef.current
 
       switch (key) {
         case 'i': readStatus(); break

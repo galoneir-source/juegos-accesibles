@@ -109,7 +109,6 @@ function calcDeadwood(hand: Card[]): { deadwood: number; melds: Card[][] } {
     }
 
     for (let size = 3; size <= remaining.length; size++) {
-      const indices = Array.from({ length: size }, (_, k) => k)
       // intentar todas las combinaciones de `size` cartas no usadas
       const availIdx = remaining.map((_, i) => i).filter(i => !used[i])
       const combos = getCombinations(availIdx, size)
@@ -261,7 +260,7 @@ export default function GinRummyPage() {
   // ── robar del mazo ──────────────────────────────────────────────────────
 
   function drawFromDeck() {
-    const { deck: d, discardPile: dp, playerHand: ph, turnStep: ts, phase: p } = stateRef.current
+    const { deck: d, playerHand: ph, turnStep: ts, phase: p } = stateRef.current
     if (p !== 'playing' || ts !== 'draw') return
     if (d.length === 0) {
       announceAssertive('El mazo está vacío. La ronda termina en empate.')
@@ -507,7 +506,7 @@ export default function GinRummyPage() {
     function handleKey(e: KeyboardEvent) {
       if (e.target instanceof HTMLInputElement) return
       const key = e.key.toLowerCase()
-      const { turnStep: ts, playerHand: ph, selectedIdx: si, discardPile: dp } = stateRef.current
+      const { turnStep: ts, playerHand: ph } = stateRef.current
 
       switch (key) {
         case 'i':

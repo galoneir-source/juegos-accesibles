@@ -248,15 +248,15 @@ const OPPORTUNITY: Record<SuspectId, Array<(t: string) => string>> = {
   ],
   isabela: [
     t => `Vi a Isabela caminando sola hacia el despacho del señor a las ${t}. El señor no recibía a nadie a esa hora.`,
-    t => `Vi a Isabela preguntar directamente dónde guardaba el señor su vino especial. Cuando le indiqué el despacho, se fue sin dar explicaciones.`,
+    () => `Vi a Isabela preguntar directamente dónde guardaba el señor su vino especial. Cuando le indiqué el despacho, se fue sin dar explicaciones.`,
     t => `Vi a Isabela salir del despacho a las ${t} con prisa. Tenía las manos temblorosas y no me dirigió la mirada.`,
-    t => `Vi a Isabela junto a la botella de vino del señor con algo pequeño en la mano. Al verme, lo cerró y lo guardó rápidamente.`,
+    () => `Vi a Isabela junto a la botella de vino del señor con algo pequeño en la mano. Al verme, lo cerró y lo guardó rápidamente.`,
   ],
   vidal: [
     t => `Vi al doctor salir del salón hacia el despacho a las ${t}. El sillón estuvo vacío casi veinte minutos.`,
     t => `Vi al doctor salir por la puerta lateral del despacho a las ${t} y volver apresuradamente, mirando a ambos lados.`,
     t => `Vi al doctor entrar al despacho a las ${t}. Cuando le pregunté si el señor le esperaba, dudó un momento antes de responder.`,
-    t => `Vi al doctor junto a la copa del señor durante su conversación. Hizo un gesto con la mano que me llamó la atención.`,
+    () => `Vi al doctor junto a la copa del señor durante su conversación. Hizo un gesto con la mano que me llamó la atención.`,
   ],
   clara: [
     t => `Vi a Clara cruzar el jardín hacia la entrada de servicio con una botella en las manos a las ${t}. Tardó veinte minutos en volver.`,
@@ -266,7 +266,7 @@ const OPPORTUNITY: Record<SuspectId, Array<(t: string) => string>> = {
   ],
   thomas: [
     t => `Vi a Thomas entrar a la cocina a las ${t} cuando debería estar en el jardín. Estuvo varios minutos junto al mueble del vino.`,
-    t => `Escuché a Thomas decir, antes de desaparecer un rato, que el señor "se llevaría su merecido esta noche".`,
+    () => `Escuché a Thomas decir, antes de desaparecer un rato, que el señor "se llevaría su merecido esta noche".`,
     t => `Vi a Thomas cerca del despacho a las ${t}. Le pregunté qué hacía dentro y no respondió.`,
     t => `Vi a Thomas salir del interior de la mansión a las ${t} cuando él afirma no haber entrado nunca.`,
   ],
@@ -365,7 +365,7 @@ export function generateGame(): GeneratedGame {
   const ALL: SuspectId[] = ['victor', 'isabela', 'vidal', 'clara', 'thomas']
   const culprit = pick(ALL)
   const innocents = shuffle(ALL.filter(s => s !== culprit))
-  const [w1, w2, ...bystanders] = innocents
+  const [w1, w2] = innocents
 
   const motive = pick(MOTIVES.filter(m => m.culprit === culprit))
   const means  = pick(MEANS.filter(m => m.culprit === culprit))

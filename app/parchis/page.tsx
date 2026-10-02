@@ -343,7 +343,6 @@ export default function ParchisPage() {
 
   // ── render: juego ─────────────────────────────────────────────────────────
 
-  const isMyTurn = phase === 'player_roll' || phase === 'player_choose'
   const movablePieces = phase === 'player_choose' && dice !== null
     ? playerPieces.map((s, i) => ({ i, canMove: nextStep(s, dice) !== null }))
     : playerPieces.map((_, i) => ({ i, canMove: false }))

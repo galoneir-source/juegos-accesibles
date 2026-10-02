@@ -16,7 +16,7 @@ export class AudioManager {
       this.master.connect(this.ctx.destination);
       this.enabled = true;
       this._initFootSlider();
-    } catch (e) {
+    } catch {
       console.warn('Web Audio no disponible');
     }
   }

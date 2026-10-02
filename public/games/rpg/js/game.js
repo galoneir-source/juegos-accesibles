@@ -1,4 +1,4 @@
-import { CANVAS_W, CANVAS_H, STATE, TILE, TILE_SIZE, DUNGEON_FLOORS, BOSS_FLOOR } from './constants.js';
+import { CANVAS_W, CANVAS_H, STATE, TILE, DUNGEON_FLOORS, BOSS_FLOOR } from './constants.js';
 import { generateDungeon } from './dungeon.js';
 import { Player } from './player.js';
 import { updateEnemies } from './enemy.js';

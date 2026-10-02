@@ -574,7 +574,7 @@ export class AccessibilityManager {
     this.audio.swing();
   }
 
-  onHitEnemy(enemy, dmg) {
+  onHitEnemy(enemy) {
     const pl  = this.game.player;
     const dx  = enemy.x - pl.x;
     const dist = Math.hypot(dx, enemy.y - pl.y);
