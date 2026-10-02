@@ -20,6 +20,11 @@ export async function registerUser(_state: unknown, formData: FormData) {
   if (!name || !email || !password || password.length < 6) {
     return { error: 'Por favor completa todos los campos. La contraseña debe tener al menos 6 caracteres.' }
   }
+  // La política de privacidad fija la edad mínima en 14 años (la edad a la
+  // que se puede consentir el tratamiento de datos en España).
+  if (formData.get('age') !== 'on') {
+    return { error: 'Para crear una cuenta debes confirmar que tienes 14 años o más.' }
+  }
   if (name.length > MAX_NAME) {
     return { error: `El nombre no puede tener más de ${MAX_NAME} caracteres.` }
   }
