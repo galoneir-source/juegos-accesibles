@@ -61,7 +61,12 @@ export default function PrivacidadPage() {
           <h2 id="terceros" className="text-lg font-bold mb-2">Con quién se comparten</h2>
           <p>
             Con nadie. El sitio no tiene publicidad, ni analítica, ni carga recursos de otras empresas, y tus
-            datos no se venden ni se ceden. Están en el servidor del sitio, al que solo accede el responsable.
+            datos no se venden ni se ceden.
+          </p>
+          <p className="mt-3">
+            Los datos están en un servidor situado en España, alquilado a la empresa de alojamiento IONOS, que
+            presta la infraestructura como encargada del tratamiento. Solo el responsable administra el
+            servidor y accede a los datos. No se envían fuera de la Unión Europea.
           </p>
         </section>
 
@@ -80,6 +85,10 @@ export default function PrivacidadPage() {
             Los datos de tu cuenta se conservan hasta que la elimines. Al eliminarla se borran de inmediato tu
             nombre, tu correo, tu contraseña y todas tus puntuaciones. Pueden permanecer hasta 30 días más en las
             copias de seguridad, que se borran solas pasado ese plazo.
+          </p>
+          <p className="mt-3">
+            Los registros técnicos del servidor (dirección IP, fecha y página solicitada) se conservan cinco
+            semanas y después se borran.
           </p>
         </section>
 
@@ -100,8 +109,8 @@ export default function PrivacidadPage() {
         <section aria-labelledby="menores">
           <h2 id="menores" className="text-lg font-bold mb-2">Menores</h2>
           <p>
-            Para crear una cuenta debes tener al menos 14 años. Si eres menor de esa edad puedes jugar
-            igualmente sin registrarte.
+            Para crear una cuenta debes tener al menos 14 años, y el formulario de registro te pide
+            confirmarlo. Si eres menor de esa edad puedes jugar igualmente sin registrarte.
           </p>
         </section>
       </main>

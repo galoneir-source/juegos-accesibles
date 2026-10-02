@@ -79,6 +79,19 @@ export default function RegisterPage() {
             </span>
           </div>
 
+          <div className="flex items-start gap-3">
+            <input
+              id="age"
+              name="age"
+              type="checkbox"
+              required
+              className="mt-1 h-5 w-5 shrink-0 accent-[#ffd700] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#ffd700] focus-visible:ring-offset-2 focus-visible:ring-offset-black"
+            />
+            <label htmlFor="age" className="text-sm">
+              Tengo 14 años o más
+            </label>
+          </div>
+
           <button
             type="submit"
             disabled={pending}
