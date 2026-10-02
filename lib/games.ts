@@ -105,6 +105,24 @@ export function socialMetadata(title: string, description: string, path: string)
   }
 }
 
+// Los buscadores cortan la descripción hacia los 155-160 caracteres.
+const MAX_DESCRIPTION = 160
+
+// Recorta `text` a `max` caracteres: se queda con las frases enteras que
+// quepan y, si ni la primera cabe, corta por la última palabra y añade "…".
+function shorten(text: string, max: number): string {
+  if (text.length <= max) return text
+  const sentences = text.match(/[^.!?]+[.!?]+/g) ?? []
+  let out = ''
+  for (const sentence of sentences) {
+    if ((out + sentence).trimEnd().length > max) break
+    out += sentence
+  }
+  if (out) return out.trim()
+  const cut = text.slice(0, max - 1)
+  return `${cut.slice(0, cut.lastIndexOf(' ')).replace(/[,;:]$/, '')}…`
+}
+
 // Metadatos SEO de la página de un juego (title, description, canonical y
 // Open Graph propios). Las páginas de juego son componentes cliente y no pueden
 // exportar metadata, así que cada carpeta tiene un layout.tsx mínimo que llama a esto.
@@ -112,7 +130,8 @@ export function gameMetadata(slug: string): Metadata {
   const game = GAMES.find((g) => g.href === `/${slug}`)
   if (!game) throw new Error(`Juego desconocido en gameMetadata: ${slug}`)
   const title = `${game.label} accesible para ciegos`
-  const description = `${game.label}, juego gratis y accesible para personas ciegas, con teclado y lector de pantalla. ${game.desc}`
+  const intro = `${game.label}, juego gratis y accesible para personas ciegas, con teclado y lector de pantalla.`
+  const description = `${intro} ${shorten(game.desc, MAX_DESCRIPTION - intro.length - 1)}`
   return {
     title,
     description,
