@@ -115,16 +115,6 @@ export default function WordlePage() {
   const [saveError,   setSaveError]   = useState('')
   const [keyStates,   setKeyStates]   = useState<Record<string, LetterState>>({})
   const [shaking,     setShaking]     = useState(false)
-  const [lastResult,  setLastResult]  = useState('')
-
-  const readState = useCallback(() => {
-    if (phase !== 'playing') return
-    if (!lastResult) {
-      announcePolite(`Sin intentos aún. Escribe una palabra de ${WORD_LENGTH} letras.`)
-    } else {
-      announcePolite(lastResult)
-    }
-  }, [phase, lastResult])
 
   const submitGuess = useCallback(() => {
     if (current.length < WORD_LENGTH) {
@@ -150,7 +140,6 @@ export default function WordlePage() {
 
     const resultDesc = result.map(r => `${r.letter}, ${STATE_LABEL[r.state]}`).join('; ')
     const msg = `Intento ${newGuesses.length}: ${resultDesc}.`
-    setLastResult(msg)
 
     const won = result.every(r => r.state === 'correct')
     if (won) {
@@ -167,7 +156,8 @@ export default function WordlePage() {
       announceAssertive(`Sin más intentos. La palabra era ${secret}.`)
     } else {
       const hasCorrect = result.some(r => r.state === 'correct')
-      hasCorrect ? audio.correct() : audio.incorrect()
+      if (hasCorrect) audio.correct()
+      else audio.incorrect()
       const rem = MAX_GUESSES - newGuesses.length
       announceAssertive(`${msg} ${rem} ${rem === 1 ? 'intento restante' : 'intentos restantes'}.`)
     }
@@ -212,7 +202,6 @@ export default function WordlePage() {
     setSaved(false)
     setSaveError('')
     setKeyStates({})
-    setLastResult('')
     audio.start()
     announcePolite(`Juego iniciado. Adivina la palabra de ${WORD_LENGTH} letras. Tienes ${MAX_GUESSES} intentos.`)
   }

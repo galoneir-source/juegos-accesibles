@@ -140,7 +140,6 @@ export default function AsteroidsPage() {
   }
 
   function scanDanger() {
-    const ship = asteroidsRef.current
     const RANGE = W * 0.6
     const nearest = [...asteroidsRef.current]
       .map(a => ({ a, d: wrapDist(a.x, a.y, shipRef.current.x, shipRef.current.y) }))
@@ -184,7 +183,8 @@ export default function AsteroidsPage() {
         const jag = r * (0.76 + ((a.id * (i + 7) * 11) % 24) / 100)
         const px  = Math.cos(ang) * jag
         const py  = Math.sin(ang) * jag
-        i === 0 ? ctx.moveTo(px, py) : ctx.lineTo(px, py)
+        if (i === 0) ctx.moveTo(px, py)
+        else ctx.lineTo(px, py)
       }
       ctx.closePath()
       ctx.stroke()
@@ -468,7 +468,6 @@ export default function AsteroidsPage() {
       window.removeEventListener('keydown', onDown)
       window.removeEventListener('keyup',   onUp)
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [phase])
 
   async function handleSave() {

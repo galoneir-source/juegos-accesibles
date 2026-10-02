@@ -477,7 +477,7 @@ export default function TetrisPage() {
           const free = scanColumns()
           // Columns occupied by the piece
           const pieceCols = new Set<number>()
-          p.matrix.forEach((row, r) =>
+          p.matrix.forEach((row) =>
             row.forEach((v, c) => { if (v) pieceCols.add(p.x + c) })
           )
           const colInfo = [...pieceCols].sort((a, b) => a - b)

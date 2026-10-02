@@ -1,4 +1,4 @@
-import { CANVAS_W, CANVAS_H, COLORS } from './constants.js';
+import { CANVAS_W, CANVAS_H } from './constants.js';
 
 export function renderHUD(ctx, player, floor, totalFloors, showInventory = true) {
   const pad = 12;

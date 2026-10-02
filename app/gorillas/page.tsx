@@ -230,7 +230,7 @@ export default function GorillasPage() {
 
   // ── Animation loop ────────────────────────────────────────────────────────
 
-  function animateExplosion(onDone: () => void) {
+  const animateExplosion = useCallback((onDone: () => void) => {
     let r = 5
     function expand() {
       r += 4
@@ -242,7 +242,7 @@ export default function GorillasPage() {
       }
     }
     animRef.current = requestAnimationFrame(expand)
-  }
+  }, [draw])
 
   const runAnimation = useCallback((
     start: BPos, bldgs: Bldg[],
@@ -282,7 +282,7 @@ export default function GorillasPage() {
       animRef.current = requestAnimationFrame(tick)
     }
     animRef.current = requestAnimationFrame(tick)
-  }, [draw])
+  }, [draw, animateExplosion])
   // ── Setup round ───────────────────────────────────────────────────────────
 
   const setupRound = useCallback(() => {
@@ -376,7 +376,7 @@ export default function GorillasPage() {
         },
       )
     }, 900)
-  }, [draw, runAnimation, checkEnd]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [draw, runAnimation, checkEnd])
 
   // ── Player throw ──────────────────────────────────────────────────────────
 

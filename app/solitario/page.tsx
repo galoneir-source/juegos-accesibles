@@ -349,7 +349,7 @@ export default function SolitarioPage() {
     }
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
-  }, [state, focus, selection, interactWith, autoFoundation, readFocus]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [state, focus, selection, interactWith, autoFoundation, readFocus])
 
   async function handleSave() {
     if (!state) return

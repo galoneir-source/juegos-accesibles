@@ -147,6 +147,17 @@ interface GameState {
   phase: Phase
 }
 
+function getExitList(cell: Cell): string {
+  const exits = (['n', 'e', 's', 'w'] as Dir[]).filter(d => !cell[d]).map(d => DIR_NAME[d])
+  return exits.length ? 'Salidas: ' + exits.join(', ') : 'Sin salidas'
+}
+
+function posDesc(x: number, y: number, g: Grid, lv: Level): string {
+  const dist = Math.abs(x - (lv.cols - 1)) + Math.abs(y - (lv.rows - 1))
+  const distTxt = dist === 0 ? '¡Estás en la salida!' : `Distancia a la salida: ${dist}.`
+  return `Columna ${x + 1} de ${lv.cols}, fila ${y + 1} de ${lv.rows}. ${getExitList(g[y][x])}. ${distTxt}`
+}
+
 export default function LaberintoAudioPage() {
   const [phase, setPhase]     = useState<Phase>('idle')
   const [levelIdx, setLevelIdx] = useState(0)
@@ -174,17 +185,6 @@ export default function LaberintoAudioPage() {
   }, [grid, pos, levelIdx])
 
   // ── Helpers ──────────────────────────────────────────────────────────────
-
-  function getExitList(cell: Cell): string {
-    const exits = (['n', 'e', 's', 'w'] as Dir[]).filter(d => !cell[d]).map(d => DIR_NAME[d])
-    return exits.length ? 'Salidas: ' + exits.join(', ') : 'Sin salidas'
-  }
-
-  function posDesc(x: number, y: number, g: Grid, lv: Level): string {
-    const dist = Math.abs(x - (lv.cols - 1)) + Math.abs(y - (lv.rows - 1))
-    const distTxt = dist === 0 ? '¡Estás en la salida!' : `Distancia a la salida: ${dist}.`
-    return `Columna ${x + 1} de ${lv.cols}, fila ${y + 1} de ${lv.rows}. ${getExitList(g[y][x])}. ${distTxt}`
-  }
 
   // ── Actions ───────────────────────────────────────────────────────────────
 

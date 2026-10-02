@@ -150,7 +150,7 @@ export default function TresEnRayaPage() {
         announcePolite(`La IA coloca en ${cellName(move)}. Tu turno.`)
       }
     }, 500)
-  }, []) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [])
 
   // ── Keyboard ──────────────────────────────────────────────────────────────
 

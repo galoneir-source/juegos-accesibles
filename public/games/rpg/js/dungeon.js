@@ -1,4 +1,4 @@
-import { TILE, TILE_SIZE, DUNGEON_FLOORS, BOSS_FLOOR } from './constants.js';
+import { TILE, TILE_SIZE, BOSS_FLOOR } from './constants.js';
 
 const MAP_W = 60;
 const MAP_H = 60;
