@@ -2,7 +2,7 @@
 
 import bcrypt from 'bcryptjs'
 import { revalidatePath } from 'next/cache'
-import { auth, signOut } from '@/lib/auth'
+import { auth, signIn, signOut } from '@/lib/auth'
 import { prisma } from '@/lib/db'
 import { hit } from '@/lib/rate-limit'
 
@@ -67,7 +67,7 @@ export async function updateProfile(_state: unknown, formData: FormData): Promis
   return { success: true }
 }
 
-export async function changePassword(_state: unknown, formData: FormData): Promise<Result> {
+export async function changePassword(_state: unknown, formData: FormData): Promise<Result | undefined> {
   const session = await auth()
   if (!session?.user?.id) return { error: 'Debes iniciar sesión.' }
 
@@ -82,10 +82,15 @@ export async function changePassword(_state: unknown, formData: FormData): Promi
   const failed = await checkPassword(session.user.id, formData.get('currentPassword'))
   if (failed) return failed
 
-  await prisma.user.update({
+  const user = await prisma.user.update({
     where: { id: session.user.id },
     data: { password: await bcrypt.hash(next, 10) },
   })
+  // El cambio invalida todas las sesiones de la cuenta (ver jwt en lib/auth.ts),
+  // también esta: se vuelve a iniciar aquí para que solo se cierren las demás.
+  // Termina en una redirección (signIn no retorna) porque esta petición llegó
+  // con la cookie antigua y ya no podría volver a pintar el perfil.
+  await signIn('credentials', { email: user.email, password: next, redirectTo: '/perfil?cambiada=1' })
   return { success: true }
 }
 

@@ -11,7 +11,8 @@ export const metadata: Metadata = {
   robots: { index: false, follow: true },
 }
 
-export default async function PerfilPage() {
+export default async function PerfilPage({ searchParams }: { searchParams: Promise<{ cambiada?: string }> }) {
+  const { cambiada } = await searchParams
   const session = await auth()
   if (!session?.user?.id) redirect('/login')
 
@@ -68,7 +69,7 @@ export default async function PerfilPage() {
           </Link>
         </p>
 
-        <AccountForms name={user.name} email={user.email} />
+        <AccountForms name={user.name} email={user.email} passwordChanged={Boolean(cambiada)} />
 
         <p className="mt-12 text-sm text-center">
           <Link href="/privacidad" className="text-[#ffd700] underline hover:text-white">
