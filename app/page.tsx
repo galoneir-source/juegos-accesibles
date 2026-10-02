@@ -122,6 +122,10 @@ export default async function Home() {
           <a href="https://dvillalon.com/" className="text-[#ffd700] underline hover:text-white">
             Daniel Villalón
           </a>
+          {' · '}
+          <Link href="/privacidad" className="text-[#ffd700] underline hover:text-white">
+            Política de privacidad
+          </Link>
         </p>
       </footer>
     </div>

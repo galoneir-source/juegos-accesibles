@@ -10,11 +10,16 @@ function LoginForm() {
   const [state, action, pending] = useActionState(loginUser, undefined)
   const params = useSearchParams()
   const registered = params.get('registered')
+  const deleted = params.get('deleted')
   const callbackUrl = params.get('callbackUrl') || '/'
 
   useEffect(() => {
     if (registered) announcePolite('Cuenta creada con éxito. Por favor inicia sesión.')
   }, [registered])
+
+  useEffect(() => {
+    if (deleted) announcePolite('Tu cuenta y tus puntuaciones se han eliminado.')
+  }, [deleted])
 
   useEffect(() => {
     if (state?.error) announceAssertive(`Error: ${state.error}`)
@@ -25,6 +30,12 @@ function LoginForm() {
         {registered && (
           <p role="status" className="mb-4 p-3 rounded bg-[#1a3a1a] border border-[#22c55e] text-[#22c55e] text-sm">
             Cuenta creada con éxito. Por favor inicia sesión.
+          </p>
+        )}
+
+        {deleted && (
+          <p role="status" className="mb-4 p-3 rounded bg-[#1a3a1a] border border-[#22c55e] text-[#22c55e] text-sm">
+            Tu cuenta y tus puntuaciones se han eliminado.
           </p>
         )}
 
