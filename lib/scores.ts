@@ -13,7 +13,7 @@ export const GAME_IDS = [
   'tetris', 'frogger', 'asteroids', 'buscaminas', 'sokoban', 'tragaperras', 'quince',
   'solitario', 'pirata', 'egipto', 'samurai', 'vikingos', 'abismo', 'zona', 'castillo',
   'corp', 'templo', 'inca', 'grecia', 'bagdad', 'china', 'rusia', 'gin-rummy', 'poker',
-  'truco', 'parchis',
+  'truco', 'parchis', 'oeste',
 ] as const
 
 export type GameId = (typeof GAME_IDS)[number]

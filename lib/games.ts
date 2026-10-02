@@ -57,6 +57,7 @@ export const GAMES = [
   { id: 'bagdad', category: 'aventuras', href: '/bagdad', label: 'Las Mil y Una Noches', desc: 'Aventura de texto en la Bagdad de los cuentos. Explora 49 zonas del palacio maldito, derrota djinns y guardianes, y enfrenta al Califa de las Sombras. Elige entre Guerrero del Desierto, Hechicera o Ladrón de Bagdad.' },
   { id: 'china', category: 'aventuras', href: '/china', label: 'El Dragón del Cielo', desc: 'Aventura de texto en la China Imperial. Explora 49 zonas del Palacio Prohibido corrompido por la oscuridad, descubre sus secretos y derrota al Dragón del Cielo Oscuro. Elige entre Guerrero Imperial, Hechicera del Dragón o Espía de la Seda.' },
   { id: 'rusia', category: 'aventuras', href: '/rusia', label: 'El Último Bogatyr', desc: 'Aventura de texto en la Rusia Imperial y el folclore eslavo. Explora 49 zonas del palacio del Zar corrompido por Koschei el Inmortal, descubre sus secretos y derrota al hechicero de la muerte. Elige entre Bogatyr, Hechicera del Bosque o Ladrón del Zar.' },
+  { id: 'oeste', category: 'aventuras', href: '/oeste', label: 'El Forajido Inmortal', desc: 'Aventura de texto en el Lejano Oeste. Explora 49 zonas del pueblo y el fortín maldito, derrota forajidos y criaturas del desierto, y enfrenta a Deadwood Jack, el Forajido Inmortal. Elige entre Pistolero, Curandera Apache o Buscador de Oro.' },
 ]
 
 // Categorías de la portada, en el orden en que se muestran. Cada una es un
