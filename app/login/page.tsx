@@ -11,6 +11,7 @@ function LoginForm() {
   const params = useSearchParams()
   const registered = params.get('registered')
   const deleted = params.get('deleted')
+  const reset = params.get('reset')
   const callbackUrl = params.get('callbackUrl') || '/'
 
   useEffect(() => {
@@ -20,6 +21,10 @@ function LoginForm() {
   useEffect(() => {
     if (deleted) announcePolite('Tu cuenta y tus puntuaciones se han eliminado.')
   }, [deleted])
+
+  useEffect(() => {
+    if (reset) announcePolite('Contraseña cambiada. Ya puedes iniciar sesión.')
+  }, [reset])
 
   useEffect(() => {
     if (state?.error) announceAssertive(`Error: ${state.error}`)
@@ -36,6 +41,12 @@ function LoginForm() {
         {deleted && (
           <p role="status" className="mb-4 p-3 rounded bg-[#1a3a1a] border border-[#22c55e] text-[#22c55e] text-sm">
             Tu cuenta y tus puntuaciones se han eliminado.
+          </p>
+        )}
+
+        {reset && (
+          <p role="status" className="mb-4 p-3 rounded bg-[#1a3a1a] border border-[#22c55e] text-[#22c55e] text-sm">
+            Contraseña cambiada. Ya puedes iniciar sesión.
           </p>
         )}
 
@@ -87,7 +98,13 @@ function LoginForm() {
           </button>
         </form>
 
-        <p className="mt-6 text-sm text-[#888] text-center">
+        <p className="mt-6 text-sm text-center">
+          <Link href="/recuperar" className="text-[#ffd700] underline hover:text-white">
+            ¿Has olvidado tu contraseña?
+          </Link>
+        </p>
+
+        <p className="mt-3 text-sm text-[#888] text-center">
           ¿No tienes cuenta?{' '}
           <Link href="/register" className="text-[#ffd700] underline hover:text-white">
             Regístrate
