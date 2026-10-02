@@ -47,7 +47,7 @@ export default function PrivacidadPage() {
         <section aria-labelledby="uso">
           <h2 id="uso" className="text-lg font-bold mb-2">Para qué se usan</h2>
           <ul className="list-disc pl-6 space-y-2">
-            <li>El correo y la contraseña, para que puedas iniciar sesión. No se te enviarán correos.</li>
+            <li>El correo y la contraseña, para que puedas iniciar sesión. Solo recibirás un correo si pides recuperar tu contraseña.</li>
             <li>El nombre y las puntuaciones, para mostrarlos en tu perfil y en la tabla de líderes, que ven los demás usuarios registrados. Tu correo nunca se muestra a otras personas.</li>
             <li>Los datos técnicos, para la seguridad del sitio: limitar los intentos de acceso y de registro y diagnosticar fallos.</li>
           </ul>
