@@ -66,7 +66,13 @@ export default function PrivacidadPage() {
           <p className="mt-3">
             Los datos están en un servidor situado en España, alquilado a la empresa de alojamiento IONOS, que
             presta la infraestructura como encargada del tratamiento. Solo el responsable administra el
-            servidor y accede a los datos. No se envían fuera de la Unión Europea.
+            servidor y accede a los datos.
+          </p>
+          <p className="mt-3">
+            Cada día se guarda además una copia de seguridad cifrada en un repositorio privado de GitHub
+            (GitHub, Inc., Estados Unidos). La copia se cifra en el servidor antes de enviarla y la clave solo
+            la tiene el responsable, así que GitHub no puede leer su contenido. Salvo esa copia cifrada, tus
+            datos no salen de la Unión Europea.
           </p>
         </section>
 
@@ -84,7 +90,7 @@ export default function PrivacidadPage() {
           <p>
             Los datos de tu cuenta se conservan hasta que la elimines. Al eliminarla se borran de inmediato tu
             nombre, tu correo, tu contraseña y todas tus puntuaciones. Pueden permanecer hasta 30 días más en las
-            copias de seguridad, que se borran solas pasado ese plazo.
+            copias de seguridad (la del servidor y la cifrada de GitHub), que se borran solas pasado ese plazo.
           </p>
           <p className="mt-3">
             Los registros técnicos del servidor (dirección IP, fecha y página solicitada) se conservan cinco
