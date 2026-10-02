@@ -1,7 +1,7 @@
 'use client'
 
 import { useActionState, useEffect, useRef } from 'react'
-import { changePassword, deleteAccount } from '@/app/actions/account'
+import { changePassword, deleteAccount, updateProfile } from '@/app/actions/account'
 import { announceAssertive, announcePolite } from '@/lib/announce'
 
 const INPUT =
@@ -10,7 +10,8 @@ const ERROR = 'mb-4 p-3 rounded bg-[#3a1a1a] border border-[#ef4444] text-[#ef44
 const FOCUS_RING =
   'focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-[#ffd700] focus-visible:ring-offset-2 focus-visible:ring-offset-black'
 
-export default function AccountForms() {
+export default function AccountForms({ name, email }: { name: string; email: string }) {
+  const [profileState, profileAction, profilePending] = useActionState(updateProfile, undefined)
   const [pwState, pwAction, pwPending] = useActionState(changePassword, undefined)
   const [delState, delAction, delPending] = useActionState(deleteAccount, undefined)
   const pwForm = useRef<HTMLFormElement>(null)
@@ -24,11 +25,95 @@ export default function AccountForms() {
   }, [pwState])
 
   useEffect(() => {
+    if (profileState?.error) announceAssertive(`Error: ${profileState.error}`)
+    if (profileState?.success) announcePolite('Datos guardados.')
+  }, [profileState])
+
+  useEffect(() => {
     if (delState?.error) announceAssertive(`Error: ${delState.error}`)
   }, [delState])
 
   return (
     <>
+      <section aria-labelledby="datos-cuenta" className="mt-12">
+        <h3 id="datos-cuenta" className="text-base font-bold text-[#ffd700] mb-4">
+          Nombre y correo
+        </h3>
+
+        {profileState?.error && <p role="alert" className={ERROR}>{profileState.error}</p>}
+        {profileState?.success && (
+          <p role="status" className="mb-4 p-3 rounded bg-[#1a3a1a] border border-[#22c55e] text-[#22c55e] text-sm">
+            Datos guardados.
+          </p>
+        )}
+
+        {/* key: tras guardar, los campos vuelven a montarse con los valores nuevos. */}
+        <form key={`${name}|${email}`} action={profileAction} className="space-y-5">
+          <div>
+            <label htmlFor="profileName" className="block text-sm font-medium mb-1">
+              Nombre
+            </label>
+            <input
+              id="profileName"
+              name="name"
+              type="text"
+              autoComplete="name"
+              required
+              maxLength={50}
+              defaultValue={name}
+              className={INPUT}
+              aria-describedby="profileName-hint"
+            />
+            <span id="profileName-hint" className="text-xs text-[#999] mt-1 block">
+              Es el que ven los demás en la tabla de líderes
+            </span>
+          </div>
+          <div>
+            <label htmlFor="profileEmail" className="block text-sm font-medium mb-1">
+              Correo electrónico
+            </label>
+            <input
+              id="profileEmail"
+              name="email"
+              type="email"
+              autoComplete="email"
+              required
+              maxLength={254}
+              defaultValue={email}
+              className={INPUT}
+              aria-describedby="profileEmail-hint"
+            />
+            <span id="profileEmail-hint" className="text-xs text-[#999] mt-1 block">
+              Lo usas para iniciar sesión; no se muestra a nadie
+            </span>
+          </div>
+          <div>
+            <label htmlFor="profilePassword" className="block text-sm font-medium mb-1">
+              Contraseña actual
+            </label>
+            <input
+              id="profilePassword"
+              name="currentPassword"
+              type="password"
+              autoComplete="current-password"
+              className={INPUT}
+              aria-describedby="profilePassword-hint"
+            />
+            <span id="profilePassword-hint" className="text-xs text-[#999] mt-1 block">
+              Solo hace falta si cambias el correo
+            </span>
+          </div>
+          <button
+            type="submit"
+            disabled={profilePending}
+            aria-busy={profilePending}
+            className={`px-5 py-2.5 rounded bg-[#ffd700] text-black font-bold text-base hover:bg-[#ffec6e] disabled:opacity-50 cursor-pointer transition-colors ${FOCUS_RING}`}
+          >
+            {profilePending ? 'Guardando...' : 'Guardar cambios'}
+          </button>
+        </form>
+      </section>
+
       <section aria-labelledby="cambiar-contrasena" className="mt-12">
         <h3 id="cambiar-contrasena" className="text-base font-bold text-[#ffd700] mb-4">
           Cambiar contraseña

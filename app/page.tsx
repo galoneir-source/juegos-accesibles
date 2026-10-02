@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { auth, signOut } from '@/lib/auth'
+import { prisma } from '@/lib/db'
 import { CATEGORIES, GAMES, SITE_NAME, SITE_URL, socialMetadata } from '@/lib/games'
 
 const TITLE = 'Juegos accesibles para ciegos gratis: 50+ con NVDA, JAWS y VoiceOver'
@@ -44,6 +45,11 @@ const jsonLd = JSON.stringify({
 
 export default async function Home() {
   const session = await auth()
+  // El nombre se lee de la base de datos y no del token de sesión: así refleja
+  // un cambio de nombre al momento y una cuenta eliminada no aparece como abierta.
+  const user = session?.user?.id
+    ? await prisma.user.findUnique({ where: { id: session.user.id }, select: { name: true } })
+    : null
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -51,9 +57,9 @@ export default async function Home() {
       <header className="flex items-center justify-between px-6 py-4 border-b border-[#333]">
         <h1 className="text-2xl font-bold text-[#ffd700]">Juegos Accesibles</h1>
         <nav aria-label="Navegación de usuario" className="flex items-center gap-4 flex-wrap">
-          {session?.user ? (
+          {user ? (
             <>
-              <span className="text-sm text-[#888]">Hola, {session.user.name}</span>
+              <span className="text-sm text-[#888]">Hola, {user.name}</span>
               <Link href="/perfil" className="text-[#ffd700] underline hover:text-white text-sm">
                 Mi perfil
               </Link>
