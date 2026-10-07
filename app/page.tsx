@@ -6,7 +6,7 @@ import { CATEGORIES, GAMES, SITE_NAME, SITE_URL, socialMetadata } from '@/lib/ga
 
 const TITLE = 'Juegos accesibles para ciegos gratis: 50+ con NVDA, JAWS y VoiceOver'
 const DESCRIPTION =
-  'Más de 50 juegos gratis y accesibles para personas ciegas o con baja visión: Tetris, Wordle, cartas, puzles, juegos de audio y aventuras de texto. Solo teclado, sin instalar nada.'
+  'Más de 50 juegos gratis y accesibles para personas ciegas o con baja visión: Tetris, Wordle, cartas, puzles, audio y aventuras de texto. Solo con teclado.'
 
 export const metadata: Metadata = {
   title: { absolute: TITLE },

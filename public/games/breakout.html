@@ -37,6 +37,14 @@
       color: #fff;
       overflow: hidden;
     }
+    /* Región principal para lectores de pantalla. Repite la disposición del
+       body para que el contenido quede colocado igual que sin ella. */
+    main {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
     #hud {
       display: flex;
       gap: 60px;
@@ -125,6 +133,7 @@
 
 <a href="/" style="position:absolute;top:10px;left:16px;color:#ffd700;font-size:14px;text-decoration:underline;font-family:monospace;z-index:100;">← Volver al lobby</a>
 
+<main>
 <h1 class="sr-only">Breakout accesible</h1>
 
 <!-- ARIA live region: screen readers announce this -->
@@ -155,6 +164,8 @@
   <kbd>H</kbd> ayuda &nbsp;|&nbsp;
   <kbd>Esc</kbd> pausa
 </div>
+
+</main>
 
 <script>
 'use strict';
