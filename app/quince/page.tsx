@@ -250,7 +250,7 @@ export default function Quince() {
   const calcScore = Math.max(0, BASE_SCORE[diff] - moves)
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-black text-white p-4 gap-6">
+    <main id="main-content" className="min-h-screen flex flex-col items-center justify-center bg-black text-white p-4 gap-6">
       <div ref={assertRef} role="status" aria-live="assertive" aria-atomic="true" className="sr-only" />
       <div ref={politeRef} role="status" aria-live="polite"    aria-atomic="true" className="sr-only" />
 
@@ -332,6 +332,6 @@ export default function Quince() {
           </div>
         </div>
       )}
-    </div>
+    </main>
   )
 }
