@@ -32,22 +32,34 @@ async function checkPassword(userId: string, password: unknown): Promise<Result 
   return null
 }
 
+// Si updateProfile falla, la respuesta devuelve lo que se había escrito para que el
+// formulario lo conserve (la contraseña no: hay que volver a escribirla).
+type ProfileResult = Result & { values?: { name: string; email: string } }
+
 // Cambia el nombre y el correo. El correo es el identificador de inicio de
 // sesión, así que cambiarlo exige la contraseña actual; el nombre solo, no.
 // El sitio no envía correos: el nuevo no se verifica, igual que en el registro.
-export async function updateProfile(_state: unknown, formData: FormData): Promise<Result> {
+export async function updateProfile(_state: unknown, formData: FormData): Promise<ProfileResult> {
   const session = await auth()
   if (!session?.user?.id) return { error: 'Debes iniciar sesión.' }
   const userId = session.user.id
 
-  const name = (formData.get('name') as string | null)?.trim()
-  const email = (formData.get('email') as string | null)?.trim().toLowerCase()
-  if (!name || !email) return { error: 'El nombre y el correo no pueden quedar vacíos.' }
+  const rawName = formData.get('name')
+  const rawEmail = formData.get('email')
+  const values = {
+    name: typeof rawName === 'string' ? rawName : '',
+    email: typeof rawEmail === 'string' ? rawEmail : '',
+  }
+  const fail = (error: string): ProfileResult => ({ error, values })
+
+  const name = values.name.trim()
+  const email = values.email.trim().toLowerCase()
+  if (!name || !email) return fail('El nombre y el correo no pueden quedar vacíos.')
   if (name.length > MAX_NAME) {
-    return { error: `El nombre no puede tener más de ${MAX_NAME} caracteres.` }
+    return fail(`El nombre no puede tener más de ${MAX_NAME} caracteres.`)
   }
   if (email.length > MAX_EMAIL || !EMAIL_RE.test(email)) {
-    return { error: 'Introduce un correo electrónico válido.' }
+    return fail('Introduce un correo electrónico válido.')
   }
 
   const user = await prisma.user.findUnique({ where: { id: userId }, select: { email: true } })
@@ -55,9 +67,9 @@ export async function updateProfile(_state: unknown, formData: FormData): Promis
 
   if (email !== user.email) {
     const failed = await checkPassword(userId, formData.get('currentPassword'))
-    if (failed) return failed
+    if (failed?.error) return fail(failed.error)
     const taken = await prisma.user.findUnique({ where: { email }, select: { id: true } })
-    if (taken) return { error: 'Ya existe una cuenta con ese correo electrónico.' }
+    if (taken) return fail('Ya existe una cuenta con ese correo electrónico.')
   }
 
   await prisma.user.update({ where: { id: userId }, data: { name, email } })
