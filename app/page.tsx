@@ -4,7 +4,7 @@ import { auth, signOut } from '@/lib/auth'
 import { prisma } from '@/lib/db'
 import { CATEGORIES, GAMES, SITE_NAME, SITE_URL, socialMetadata } from '@/lib/games'
 
-const TITLE = 'Juegos accesibles para ciegos gratis: 50+ con NVDA, JAWS y VoiceOver'
+const TITLE = 'Juegos accesibles para ciegos gratis, con NVDA, JAWS y VoiceOver'
 const DESCRIPTION =
   'Más de 50 juegos gratis y accesibles para personas ciegas o con baja visión: Tetris, Wordle, cartas, puzles, audio y aventuras de texto. Solo con teclado.'
 
