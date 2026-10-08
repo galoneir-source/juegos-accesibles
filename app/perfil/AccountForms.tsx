@@ -49,7 +49,8 @@ export default function AccountForms({ name, email, passwordChanged }: { name: s
           </p>
         )}
 
-        {/* key: tras guardar, los campos vuelven a montarse con los valores nuevos. */}
+        {/* key: tras guardar, los campos vuelven a montarse con los valores nuevos.
+            Si hay un error, conservan lo que se había escrito (profileState.values). */}
         <form key={`${name}|${email}`} action={profileAction} className="space-y-5">
           <div>
             <label htmlFor="profileName" className="block text-sm font-medium mb-1">
@@ -62,7 +63,7 @@ export default function AccountForms({ name, email, passwordChanged }: { name: s
               autoComplete="name"
               required
               maxLength={50}
-              defaultValue={name}
+              defaultValue={profileState?.values?.name ?? name}
               className={INPUT}
               aria-describedby="profileName-hint"
             />
@@ -81,7 +82,7 @@ export default function AccountForms({ name, email, passwordChanged }: { name: s
               autoComplete="email"
               required
               maxLength={254}
-              defaultValue={email}
+              defaultValue={profileState?.values?.email ?? email}
               className={INPUT}
               aria-describedby="profileEmail-hint"
             />
