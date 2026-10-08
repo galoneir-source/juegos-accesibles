@@ -109,6 +109,9 @@ export function socialMetadata(title: string, description: string, path: string)
 // Los buscadores cortan la descripción hacia los 155-160 caracteres.
 const MAX_DESCRIPTION = 160
 
+// Y el título hacia los 60-65.
+const MAX_TITLE = 65
+
 // Recorta `text` a `max` caracteres: se queda con las frases enteras que
 // quepan y, si ni la primera cabe, corta por la última palabra y añade "…".
 function shorten(text: string, max: number): string {
@@ -131,13 +134,17 @@ export function gameMetadata(slug: string): Metadata {
   const game = GAMES.find((g) => g.href === `/${slug}`)
   if (!game) throw new Error(`Juego desconocido en gameMetadata: ${slug}`)
   const title = `${game.label} accesible para ciegos`
+  // Con el sufijo del sitio (plantilla de app/layout.tsx) los nombres largos
+  // pasan del ancho que muestran los buscadores: en ese caso va sin sufijo.
+  const fullTitle = `${title} — ${SITE_NAME}`
+  const tooLong = fullTitle.length > MAX_TITLE
   const intro = `${game.label}, juego gratis y accesible para personas ciegas, con teclado y lector de pantalla.`
   const description = `${intro} ${shorten(game.desc, MAX_DESCRIPTION - intro.length - 1)}`
   return {
-    title,
+    title: tooLong ? { absolute: title } : title,
     description,
     alternates: { canonical: game.href },
-    ...socialMetadata(`${title} — ${SITE_NAME}`, description, game.href),
+    ...socialMetadata(tooLong ? title : fullTitle, description, game.href),
   }
 }
 

@@ -35,6 +35,8 @@ const securityHeaders = [
 ];
 
 const nextConfig: NextConfig = {
+  // Sin la cabecera `X-Powered-By: Next.js`: no aporta nada al visitante.
+  poweredByHeader: false,
   // scripts/deploy.sh compila en .builds/<id> (NEXT_DIST_DIR) para no pisar la
   // build que está sirviendo producción; `next start` usa .next, que es un
   // symlink a la build activa.
