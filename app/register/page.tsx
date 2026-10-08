@@ -23,6 +23,17 @@ export default function RegisterPage() {
       <main id="main-content" className="w-full max-w-sm">
         <h1 className="text-2xl font-bold text-[#ffd700] mb-6">Crear cuenta</h1>
 
+        {/* Sin JavaScript no hay redirección: el aviso lleva el enlace. */}
+        {state?.success && (
+          <p role="status" className="mb-4 p-3 rounded bg-[#1a3a1a] border border-[#22c55e] text-[#22c55e] text-sm">
+            Cuenta creada.{' '}
+            <Link href="/login?registered=1" className="underline">
+              Inicia sesión
+            </Link>
+            .
+          </p>
+        )}
+
         {state?.error && (
           <p role="alert" className="mb-4 p-3 rounded bg-[#3a1a1a] border border-[#ef4444] text-[#ef4444] text-sm">
             {state.error}
