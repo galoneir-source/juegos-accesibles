@@ -71,6 +71,13 @@ case "${1:-}" in
 esac
 
 # --- Comprobaciones previas: producción debe corresponder a main ---
+# La versión mínima de Node está en "engines" de package.json. Con una anterior
+# npm solo avisa, así que se comprueba aquí antes de compilar.
+NODE_MIN=22
+NODE_MAJOR=$(node -p 'process.versions.node.split(".")[0]')
+[ "$NODE_MAJOR" -ge "$NODE_MIN" ] ||
+  die "Hace falta Node $NODE_MIN o posterior y este servidor tiene $(node -v). Actualiza Node antes de desplegar."
+
 if [ "${1:-}" != "--force" ]; then
   git fetch -q origin main
   [ -z "$(git status --porcelain)" ] || die "Hay cambios sin commitear. Usa --force si es intencionado."
