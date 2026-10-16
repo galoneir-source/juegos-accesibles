@@ -55,7 +55,7 @@ export default async function Home() {
     <div className="min-h-screen flex flex-col">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLd }} />
       <header className="flex items-center justify-between px-6 py-4 border-b border-[#333]">
-        <h1 className="text-2xl font-bold text-[#ffd700]">Juegos Accesibles</h1>
+        <h1 className="text-2xl font-bold text-[#ffd700]">Juegos accesibles gratis para personas ciegas</h1>
         <nav aria-label="Navegación de usuario" className="flex items-center gap-4 flex-wrap">
           {user ? (
             <>
@@ -99,7 +99,9 @@ export default async function Home() {
         {CATEGORIES.map((category) => (
           <section key={category.id} aria-labelledby={`cat-${category.id}`} className="mb-10">
             <h2 id={`cat-${category.id}`} className="text-xl font-bold mb-4">
-              {category.label}
+              <Link href={`/${category.slug}`} className="hover:text-[#ffd700] hover:underline">
+                {category.label}
+              </Link>
             </h2>
             <ul className="space-y-4" role="list">
               {GAMES.filter((game) => game.category === category.id).map((game) => (
