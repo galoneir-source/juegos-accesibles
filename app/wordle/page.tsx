@@ -103,7 +103,7 @@ const INSTRUCTIONS =
   'amarillo = letra en la palabra pero en otra posición, ' +
   'gris = letra que no está en la palabra. ' +
   'Usa el teclado físico o los botones en pantalla. ' +
-  'Tecla H repite instrucciones. Tecla R relee el último resultado.'
+  'Tecla 1 repite instrucciones. Tecla 2 relee el último resultado.'
 
 export default function WordlePage() {
   const [secret,      setSecret]      = useState('')
@@ -192,6 +192,17 @@ export default function WordlePage() {
     return () => window.removeEventListener('keydown', handleKey)
   }, [phase, submitGuess])
 
+  function readLast() {
+    const last = guesses[guesses.length - 1]
+    if (!last) {
+      announcePolite(`Aún no has hecho ningún intento. Tienes ${MAX_GUESSES}.`)
+      return
+    }
+    const desc = last.map(r => `${r.letter}, ${STATE_LABEL[r.state]}`).join('; ')
+    const rem = MAX_GUESSES - guesses.length
+    announcePolite(`Intento ${guesses.length}: ${desc}. ${rem} ${rem === 1 ? 'intento restante' : 'intentos restantes'}.`)
+  }
+
   function startGame() {
     const word = WORDS[Math.floor(Math.random() * WORDS.length)]
     setSecret(word)
@@ -219,7 +230,7 @@ export default function WordlePage() {
 
   if (phase === 'idle') {
     return (
-      <GameShell title="Wordle" instructions={INSTRUCTIONS} score={0}>
+      <GameShell title="Wordle" instructions={INSTRUCTIONS} score={0} helpKey="1" rereadKey="2">
         <div className="text-center space-y-6">
           <h2 className="text-xl text-[#ffd700]">Wordle en Español</h2>
           <p className="text-[#888] max-w-md mx-auto text-sm">{INSTRUCTIONS}</p>
@@ -231,7 +242,7 @@ export default function WordlePage() {
 
   if (phase === 'won' || phase === 'lost') {
     return (
-      <GameShell title="Wordle" instructions={INSTRUCTIONS} score={score}>
+      <GameShell title="Wordle" instructions={INSTRUCTIONS} score={score} onReread={readLast} helpKey="1" rereadKey="2">
         <div className="text-center space-y-6">
           <h2 className="text-2xl" style={{ color: phase === 'won' ? '#22c55e' : '#ef4444' }}>
             {phase === 'won' ? '¡Ganaste!' : 'Sin más intentos'}
@@ -258,7 +269,7 @@ export default function WordlePage() {
   }
 
   return (
-    <GameShell title="Wordle" instructions={INSTRUCTIONS} score={score} disableKeyShortcuts>
+    <GameShell title="Wordle" instructions={INSTRUCTIONS} score={score} onReread={readLast} helpKey="1" rereadKey="2">
       <div className="flex flex-col items-center gap-4">
 
         {/* Grid */}

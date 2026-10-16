@@ -13,24 +13,33 @@ interface GameShellProps {
   onHelp?: () => void
   onReread?: () => void
   disableKeyShortcuts?: boolean
+  // Teclas de los atajos comunes. Los juegos que usan H o R para jugar (el
+  // Ahorcado, que recibe cualquier letra, o la Generala, que tira con R) las
+  // cambian aquí para que una pulsación no haga dos cosas a la vez.
+  helpKey?: string
+  rereadKey?: string
 }
 
-export default function GameShell({ title, instructions, score, children, onHelp, onReread, disableKeyShortcuts }: GameShellProps) {
+export default function GameShell({
+  title, instructions, score, children, onHelp, onReread, disableKeyShortcuts,
+  helpKey = 'h', rereadKey = 'r',
+}: GameShellProps) {
   useEffect(() => {
     if (disableKeyShortcuts) return
     function handleKey(e: KeyboardEvent) {
       if ((e.target as HTMLElement).tagName === 'INPUT') return
-      if (e.key === 'h' || e.key === 'H') {
+      const key = e.key.toLowerCase()
+      if (key === helpKey) {
         onHelp?.()
         announcePolite(instructions)
       }
-      if (e.key === 'r' || e.key === 'R') {
+      if (key === rereadKey) {
         onReread?.()
       }
     }
     window.addEventListener('keydown', handleKey)
     return () => window.removeEventListener('keydown', handleKey)
-  }, [instructions, onHelp, onReread, disableKeyShortcuts])
+  }, [instructions, onHelp, onReread, disableKeyShortcuts, helpKey, rereadKey])
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -47,8 +56,8 @@ export default function GameShell({ title, instructions, score, children, onHelp
       </header>
 
       <div className="bg-[#111] px-6 py-2 text-sm text-[#888] border-b border-[#222]" role="note">
-        Tecla <kbd className="bg-[#333] text-[#f0f0f0] px-1 rounded">H</kbd> = instrucciones &nbsp;|&nbsp;
-        Tecla <kbd className="bg-[#333] text-[#f0f0f0] px-1 rounded">R</kbd> = releer estado
+        Tecla <kbd className="bg-[#333] text-[#f0f0f0] px-1 rounded">{helpKey.toUpperCase()}</kbd> = instrucciones &nbsp;|&nbsp;
+        Tecla <kbd className="bg-[#333] text-[#f0f0f0] px-1 rounded">{rereadKey.toUpperCase()}</kbd> = releer estado
       </div>
 
       <main id="main-content" className="flex-1 px-6 py-8 max-w-2xl mx-auto w-full">

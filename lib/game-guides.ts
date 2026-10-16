@@ -92,7 +92,7 @@ export const GAME_GUIDES: Record<string, GameGuide> = {
   // ── Palabras y números ─────────────────────────────────────────────────────
   'hangman': {
     como: 'El Ahorcado de siempre. Pulsas una letra y el lector de pantalla te dice si está en la palabra y cómo va quedando, con los huecos que faltan, y cuántos intentos te quedan. Un sonido distinto marca el acierto y el fallo, así que no hace falta mirar el dibujo.',
-    controles: 'Pulsa cualquier letra del teclado para probarla. El botón «Pedir pista» te da una pista a cambio de 5 puntos. H repite las instrucciones.',
+    controles: 'Pulsa cualquier letra del teclado para probarla. El botón «Pedir pista» te da una pista a cambio de 5 puntos. Como todas las letras sirven para jugar, los atajos van con números: 1 repite las instrucciones y 2 relee la palabra y las letras usadas.',
     progreso: 'Tienes 6 intentos fallidos antes de perder.',
   },
   'mastermind': {
@@ -101,8 +101,8 @@ export const GAME_GUIDES: Record<string, GameGuide> = {
     progreso: 'El número secreto tiene 4 cifras distintas y tienes 10 intentos para adivinarlo.',
   },
   'wordle': {
-    como: 'Wordle en español. Los colores de la versión original no sirven si no ves la pantalla, así que aquí el lector de pantalla te lee el resultado de cada intento letra a letra: si está en su sitio, si está en la palabra pero en otro sitio o si no está. Con R vuelves a escuchar el último resultado cuando quieras.',
-    controles: 'Escribe la palabra con el teclado (o con los botones en pantalla) y pulsa Enter. R relee el último resultado y H repite las instrucciones.',
+    como: 'Wordle en español. Los colores de la versión original no sirven si no ves la pantalla, así que aquí el lector de pantalla te lee el resultado de cada intento letra a letra: si está en su sitio, si está en la palabra pero en otro sitio o si no está. Con la tecla 2 vuelves a escuchar el último resultado cuando quieras.',
+    controles: 'Escribe la palabra con el teclado (o con los botones en pantalla) y pulsa Enter. 2 relee el último resultado y 1 repite las instrucciones.',
     progreso: 'Tienes 6 intentos para adivinar una palabra de 5 letras.',
   },
   'mates-rapidas': {
@@ -161,7 +161,7 @@ export const GAME_GUIDES: Record<string, GameGuide> = {
   },
   'generala': {
     como: 'La Generala, prima del Yahtzee, con cinco dados. Cada dado suena con una nota según su valor al tirarlo, y el lector de pantalla te dice el resultado de la tirada, qué dados tienes guardados y cuántos puntos daría cada categoría.',
-    controles: 'R o Espacio para tirar los dados; teclas del 1 al 5 para guardar o soltar cada dado; flechas arriba y abajo para recorrer las categorías y Enter para anotar.',
+    controles: 'R o Espacio para tirar los dados; teclas del 1 al 5 para guardar o soltar cada dado; flechas arriba y abajo para recorrer las categorías y Enter para anotar. E relee el turno y los dados, y H repite las instrucciones.',
     progreso: '13 turnos con hasta 3 tiradas cada uno. Si la sección de arriba suma 63 o más, ganas 35 puntos extra. La Generala (cinco dados iguales) vale 50 puntos, o 100 si sale en la primera tirada del turno.',
   },
   'bingo': {
