@@ -153,3 +153,7 @@ ls -1 "$BUILDS" | sort | grep -vx "$ID" | head -n -"$KEEP" | while read -r old; 
 done
 
 log "Desplegado $ID ($(cut -d' ' -f2- "$DIR/DEPLOY_COMMIT"))"
+
+# --- Aviso a los buscadores (IndexNow) de las páginas que han cambiado ---
+# Un fallo aquí no deshace el despliegue: solo se avisa y se sigue.
+PORT="$PORT" node scripts/indexnow.mjs || log "Aviso: IndexNow ha fallado; el despliegue está hecho. Reintenta con: node scripts/indexnow.mjs"
