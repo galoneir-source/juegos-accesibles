@@ -49,3 +49,6 @@ next-env.d.ts
 
 # logs de servidores de prueba (nunca en public/)
 nohup.out
+
+# IndexNow: huellas del último envío (scripts/indexnow.mjs)
+/.indexnow-state.json
