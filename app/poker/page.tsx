@@ -611,7 +611,7 @@ export default function PokerPage() {
 
   if (phase === 'idle') {
     return (
-      <GameShell title="Póker Texas Hold'em" instructions={INSTRUCTIONS} score={0} disableKeyShortcuts>
+      <GameShell title="Póker Texas Hold'em" instructions={INSTRUCTIONS} score={0} disableKeyShortcuts helpKey={null} rereadKey="i">
         <div className="text-center space-y-6">
           <h2 className="text-xl text-[#ffd700]">Póker Texas Hold&apos;em</h2>
           <p className="text-[#888] text-sm leading-relaxed max-w-lg mx-auto">{INSTRUCTIONS}</p>
@@ -634,7 +634,7 @@ export default function PokerPage() {
   }
 
   return (
-    <GameShell title="Póker Texas Hold'em" instructions={INSTRUCTIONS} score={score} disableKeyShortcuts>
+    <GameShell title="Póker Texas Hold'em" instructions={INSTRUCTIONS} score={score} disableKeyShortcuts helpKey={null} rereadKey="i">
       <div className="space-y-5">
 
         {/* Fichas y bote */}

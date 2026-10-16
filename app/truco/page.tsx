@@ -684,7 +684,7 @@ export default function TrucoPage() {
 
   if (phase === 'idle') {
     return (
-      <GameShell title="Truco" instructions={INSTRUCTIONS} score={0} disableKeyShortcuts>
+      <GameShell title="Truco" instructions={INSTRUCTIONS} score={0} disableKeyShortcuts helpKey={null} rereadKey="i">
         <div className="text-center space-y-6">
           <h2 className="text-xl text-[#ffd700]">Truco Argentino</h2>
           <p className="text-[#888] text-sm leading-relaxed max-w-lg mx-auto">{INSTRUCTIONS}</p>
@@ -707,7 +707,7 @@ export default function TrucoPage() {
   }
 
   return (
-    <GameShell title="Truco" instructions={INSTRUCTIONS} score={playerScore} disableKeyShortcuts>
+    <GameShell title="Truco" instructions={INSTRUCTIONS} score={playerScore} disableKeyShortcuts helpKey={null} rereadKey="i">
       <div className="space-y-5">
 
         {/* Marcador */}

@@ -282,7 +282,7 @@ export default function PenaltisPage() {
 
   if (phase === 'idle') {
     return (
-      <GameShell title="Penaltis" instructions={INSTRUCTIONS} score={0} disableKeyShortcuts>
+      <GameShell title="Penaltis" instructions={INSTRUCTIONS} score={0} disableKeyShortcuts rereadKey={null}>
         <div className="space-y-6">
           <h2 className="text-xl text-[#ffd700]">Tiros de Penalti</h2>
           <p className="text-[#888] text-sm leading-relaxed">{INSTRUCTIONS}</p>
@@ -300,7 +300,7 @@ export default function PenaltisPage() {
     const result = pg > ag ? '¡Ganaste!' : pg === ag ? 'Empate' : '¡Perdiste!'
     const resultColor = pg > ag ? '#22c55e' : pg === ag ? '#ffd700' : '#ef4444'
     return (
-      <GameShell title="Penaltis" instructions={INSTRUCTIONS} score={score} disableKeyShortcuts>
+      <GameShell title="Penaltis" instructions={INSTRUCTIONS} score={score} disableKeyShortcuts rereadKey={null}>
         <div className="text-center space-y-6">
           <h2 className="text-3xl font-bold" style={{ color: resultColor }}>{result}</h2>
           <p className="text-xl">
@@ -328,7 +328,7 @@ export default function PenaltisPage() {
   const label = isShooting ? 'TÚ DISPARAS — elige dirección' : 'EL RIVAL DISPARA — ¿hacia dónde te lanzas?'
 
   return (
-    <GameShell title="Penaltis" instructions={INSTRUCTIONS} score={score} disableKeyShortcuts>
+    <GameShell title="Penaltis" instructions={INSTRUCTIONS} score={score} disableKeyShortcuts rereadKey={null}>
       <div className="space-y-2">
         <div className="flex justify-between text-xs text-[#999] mb-1">
           <span>TÚ</span>

@@ -11,7 +11,7 @@ const SOUND_NAMES = ['Do', 'Re', 'Mi', 'Fa', 'Sol', 'La', 'Si', 'Do alto']
 const INITIAL_LENGTH = 3
 const MAX_LENGTH = 8
 
-const INSTRUCTIONS = 'Memory de Sonidos. Escucharás una secuencia de tonos. Luego debes repetirla en el mismo orden usando los botones numerados del 1 al 8, o presionando esas teclas en el teclado. Cada ronda añade un tono más. Tecla H repite instrucciones.'
+const INSTRUCTIONS = 'Memory de Sonidos. Escucharás una secuencia de tonos. Luego debes repetirla en el mismo orden usando los botones numerados del 1 al 8, o presionando esas teclas en el teclado. Cada ronda añade un tono más. Tecla H repite instrucciones. Tecla R relee el nivel y la puntuación.'
 
 type Phase = 'idle' | 'playing' | 'waiting' | 'input' | 'win' | 'lose'
 
@@ -104,6 +104,11 @@ export default function MemorySonidosPage() {
 
   useEffect(() => () => { if (timeoutRef.current) clearTimeout(timeoutRef.current) }, [])
 
+  function readState() {
+    const progress = phase === 'input' ? ` Llevas ${inputSeq.length} de ${sequence.length} tonos.` : ''
+    announcePolite(`Nivel ${level}: secuencia de ${sequence.length} tonos.${progress} Puntos: ${score}.`)
+  }
+
   async function handleSave() {
     const result = await saveScore('memory', score)
     if (result?.error) {
@@ -153,7 +158,7 @@ export default function MemorySonidosPage() {
   }
 
   return (
-    <GameShell title="Memory de Sonidos" instructions={INSTRUCTIONS} score={score}>
+    <GameShell title="Memory de Sonidos" instructions={INSTRUCTIONS} score={score} onReread={readState}>
       <div className="space-y-6">
         <div className="flex justify-between items-center">
           <p className="text-sm text-[#888]">Nivel {level} — secuencia de {level} tonos</p>

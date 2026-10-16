@@ -369,7 +369,7 @@ export default function SolitarioPage() {
   }
 
   if (!state) return (
-    <GameShell title="Solitario" instructions={INSTRUCTIONS} score={0} disableKeyShortcuts>
+    <GameShell title="Solitario" instructions={INSTRUCTIONS} score={0} disableKeyShortcuts helpKey="i">
       <div className="text-center space-y-6">
         <h2 className="text-xl text-[#ffd700]">Solitario Klondike</h2>
         <p className="text-[#888] text-sm leading-relaxed max-w-md mx-auto">{INSTRUCTIONS}</p>
@@ -379,7 +379,7 @@ export default function SolitarioPage() {
   )
 
   return (
-    <GameShell title="Solitario" instructions={INSTRUCTIONS} score={state.score} disableKeyShortcuts>
+    <GameShell title="Solitario" instructions={INSTRUCTIONS} score={state.score} disableKeyShortcuts helpKey="i">
       <div className="space-y-3">
 
         {/* Top row: stock, waste, foundations */}

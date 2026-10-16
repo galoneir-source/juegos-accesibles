@@ -451,7 +451,7 @@ export default function GorillasPage() {
 
   if (phase === 'idle') {
     return (
-      <GameShell title="Gorilas" instructions={INSTRUCTIONS} score={0} disableKeyShortcuts>
+      <GameShell title="Gorilas" instructions={INSTRUCTIONS} score={0} disableKeyShortcuts rereadKey={null}>
         <div className="space-y-6">
           <h2 className="text-xl text-[#ffd700]">Gorilas</h2>
           <p className="text-[#888] text-sm leading-relaxed">{INSTRUCTIONS}</p>
@@ -462,7 +462,7 @@ export default function GorillasPage() {
   }
 
   return (
-    <GameShell title="Gorilas" instructions={INSTRUCTIONS} score={score} disableKeyShortcuts>
+    <GameShell title="Gorilas" instructions={INSTRUCTIONS} score={score} disableKeyShortcuts rereadKey={null}>
       <div className="space-y-4">
 
         {/* Scoreboard */}

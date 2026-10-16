@@ -527,7 +527,7 @@ export default function BatallaNavalPage() {
   if (phase === 'placement') {
     const currentShip = FLEET[shipIdx]
     return (
-      <GameShell title="Batalla Naval" instructions={INSTRUCTIONS} score={0} disableKeyShortcuts>
+      <GameShell title="Batalla Naval" instructions={INSTRUCTIONS} score={0} disableKeyShortcuts rereadKey={null}>
         <div className="space-y-4">
           <div className="text-sm text-[#888]">
             Barco {shipIdx + 1} de {FLEET.length}:{' '}
