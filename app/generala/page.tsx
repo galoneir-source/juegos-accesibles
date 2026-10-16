@@ -92,7 +92,8 @@ const INSTRUCTIONS =
   'Pulsa R o Espacio para tirar. Teclas 1-5 para guardar o liberar un dado. ' +
   'Flechas ↑↓ para navegar categorías, Enter para anotar. ' +
   'Sección superior: bonus de 35 pts si sumas 63 o más. ' +
-  'Generala (×5 iguales): 50 pts, o 100 si es el primer tiro del turno.'
+  'Generala (×5 iguales): 50 pts, o 100 si es el primer tiro del turno. ' +
+  'Tecla E relee el turno y los dados. Tecla H repite instrucciones.'
 
 // ── Component ─────────────────────────────────────────────────────────────────
 
@@ -286,7 +287,7 @@ export default function GeneralaPage() {
 
   if (phase === 'idle') {
     return (
-      <GameShell title="Generala" instructions={INSTRUCTIONS} score={0}>
+      <GameShell title="Generala" instructions={INSTRUCTIONS} score={0} rereadKey="e">
         <div className="text-center space-y-6">
           <h2 className="text-xl text-[#ffd700]">Generala</h2>
           <p className="text-[#888] text-sm max-w-sm mx-auto">
@@ -309,7 +310,7 @@ export default function GeneralaPage() {
 
   if (phase === 'done') {
     return (
-      <GameShell title="Generala" instructions={INSTRUCTIONS} score={total}>
+      <GameShell title="Generala" instructions={INSTRUCTIONS} score={total} rereadKey="e">
         <div className="text-center space-y-4">
           <h2 className="text-2xl text-[#ffd700]">Partida terminada</h2>
           <p className="text-3xl font-mono font-bold" aria-live="polite">
@@ -363,6 +364,7 @@ export default function GeneralaPage() {
       title="Generala"
       instructions={INSTRUCTIONS}
       score={total}
+      rereadKey="e"
       onReread={() =>
         announcePolite(
           `Turno ${turn} de ${N_TURNS}. ${rollsLeft} tirada${rollsLeft !== 1 ? 's' : ''} restante${rollsLeft !== 1 ? 's' : ''}. ` +

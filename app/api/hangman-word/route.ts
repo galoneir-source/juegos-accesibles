@@ -26,11 +26,18 @@ function cleanWikitext(text: string): string {
     .trim()
 }
 
+// Wikimedia responde 429 a las peticiones sin un User-Agent propio (el de
+// fetch de Node es genérico), y entonces el juego siempre caía en la lista de
+// reserva. Su política pide nombre de la herramienta y un contacto.
+const USER_AGENT = 'JuegosAccesibles/1.0 (https://juegos.dvillalon.com; contacto@dvillalon.com)'
+
+const MAX_HINT = 80
+
 async function getDefinition(word: string): Promise<string | null> {
   try {
     const res = await fetch(
       `https://es.wiktionary.org/w/api.php?action=parse&page=${encodeURIComponent(word)}&prop=wikitext&format=json`,
-      { signal: AbortSignal.timeout(4000) },
+      { headers: { 'User-Agent': USER_AGENT }, signal: AbortSignal.timeout(4000) },
     )
     if (!res.ok) return null
     const data = await res.json()
@@ -43,9 +50,13 @@ async function getDefinition(word: string): Promise<string | null> {
     const cleaned = cleanWikitext(match[1])
     if (cleaned.length < 10) return null
 
-    // First sentence only, max 80 chars
+    // First sentence only, max 80 chars, cut at a word boundary
     const sentence = cleaned.split(/[.;]/)[0].trim()
-    return sentence.length > 10 ? sentence.slice(0, 80) : null
+    if (sentence.length <= 10) return null
+    if (sentence.length <= MAX_HINT) return sentence
+    const cut = sentence.slice(0, MAX_HINT + 1)
+    const end = cut.lastIndexOf(' ')
+    return (end > 0 ? cut.slice(0, end) : cut.slice(0, MAX_HINT)).replace(/[\s,:(]+$/, '') + '…'
   } catch {
     return null
   }
@@ -66,7 +77,7 @@ export async function GET(request: Request) {
   try {
     const res = await fetch(
       'https://random-word-api.herokuapp.com/word?lang=es&number=30',
-      { signal: AbortSignal.timeout(5000) },
+      { headers: { 'User-Agent': USER_AGENT }, signal: AbortSignal.timeout(5000) },
     )
     if (!res.ok) throw new Error('word API failed')
     const words: string[] = await res.json()

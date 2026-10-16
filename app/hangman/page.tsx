@@ -21,7 +21,7 @@ const FALLBACK_WORDS = [
 ]
 
 const MAX_ERRORS = 6
-const INSTRUCTIONS = 'Ahorcado. Adivina la palabra letra a letra. Presiona una letra del teclado para intentarla. Usa el botón "Pedir pista" para obtener una pista (resta 5 puntos). Tienes 6 intentos. Tecla H repite instrucciones.'
+const INSTRUCTIONS = 'Ahorcado. Adivina la palabra letra a letra. Presiona una letra del teclado para intentarla. Usa el botón "Pedir pista" para obtener una pista (resta 5 puntos). Tienes 6 intentos. Tecla 1 repite instrucciones. Tecla 2 relee la palabra y las letras usadas.'
 
 export default function HangmanPage() {
   const [wordData, setWordData] = useState(FALLBACK_WORDS[0])
@@ -132,7 +132,7 @@ export default function HangmanPage() {
 
   if (!started) {
     return (
-      <GameShell title="Ahorcado" instructions={INSTRUCTIONS} score={0}>
+      <GameShell title="Ahorcado" instructions={INSTRUCTIONS} score={0} helpKey="1" rereadKey="2">
         <div className="text-center space-y-6">
           <h2 className="text-xl text-[#ffd700]">Ahorcado</h2>
           <p className="text-[#888]">{INSTRUCTIONS}</p>
@@ -146,7 +146,7 @@ export default function HangmanPage() {
 
   if (finished) {
     return (
-      <GameShell title="Ahorcado" instructions={INSTRUCTIONS} score={score}>
+      <GameShell title="Ahorcado" instructions={INSTRUCTIONS} score={score} helpKey="1" rereadKey="2">
         <div className="text-center space-y-6">
           <h2 className="text-2xl" style={{ color: won ? '#22c55e' : '#ef4444' }}>
             {won ? '¡Ganaste!' : 'Perdiste'}
@@ -172,7 +172,7 @@ export default function HangmanPage() {
   const LETTERS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZÁÉÍÓÚÜÑ'.split('')
 
   return (
-    <GameShell title="Ahorcado" instructions={INSTRUCTIONS} score={score} onReread={readState}>
+    <GameShell title="Ahorcado" instructions={INSTRUCTIONS} score={score} onReread={readState} helpKey="1" rereadKey="2">
       <div className="space-y-6">
         <p className="text-sm text-[#888]">Intentos restantes: <strong className="text-[#f0f0f0]">{remaining}</strong></p>
 
