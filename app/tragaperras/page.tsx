@@ -312,7 +312,7 @@ export default function Tragaperras() {
       <div ref={assertRef} role="status" aria-live="assertive" aria-atomic="true" className="sr-only" />
       <div ref={politeRef} role="status" aria-live="polite"    aria-atomic="true" className="sr-only" />
 
-      <h1 className="text-2xl font-bold text-[#ffd700]">Tragaperras</h1>
+      <h1 className="text-2xl font-bold text-[#ffd700]">Tragaperras accesible para ciegos</h1>
 
       {phase === 'start' && (
         <div className="text-center space-y-4 max-w-md">

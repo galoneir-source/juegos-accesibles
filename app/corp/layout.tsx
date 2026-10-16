@@ -1,7 +1,13 @@
+import GameExtras from '@/components/games/GameExtras'
 import { gameMetadata } from '@/lib/games'
 
 export const metadata = gameMetadata('corp')
 
 export default function Layout({ children }: { children: React.ReactNode }) {
-  return children
+  return (
+    <>
+      {children}
+      <GameExtras slug="corp" />
+    </>
+  )
 }

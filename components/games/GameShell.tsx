@@ -35,7 +35,7 @@ export default function GameShell({ title, instructions, score, children, onHelp
   return (
     <div className="min-h-screen flex flex-col">
       <header className="flex items-center justify-between px-6 py-4 border-b border-[#333]">
-        <h1 className="text-xl font-bold text-[#ffd700]">{title}</h1>
+        <h1 className="text-xl font-bold text-[#ffd700]">{title} accesible para ciegos</h1>
         <div className="flex items-center gap-4">
           <span aria-live="polite" aria-label={`Puntuación: ${score}`} className="text-lg font-mono">
             Puntos: <strong>{score}</strong>
