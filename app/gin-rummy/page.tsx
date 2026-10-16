@@ -572,7 +572,7 @@ export default function GinRummyPage() {
 
   if (phase === 'idle') {
     return (
-      <GameShell title="Gin Rummy" instructions={INSTRUCTIONS} score={0} disableKeyShortcuts>
+      <GameShell title="Gin Rummy" instructions={INSTRUCTIONS} score={0} disableKeyShortcuts helpKey="i" rereadKey="h">
         <div className="text-center space-y-6">
           <h2 className="text-xl text-[#ffd700]">Gin Rummy</h2>
           <p className="text-[#888] text-sm leading-relaxed max-w-lg mx-auto">{INSTRUCTIONS}</p>
@@ -596,7 +596,7 @@ export default function GinRummyPage() {
     'text-[#888]'
 
   return (
-    <GameShell title="Gin Rummy" instructions={INSTRUCTIONS} score={score} disableKeyShortcuts>
+    <GameShell title="Gin Rummy" instructions={INSTRUCTIONS} score={score} disableKeyShortcuts helpKey="i" rereadKey="h">
       <div className="space-y-6">
 
         {/* IA */}

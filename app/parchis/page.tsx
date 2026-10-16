@@ -331,7 +331,7 @@ export default function ParchisPage() {
 
   if (phase === 'idle') {
     return (
-      <GameShell title="Parchís" instructions={INSTRUCTIONS} score={0} disableKeyShortcuts>
+      <GameShell title="Parchís" instructions={INSTRUCTIONS} score={0} disableKeyShortcuts helpKey={null} rereadKey="i">
         <div className="text-center space-y-6">
           <h2 className="text-xl text-[#ffd700]">Parchís</h2>
           <p className="text-[#888] text-sm leading-relaxed max-w-lg mx-auto">{INSTRUCTIONS}</p>
@@ -351,7 +351,7 @@ export default function ParchisPage() {
   const aiGoal = aiPieces.filter(s => s >= GOAL).length
 
   return (
-    <GameShell title="Parchís" instructions={INSTRUCTIONS} score={score} disableKeyShortcuts>
+    <GameShell title="Parchís" instructions={INSTRUCTIONS} score={score} disableKeyShortcuts helpKey={null} rereadKey="i">
       <div className="space-y-5">
 
         {/* Progreso */}

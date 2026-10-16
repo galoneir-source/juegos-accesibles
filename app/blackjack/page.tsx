@@ -272,7 +272,7 @@ export default function BlackjackPage() {
 
   if (phase === 'idle') {
     return (
-      <GameShell title="Blackjack" instructions={INSTRUCTIONS} score={0} disableKeyShortcuts>
+      <GameShell title="Blackjack" instructions={INSTRUCTIONS} score={0} disableKeyShortcuts helpKey="i">
         <div className="text-center space-y-6">
           <h2 className="text-xl text-[#ffd700]">Blackjack</h2>
           <p className="text-[#888] text-sm leading-relaxed max-w-md mx-auto">{INSTRUCTIONS}</p>
@@ -288,7 +288,7 @@ export default function BlackjackPage() {
   const outcomeColor = !outcome ? '' : ['win', 'double_win', 'blackjack'].includes(outcome) ? 'text-[#22c55e]' : outcome === 'push' ? 'text-[#888]' : 'text-[#ef4444]'
 
   return (
-    <GameShell title="Blackjack" instructions={INSTRUCTIONS} score={score} disableKeyShortcuts>
+    <GameShell title="Blackjack" instructions={INSTRUCTIONS} score={score} disableKeyShortcuts helpKey="i">
       <div className="space-y-8">
 
         {/* Dealer */}

@@ -70,7 +70,7 @@ export const GAME_GUIDES: Record<string, GameGuide> = {
   // ── Juegos de audio ────────────────────────────────────────────────────────
   'memory-sonidos': {
     como: 'Un juego de memoria auditiva en el que no hay nada que ver: el juego toca una secuencia de tonos y tú la repites en el mismo orden. Cada uno de los 8 botones tiene su nota, así que con un poco de práctica reconoces cada tono por el oído.',
-    controles: 'Teclas del 1 al 8 (o los botones numerados) para tocar cada tono. H repite las instrucciones.',
+    controles: 'Teclas del 1 al 8 (o los botones numerados) para tocar cada tono. R relee el nivel y la puntuación, y H repite las instrucciones.',
     progreso: 'Cada ronda añade un tono más a la secuencia, hasta 8. Un error termina la partida.',
   },
   'laberinto-audio': {
