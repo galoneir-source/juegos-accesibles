@@ -34,7 +34,7 @@ healthy() {
   for _ in $(seq 30); do
     sleep 1
     curl -sf -o /dev/null "http://127.0.0.1:$PORT/" &&
-      curl -sf -o /dev/null "http://127.0.0.1:$PORT/hangman" && return 0
+      curl -sf -o /dev/null "http://127.0.0.1:$PORT/ahorcado" && return 0
   done
   return 1
 }

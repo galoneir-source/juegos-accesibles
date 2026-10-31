@@ -54,6 +54,11 @@ const nextConfig: NextConfig = {
       { source: "/games/breakout.html", destination: "/breakout", permanent: true },
       { source: "/games/rpg", destination: "/mazmorra-oscura", permanent: true },
       { source: "/games/rpg/index.html", destination: "/mazmorra-oscura", permanent: true },
+      // Rutas antiguas que no describían el juego (una en inglés). El id
+      // interno ('hangman', 'rusia') no cambia: lo usan las puntuaciones
+      // guardadas en la BD y las partidas en localStorage.
+      { source: "/hangman", destination: "/ahorcado", permanent: true },
+      { source: "/rusia", destination: "/el-ultimo-bogatyr", permanent: true },
     ];
   },
   async headers() {
