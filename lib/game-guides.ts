@@ -90,7 +90,7 @@ export const GAME_GUIDES: Record<string, GameGuide> = {
   },
 
   // ── Palabras y números ─────────────────────────────────────────────────────
-  'hangman': {
+  'ahorcado': {
     como: 'El Ahorcado de siempre. Pulsas una letra y el lector de pantalla te dice si está en la palabra y cómo va quedando, con los huecos que faltan, y cuántos intentos te quedan. Un sonido distinto marca el acierto y el fallo, así que no hace falta mirar el dibujo.',
     controles: 'Pulsa cualquier letra del teclado para probarla. El botón «Pedir pista» te da una pista a cambio de 5 puntos. Como todas las letras sirven para jugar, los atajos van con números: 1 repite las instrucciones y 2 relee la palabra y las letras usadas.',
     progreso: 'Tienes 6 intentos fallidos antes de perder.',
@@ -351,7 +351,7 @@ export const GAME_GUIDES: Record<string, GameGuide> = {
     magia: { quien: 'La Bruja del Mar', orden: 'maldecir', efecto: 'lanzar un hechizo' },
     explorar: { quien: 'El Navegante', orden: 'explorar' },
   }),
-  'rusia': aventura({
+  'el-ultimo-bogatyr': aventura({
     ambiente: 'La Rusia de los cuentos eslavos: 49 zonas del palacio del Zar, corrompido por Koschei el Inmortal.',
     zonas: 'una zona',
     jefe: 'Koschei',

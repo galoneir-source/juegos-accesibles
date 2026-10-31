@@ -38,7 +38,7 @@ reload_and_check() {
   for _ in $(seq 30); do
     sleep 1
     if curl -sf -o /dev/null "http://localhost:$PORT/" &&
-       curl -sf -o /dev/null "http://localhost:$PORT/hangman"; then
+       curl -sf -o /dev/null "http://localhost:$PORT/ahorcado"; then
       # La página debe apuntar a chunks que existan en la build activa.
       chunk=$(curl -sf "http://localhost:$PORT/" | grep -o '/_next/static/[^"]*\.js' | head -1)
       [ -n "$chunk" ] && curl -sf -o /dev/null "http://localhost:$PORT$chunk" && return 0
