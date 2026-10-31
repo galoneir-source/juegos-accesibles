@@ -335,14 +335,14 @@ export default function BlackjackPage() {
         {/* Actions */}
         {isPlaying && (
           <div className="flex flex-wrap gap-3" role="group" aria-label="Acciones disponibles">
-            <Button onClick={handleHit} aria-label="Pedir carta (tecla P)">
+            <Button onClick={handleHit} aria-label="Tecla P: Pedir carta">
               P — Pedir carta
             </Button>
-            <Button variant="secondary" onClick={handleStand} aria-label="Plantarse (tecla S)">
+            <Button variant="secondary" onClick={handleStand} aria-label="Tecla S: Plantarse">
               S — Plantarse
             </Button>
             {canDouble && (
-              <Button variant="secondary" onClick={handleDouble} aria-label="Doblar apuesta (tecla D)">
+              <Button variant="secondary" onClick={handleDouble} aria-label="Tecla D: Doblar apuesta">
                 D — Doblar
               </Button>
             )}

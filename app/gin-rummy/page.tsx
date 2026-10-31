@@ -65,6 +65,13 @@ function cardLabel(card: Card): string {
   return `${RANK_NAMES[card.rank]} de ${card.suit}`
 }
 
+// Nombre de un botón que muestra la carta dibujada («7 ♦», «Q ♥»): empieza por
+// lo que se ve, para el control por voz (WCAG 2.5.3). El lector dice igual «7»
+// que «Siete»; en las figuras se antepone la letra: «Q, Reina de Corazones».
+function cardFaceLabel(card: Card): string {
+  return /^\d+$/.test(card.rank) ? `${card.rank} de ${card.suit}` : `${card.rank}, ${cardLabel(card)}`
+}
+
 function cardValue(card: Card): number {
   return RANK_VALUE[card.rank]
 }
@@ -623,7 +630,7 @@ export default function GinRummyPage() {
             <button
               onClick={drawFromDeck}
               disabled={!isPlaying || turnStep !== 'draw'}
-              aria-label={`Robar del mazo (${deck.length} cartas) — tecla M`}
+              aria-label={`Tecla M: Robar del mazo (${deck.length} cartas)`}
               className="w-12 h-16 rounded border-2 border-[#555] bg-[#1e1e2e] flex items-center justify-center text-[#999] text-xs hover:border-[#ffd700] disabled:opacity-40 transition-colors"
             >
               M
@@ -632,7 +639,7 @@ export default function GinRummyPage() {
               <button
                 onClick={drawFromDiscard}
                 disabled={!isPlaying || turnStep !== 'draw'}
-                aria-label={`Robar del descarte: ${cardLabel(topDiscard)} — tecla D`}
+                aria-label={`Tecla D: Robar del descarte: ${cardFaceLabel(topDiscard)}`}
               >
                 <CardVisual card={topDiscard} />
               </button>
@@ -665,7 +672,7 @@ export default function GinRummyPage() {
                     return next
                   })
                 }}
-                aria-label={`${i + 1 <= 9 ? i + 1 : 0}: ${cardLabel(card)}${selectedIdx === i ? ' (seleccionada)' : ''}`}
+                aria-label={`${i + 1 <= 9 ? i + 1 : 0}: ${cardFaceLabel(card)}${selectedIdx === i ? ' (seleccionada)' : ''}`}
                 aria-pressed={selectedIdx === i}
                 disabled={!isPlaying}
                 className="focus:outline-none focus:ring-2 focus:ring-[#ffd700] rounded disabled:cursor-default"
@@ -693,17 +700,17 @@ export default function GinRummyPage() {
           <div className="flex flex-wrap gap-2" role="group" aria-label="Acciones disponibles">
             {turnStep === 'draw' ? (
               <>
-                <Button onClick={drawFromDeck} aria-label="Robar del mazo (tecla M)">M — Mazo</Button>
-                <Button variant="secondary" onClick={drawFromDiscard} disabled={!topDiscard} aria-label="Robar del descarte (tecla D)">
-                  D — Descarte
+                <Button onClick={drawFromDeck} aria-label="Tecla M: Robar del mazo">M — Robar del mazo</Button>
+                <Button variant="secondary" onClick={drawFromDiscard} disabled={!topDiscard} aria-label="Tecla D: Robar del descarte">
+                  D — Robar del descarte
                 </Button>
                 {canCall && !canGin && (
-                  <Button variant="secondary" onClick={() => playerCall(false)} aria-label="Llamar (tecla L)">
-                    L — Llamar ({playerDw} pts)
+                  <Button variant="secondary" onClick={() => playerCall(false)} aria-label={`Tecla L: Llamar (${playerDw} puntos)`}>
+                    L — Llamar ({playerDw} puntos)
                   </Button>
                 )}
                 {canGin && (
-                  <Button onClick={() => playerCall(true)} aria-label="Gin (tecla G)">
+                  <Button onClick={() => playerCall(true)} aria-label="Tecla G: Gin">
                     G — GIN
                   </Button>
                 )}
@@ -713,13 +720,13 @@ export default function GinRummyPage() {
                 <Button
                   onClick={discardSelected}
                   disabled={selectedIdx === null}
-                  aria-label="Descartar carta seleccionada (tecla R)"
+                  aria-label={`Tecla R: Descartar${selectedIdx !== null ? `: ${cardLabel(playerHand[selectedIdx])}` : ' la carta seleccionada'}`}
                 >
                   R — Descartar{selectedIdx !== null ? `: ${RANK_NAMES[playerHand[selectedIdx].rank]}` : ''}
                 </Button>
               </>
             )}
-            <Button variant="secondary" onClick={readHand} aria-label="Leer mano completa (tecla H)">H — Leer mano</Button>
+            <Button variant="secondary" onClick={readHand} aria-label="Tecla H: Leer mano completa">H — Leer mano completa</Button>
           </div>
         )}
 

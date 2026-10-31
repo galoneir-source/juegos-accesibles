@@ -278,7 +278,7 @@ export default function SecuenciasPage() {
         {/* Status */}
         <div className="h-6 text-center" aria-live="polite">
           {phase === 'preview' && (
-            <p className="text-[#ffd700] text-sm animate-pulse">
+            <p className="text-[#ffd700] text-sm">
               {previewRow >= 0 ? `Escuchando fila ${previewRow + 1} de ${n}…` : 'Preparando…'}
             </p>
           )}

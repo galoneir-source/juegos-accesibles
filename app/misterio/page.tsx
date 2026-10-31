@@ -443,6 +443,7 @@ export default function MisterioPage() {
         <div
           ref={historyEl}
           className="flex-1 overflow-y-auto border border-[#333] rounded p-4 mb-3 space-y-1.5 font-mono text-sm"
+          role="log"
           aria-live="polite"
           aria-label="Registro de la investigación"
           tabIndex={0}

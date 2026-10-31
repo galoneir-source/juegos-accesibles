@@ -178,7 +178,7 @@ export default function MemorySonidosPage() {
               aria-label={`Tono ${i + 1}: ${name}`}
               className={`flex flex-col items-center gap-1 h-20 ${activeBtn === i ? '!bg-[#ffd700] !text-black !border-[#ffd700]' : ''}`}
             >
-              <span className="text-2xl font-bold text-[#ffd700]">{i + 1}</span>
+              <span className="text-2xl font-bold text-[#ffd700]">{i + 1}</span>{' '}
               <span className="text-xs">{name}</span>
             </Button>
           ))}
@@ -196,7 +196,7 @@ export default function MemorySonidosPage() {
         )}
 
         {phase === 'waiting' && (
-          <p className="text-center text-[#888] animate-pulse">Preparando siguiente ronda…</p>
+          <p className="text-center text-[#888]">Preparando siguiente ronda…</p>
         )}
       </div>
     </GameShell>

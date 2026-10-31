@@ -308,27 +308,27 @@ export default function MatesRapidasPage() {
     >
       <div className="space-y-6 max-w-sm mx-auto">
         <div className="flex justify-between items-center text-sm">
-          <span className="text-[#888]" aria-label={`Operación ${qNum} de ${TOTAL_QUESTIONS}`}>
-            {qNum} / {TOTAL_QUESTIONS}
+          <span className="text-[#888]">
+            <span className="sr-only">Operación {qNum} de {TOTAL_QUESTIONS}</span>
+            <span aria-hidden="true">{qNum} / {TOTAL_QUESTIONS}</span>
           </span>
           <span
             className="font-mono text-2xl font-bold tabular-nums"
             style={{ color: timerColor }}
-            aria-label={`Tiempo: ${timeLeft} segundos`}
-            aria-live="off"
           >
-            {timeLeft}s
+            <span className="sr-only">Tiempo: {timeLeft} segundos</span>
+            <span aria-hidden="true">{timeLeft}s</span>
           </span>
-          <span className="text-xl tracking-wide" aria-label={`Vidas: ${lives} de ${MAX_LIVES}`}>
-            {'♥'.repeat(lives)}{'♡'.repeat(MAX_LIVES - lives)}
+          <span className="text-xl tracking-wide">
+            <span className="sr-only">Vidas: {lives} de {MAX_LIVES}</span>
+            <span aria-hidden="true">{'♥'.repeat(lives)}{'♡'.repeat(MAX_LIVES - lives)}</span>
           </span>
         </div>
 
         {question && (
-          <div
-            className="text-center py-10 px-6 rounded-xl border border-[#333] bg-[#0a0a0a]"
-            aria-label={question.spoken}
-          >
+          <div className="text-center py-10 px-6 rounded-xl border border-[#333] bg-[#0a0a0a]">
+            {/* La operación se lee con palabras («5 más 3»); los signos se ocultan. */}
+            <p className="sr-only">{question.spoken}</p>
             <p className="text-5xl font-mono font-bold text-[#f0f0f0]" aria-hidden="true">
               {question.display}
             </p>
@@ -349,7 +349,7 @@ export default function MatesRapidasPage() {
               value={input}
               onChange={e => setInput(e.target.value.replace(/\D/g, ''))}
               onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); handleSubmit() } }}
-              className="flex-1 bg-[#111] border border-[#444] rounded-md px-4 py-3 text-2xl font-mono text-[#ffd700] focus:outline-none focus:ring-3 focus:ring-[#ffd700] focus:ring-offset-2 focus:ring-offset-black"
+              className="flex-1 min-w-0 bg-[#111] border border-[#444] rounded-md px-4 py-3 text-2xl font-mono text-[#ffd700] focus:outline-none focus:ring-3 focus:ring-[#ffd700] focus:ring-offset-2 focus:ring-offset-black"
               aria-label="Escribe tu respuesta numérica"
               autoComplete="off"
               disabled={answered.current}
@@ -357,7 +357,7 @@ export default function MatesRapidasPage() {
             <Button
               onClick={handleSubmit}
               disabled={answered.current}
-              aria-label="Confirmar respuesta"
+              aria-label="OK: confirmar respuesta"
             >
               OK
             </Button>

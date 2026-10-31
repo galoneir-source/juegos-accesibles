@@ -188,7 +188,7 @@ export default function BingoPage() {
     if (isFree)    return `${base} bg-[#ffd700] text-black`
     if (isLast)    return `${base} bg-yellow-400 text-black ring-2 ring-white`
     if (isMarked)  return `${base} bg-green-700 text-white`
-    return `${base} bg-[#0d1b2a] text-[#778] border border-[#1e3048]`
+    return `${base} bg-[#0d1b2a] text-[#99a] border border-[#1e3048]`
   }
 
   // ── Idle ──────────────────────────────────────────────────────────────────────

@@ -451,13 +451,13 @@ export default function PongAudioPage() {
         <div
           className="flex justify-between text-lg font-mono"
           aria-live="polite"
-          aria-label={`Marcador: tú ${playerScore}, rival ${aiScore}`}
         >
-          <span className="text-[#ffd700]">
+          <span className="sr-only">Marcador: tú {playerScore}, rival {aiScore}</span>
+          <span className="text-[#ffd700]" aria-hidden="true">
             Tú: <strong>{playerScore}</strong>
           </span>
-          <span className="text-[#999] text-sm self-center">— meta: {WIN_SCORE} —</span>
-          <span className="text-[#ef4444]">
+          <span className="text-[#999] text-sm self-center" aria-hidden="true">— meta: {WIN_SCORE} —</span>
+          <span className="text-[#ef4444]" aria-hidden="true">
             Rival: <strong>{aiScore}</strong>
           </span>
         </div>

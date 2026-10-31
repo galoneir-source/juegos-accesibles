@@ -276,7 +276,6 @@ export default function MastermindPage() {
           <Button
             onClick={handleSubmit}
             className="mt-6"
-            aria-label="Enviar intento"
           >
             Intentar
           </Button>

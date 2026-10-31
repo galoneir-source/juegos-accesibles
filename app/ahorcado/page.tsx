@@ -178,10 +178,10 @@ export default function HangmanPage() {
 
         <div
           className="font-mono text-3xl tracking-widest text-center py-4 border border-[#333] rounded"
-          aria-label={`Palabra: ${displayed.join(' ')}`}
         >
+          <span className="sr-only">Palabra: {displayed.join(' ')}</span>
           {displayed.map((l, i) => (
-            <span key={i} className={l === '_' ? 'text-[#999]' : 'text-[#ffd700]'}>{l}</span>
+            <span key={i} aria-hidden="true" className={l === '_' ? 'text-[#999]' : 'text-[#ffd700]'}>{l}</span>
           ))}
         </div>
 

@@ -335,7 +335,7 @@ export default function WordlePage() {
                 const ks       = keyStates[key]
                 const isAction = key === 'ENTER' || key === '⌫'
                 const label    = key === '⌫' ? 'Borrar'
-                              : key === 'ENTER' ? 'Confirmar intento'
+                              : key === 'ENTER' ? 'Enter: confirmar intento'
                               : `Letra ${key}${ks ? `, ${STATE_LABEL[ks as LetterState]}` : ''}`
                 return (
                   <button

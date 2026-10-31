@@ -1138,26 +1138,26 @@ export default function AventuraMagicaPage() {
           <span
             className="text-[#e879f9] text-xs font-medium"
             aria-live="polite"
-            aria-label={`Fragmentos: ${shards.length} de 3`}
           >
-            Fragmentos: {shards.length}/3
+            <span className="sr-only">Fragmentos: {shards.length} de 3</span>
+            <span aria-hidden="true">Fragmentos: {shards.length}/3</span>
           </span>
           <span className="text-[#999] text-xs">{CLASS_DEFS[charClass].name}</span>
           {charClass === 'hechicera' && specialCD > 0 && (
             <span className="text-[#a78bfa] text-xs" aria-live="polite">Hechizo en {specialCD}t</span>
           )}
           {inventory.length > 0 && (
-            <span className="text-[#a78bfa] text-xs" aria-label={`Objetos: ${inventory.join(', ')}`}>
-              {inventory.join(' · ')}
+            <span className="text-[#a78bfa] text-xs">
+              <span className="sr-only">Objetos: </span>{inventory.join(' · ')}
             </span>
           )}
           {enemy && (
             <span
               className="text-[#f97316] font-medium"
               aria-live="polite"
-              aria-label={`En combate contra ${enemy.name}, vida ${enemy.hp} de ${enemy.maxHp}`}
             >
-              {enemy.name}: {enemy.hp}/{enemy.maxHp}
+              <span className="sr-only">En combate contra {enemy.name}, vida {enemy.hp} de {enemy.maxHp}</span>
+              <span aria-hidden="true">{enemy.name}: {enemy.hp}/{enemy.maxHp}</span>
             </span>
           )}
         </div>
@@ -1166,6 +1166,7 @@ export default function AventuraMagicaPage() {
         <div
           ref={historyEl}
           className="flex-1 overflow-y-auto border border-[#333] rounded p-4 mb-3 space-y-1.5 font-mono text-sm"
+          role="log"
           aria-live="polite"
           aria-label="Historial de la aventura"
           tabIndex={0}
