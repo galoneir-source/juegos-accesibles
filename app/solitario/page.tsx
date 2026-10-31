@@ -40,6 +40,12 @@ function color(s: Suit) { return RED_SUITS.has(s) ? 'rojo' : 'negro' }
 function cardLabel(c: Card) {
   return c.faceUp ? `${RANK_NAME[c.rank]} de ${c.suit}` : 'carta boca abajo'
 }
+
+// Valor de una carta tal como se ve dibujada («7», «Q»). El lector dice igual
+// «7» que «Siete»; en las figuras se antepone la letra: «Q, Reina».
+function rankFace(r: Rank) {
+  return /^\d+$/.test(r) ? r : `${r}, ${RANK_NAME[r]}`
+}
 function canToFoundation(card: Card, found: Card[], suit: Suit): boolean {
   if (card.suit !== suit) return false
   if (found.length === 0) return card.rank === 'A'
@@ -173,10 +179,38 @@ function describePile(state: GameState, pile: PileId): string {
   return `Columna ${ci+1}: ${cardLabel(top)}${faceUp > 1 ? `, más ${faceUp-1} visible${faceUp-1!==1?'s':''}` : ''}${faceDown > 0 ? `, ${faceDown} oculta${faceDown!==1?'s':''}` : ''}.`
 }
 
+// Nombre accesible de los botones de los montones. Empieza por lo que se ve
+// dibujado (WCAG 2.5.3, para el control por voz): en las columnas, el número y
+// los valores de las cartas boca arriba. Los anuncios al moverse con el teclado
+// siguen usando describePile.
+function pileButtonLabel(state: GameState, pile: PileId): string {
+  if (pile === 'stock') return describePile(state, pile)
+  if (pile === 'waste') {
+    if (state.waste.length === 0) return describePile(state, pile)
+    const top = state.waste[state.waste.length - 1]
+    return `Descarte: ${rankFace(top.rank)} de ${top.suit}. ${state.waste.length - 1} debajo.`
+  }
+  if (pile.startsWith('f')) {
+    const fi = parseInt(pile[1])
+    const found = state.foundations[fi]
+    if (found.length === 0) return describePile(state, pile)
+    return `Fundación ${FOUND_SUIT[fi]}: ${rankFace(found[found.length-1].rank)} (${found.length} de 13).`
+  }
+  const ci = parseInt(pile[1])
+  const col = state.tableau[ci]
+  if (col.length === 0) return describePile(state, pile)
+  const up = col.filter(c => c.faceUp)
+  const faceDown = col.length - up.length
+  const hidden = faceDown > 0 ? `, ${faceDown} oculta${faceDown !== 1 ? 's' : ''}` : ''
+  const top = up[up.length - 1]
+  if (up.length === 1) return `Columna ${ci+1}: ${rankFace(top.rank)} de ${top.suit}${hidden}.`
+  return `Columna ${ci+1}: ${up.map(c => c.rank).join(' ')}, de ${cardLabel(up[0])} a ${cardLabel(top)}${hidden}.`
+}
+
 function CardVis({ card, mini }: { card: Card; mini?: boolean }) {
   const sz = mini ? 'w-8 h-12 text-xs' : 'w-12 h-16 text-sm'
   if (!card.faceUp) return (
-    <div aria-hidden="true" className={`${sz} rounded border border-[#444] bg-[#1e1e2e] flex items-center justify-center text-[#999]`}>░</div>
+    <div aria-hidden="true" className={`${sz} rounded border border-[#444] bg-[#1e1e2e] flex items-center justify-center text-[#999]`} />
   )
   const red = RED_SUITS.has(card.suit)
   return (
@@ -384,16 +418,16 @@ export default function SolitarioPage() {
 
         {/* Top row: stock, waste, foundations */}
         <div className="flex gap-2 flex-wrap items-start">
-          <button className={pileClass('stock')} onClick={() => interactWith('stock')} aria-label={describePile(state, 'stock')}>
-            <p className="text-xs text-[#888] mb-1">Mazo</p>
+          <button className={pileClass('stock')} onClick={() => interactWith('stock')} aria-label={pileButtonLabel(state, 'stock')}>
+            <p className="text-xs text-[#888] mb-1">Mazo</p>{' '}
             {state.stock.length > 0
               ? <div aria-hidden="true" className="w-12 h-16 rounded border border-[#444] bg-[#1e1e2e] flex items-center justify-center text-[#888] text-sm font-mono">{state.stock.length}</div>
               : <div aria-hidden="true" className="w-12 h-16 rounded border border-dashed border-[#444] flex items-center justify-center text-[#999] text-xl">↺</div>
             }
           </button>
 
-          <button className={pileClass('waste')} onClick={() => interactWith('waste')} aria-label={describePile(state, 'waste')}>
-            <p className="text-xs text-[#888] mb-1">Descarte</p>
+          <button className={pileClass('waste')} onClick={() => interactWith('waste')} aria-label={pileButtonLabel(state, 'waste')}>
+            <p className="text-xs text-[#888] mb-1">Descarte</p>{' '}
             {state.waste.length > 0
               ? <CardVis card={state.waste[state.waste.length - 1]} />
               : <div aria-hidden="true" className="w-12 h-16 rounded border border-dashed border-[#333]" />
@@ -407,8 +441,8 @@ export default function SolitarioPage() {
             const found = state.foundations[fi]
             const suit = FOUND_SUIT[fi]
             return (
-              <button key={id} className={pileClass(id)} onClick={() => interactWith(id)} aria-label={describePile(state, id)}>
-                <p className="text-xs text-[#888] mb-1">{SUIT_SYM[suit]}</p>
+              <button key={id} className={pileClass(id)} onClick={() => interactWith(id)} aria-label={pileButtonLabel(state, id)}>
+                <p className="text-xs text-[#888] mb-1">{SUIT_SYM[suit]}</p>{' '}
                 {found.length > 0
                   ? <CardVis card={found[found.length - 1]} />
                   : <div aria-hidden="true" className={`w-12 h-16 rounded border border-dashed border-[#333] flex items-center justify-center text-2xl ${RED_SUITS.has(suit) ? 'text-[#7f2222]' : 'text-[#999]'}`}>{SUIT_SYM[suit]}</div>
@@ -429,9 +463,9 @@ export default function SolitarioPage() {
                 key={id}
                 className={`${pileClass(id)} flex-1 min-w-[2.5rem] flex flex-col min-h-[10rem]`}
                 onClick={() => interactWith(id)}
-                aria-label={describePile(state, id)}
+                aria-label={pileButtonLabel(state, id)}
               >
-                <p className="text-xs text-[#888] mb-1 text-center">{ci+1}</p>
+                <p className="text-xs text-[#888] mb-1 text-center">{ci+1}</p>{' '}
                 {col.length === 0
                   ? <div aria-hidden="true" className="mx-auto w-8 h-12 rounded border border-dashed border-[#333] flex items-center justify-center text-[#999] text-xs">K</div>
                   : <div className="flex flex-col" style={{ gap: 0 }}>

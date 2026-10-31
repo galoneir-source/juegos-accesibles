@@ -471,7 +471,7 @@ export default function ConectaCuatroPage() {
         {/* Status */}
         <div className="h-5 text-center" aria-live="polite">
           {thinking && (
-            <p className="text-[#aaa] text-sm animate-pulse">La IA está pensando…</p>
+            <p className="text-[#aaa] text-sm">La IA está pensando…</p>
           )}
         </div>
 

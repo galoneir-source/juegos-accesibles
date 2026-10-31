@@ -273,8 +273,9 @@ export default function Page2048() {
           className="bg-[#bbada0] p-2 rounded-xl gap-2 grid"
           style={{ gridTemplateColumns: `repeat(${SIZE}, 1fr)` }}
         >
-          {board.map((row, r) =>
-            row.map((val, c) => (
+          {board.map((row, r) => (
+            <div key={r} role="row" className="contents">
+            {row.map((val, c) => (
               <div
                 key={`${r}-${c}`}
                 role="gridcell"
@@ -289,8 +290,9 @@ export default function Page2048() {
               >
                 {val > 0 ? val : ''}
               </div>
-            ))
-          )}
+            ))}
+            </div>
+          ))}
         </div>
 
         {/* Game over overlay */}

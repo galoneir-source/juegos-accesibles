@@ -255,28 +255,28 @@ export default function AnagramasPage() {
 
         {/* Progress + timer */}
         <div className="flex justify-between items-center text-sm">
-          <span className="text-[#888]" aria-label={`Palabra ${round + 1} de ${TOTAL_ROUNDS}`}>
-            {round + 1} / {TOTAL_ROUNDS}
+          <span className="text-[#888]">
+            <span className="sr-only">Palabra {round + 1} de {TOTAL_ROUNDS}</span>
+            <span aria-hidden="true">{round + 1} / {TOTAL_ROUNDS}</span>
           </span>
           <span
             className="font-mono text-2xl font-bold tabular-nums"
             style={{ color: loading ? '#555' : timerColor }}
-            aria-label={`Tiempo: ${timeLeft} segundos`}
-            aria-live="off"
           >
-            {loading ? '…' : `${timeLeft}s`}
+            <span className="sr-only">{loading ? 'Cargando' : `Tiempo: ${timeLeft} segundos`}</span>
+            <span aria-hidden="true">{loading ? '…' : `${timeLeft}s`}</span>
           </span>
         </div>
 
         {/* Scrambled word or loading */}
         <div
           className="text-center py-8 px-6 rounded-xl border border-[#333] bg-[#0a0a0a] min-h-[120px] flex flex-col items-center justify-center"
-          aria-label={loading ? 'Cargando siguiente palabra' : `Palabra desordenada: ${scrambledWord}`}
         >
           {loading ? (
             <p className="text-[#999] text-sm" aria-live="polite">Cargando palabra…</p>
           ) : (
             <>
+              <p className="sr-only">Palabra desordenada: {scrambledWord}</p>
               <p className="text-4xl font-mono font-bold tracking-widest text-[#f0f0f0]" aria-hidden="true">
                 {scrambledWord}
               </p>
@@ -307,13 +307,13 @@ export default function AnagramasPage() {
               value={input}
               onChange={e => setInput(e.target.value.replace(/[^a-zA-ZáéíóúüñÁÉÍÓÚÜÑ]/g, '').toUpperCase())}
               onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); handleSubmit() } }}
-              className="flex-1 bg-[#111] border border-[#444] rounded-md px-4 py-3 text-2xl font-mono text-[#ffd700] uppercase focus:outline-none focus:ring-3 focus:ring-[#ffd700] focus:ring-offset-2 focus:ring-offset-black"
+              className="flex-1 min-w-0 bg-[#111] border border-[#444] rounded-md px-4 py-3 text-2xl font-mono text-[#ffd700] uppercase focus:outline-none focus:ring-3 focus:ring-[#ffd700] focus:ring-offset-2 focus:ring-offset-black"
               aria-label="Escribe la palabra original"
               autoComplete="off"
               autoCapitalize="characters"
               disabled={roundDone || loading}
             />
-            <Button onClick={handleSubmit} disabled={roundDone || loading} aria-label="Confirmar respuesta">
+            <Button onClick={handleSubmit} disabled={roundDone || loading} aria-label="OK: confirmar respuesta">
               OK
             </Button>
           </div>

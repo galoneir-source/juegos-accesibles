@@ -689,14 +689,14 @@ export default function PokerPage() {
         {/* Acciones en juego */}
         {isPlaying && isPlayerTurn && (
           <div className="flex flex-wrap gap-2" role="group" aria-label="Tus acciones">
-            <Button variant="secondary" onClick={() => playerAct('fold')} aria-label="Retirarse (tecla F)">F — Retirarme</Button>
-            <Button onClick={() => playerAct(needed === 0 ? 'check' : 'call')} aria-label={needed === 0 ? 'Pasar (tecla C)' : `Igualar ${needed} fichas (tecla C)`}>
+            <Button variant="secondary" onClick={() => playerAct('fold')} aria-label="Tecla F: Retirarme">F — Retirarme</Button>
+            <Button onClick={() => playerAct(needed === 0 ? 'check' : 'call')} aria-label={needed === 0 ? 'Tecla C: Pasar' : `Tecla C: Igualar ${needed} fichas`}>
               C — {needed === 0 ? 'Pasar' : `Igualar ${needed}`}
             </Button>
-            <Button onClick={() => playerAct('raise')} aria-label={`Subir ${raiseAmount} fichas (tecla R)`}>
+            <Button onClick={() => playerAct('raise')} aria-label={`Tecla R: Subir ${raiseAmount} fichas`}>
               R — Subir {raiseAmount}
             </Button>
-            <div className="flex items-center gap-1 ml-2" aria-label={`Ajuste de subida: ${raiseAmount} fichas`}>
+            <div className="flex items-center gap-1 ml-2" role="group" aria-label={`Ajuste de subida: ${raiseAmount} fichas`}>
               <Button variant="ghost" size="sm" onClick={() => setRaiseAmount(r => Math.max(RAISE_STEP, r - RAISE_STEP))} aria-label="Reducir subida (tecla -)">−</Button>
               <span className="text-xs text-[#888] w-12 text-center">{raiseAmount}</span>
               <Button variant="ghost" size="sm" onClick={() => setRaiseAmount(r => r + RAISE_STEP)} aria-label="Aumentar subida (tecla +)">+</Button>
@@ -712,7 +712,7 @@ export default function PokerPage() {
         {phase === 'finished' && (
           <div className="flex flex-wrap gap-3 items-center">
             {playerChips > 0 && aiChips > 0 ? (
-              <Button onClick={newGame} aria-label="Nueva mano (tecla N)">N — Nueva mano</Button>
+              <Button onClick={newGame} aria-label="Tecla N: Nueva mano">N — Nueva mano</Button>
             ) : (
               <Button onClick={firstGame}>Nueva partida</Button>
             )}

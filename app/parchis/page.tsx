@@ -67,8 +67,16 @@ function posLabel(exit: number, step: number): string {
 function stepTag(exit: number, step: number): string {
   if (step === -1) return 'Casa'
   if (step >= GOAL) return 'Meta'
-  if (step >= BOARD_SIZE) return `PF${step - BOARD_SIZE + 1}`
+  if (step >= BOARD_SIZE) return `Final ${step - BOARD_SIZE + 1}`
   return `${absPos(exit, step)}`
+}
+
+// Lo que el botón de una ficha añade al texto visible de stepTag (el nombre
+// accesible empieza por lo que se ve, para el control por voz).
+function stepLabelExtra(exit: number, step: number): string {
+  if (step === -1 || step >= GOAL) return ''
+  if (step >= BOARD_SIZE) return ' de 5 del pasillo final'
+  return SAFE.has(absPos(exit, step)!) ? ' (casilla segura)' : ''
 }
 
 // ── IA ─────────────────────────────────────────────────────────────────────
@@ -374,7 +382,7 @@ export default function ParchisPage() {
               {dice ?? '?'}
             </div>
             {phase === 'player_roll' && (
-              <Button onClick={rollDice} aria-label="Lanzar dado (tecla R)">R — Lanzar dado</Button>
+              <Button onClick={rollDice} aria-label="Tecla R: Lanzar dado">R — Lanzar dado</Button>
             )}
             {phase === 'ai_turn' && (
               <span className="text-[#888] text-sm" aria-live="polite">Turno de la IA…</span>
@@ -395,7 +403,7 @@ export default function ParchisPage() {
                   key={i}
                   onClick={() => movePiece(i)}
                   disabled={!canMove}
-                  aria-label={`Ficha ${i + 1}: ${posLabel(RED_EXIT, step)}${canMove ? ' — pulsa para mover' : ''}`}
+                  aria-label={`Ficha ${i + 1}: ${stepTag(RED_EXIT, step)}${stepLabelExtra(RED_EXIT, step)}${canMove ? ' — pulsa para mover' : ''}`}
                   className={`px-3 py-2 rounded text-sm font-mono border-2 transition-colors disabled:cursor-default ${
                     step >= GOAL
                       ? 'border-[#22c55e] text-[#22c55e] bg-[#22c55e]/10'
@@ -424,7 +432,7 @@ export default function ParchisPage() {
                 className={`px-3 py-2 rounded text-sm font-mono border ${
                   step >= GOAL
                     ? 'border-[#22c55e] text-[#22c55e]'
-                    : 'border-[#60a5fa] text-[#60a5fa] opacity-70'
+                    : 'border-[#60a5fa] text-[#60a5fa]'
                 }`}
               >
                 {i + 1}: {stepTag(BLUE_EXIT, step)}
@@ -442,8 +450,8 @@ export default function ParchisPage() {
         {phase === 'player_choose' && (
           <div className="flex flex-wrap gap-2" role="group" aria-label="Elige ficha a mover">
             {movablePieces.filter(m => m.canMove).map(({ i }) => (
-              <Button key={i} onClick={() => movePiece(i)} aria-label={`Mover ficha ${i + 1} (tecla ${i + 1})`}>
-                {i + 1} — Ficha {i + 1} ({stepTag(RED_EXIT, playerPieces[i])})
+              <Button key={i} onClick={() => movePiece(i)} aria-label={`Tecla ${i + 1}: Mover ficha ${i + 1} (${stepTag(RED_EXIT, playerPieces[i])})`}>
+                {i + 1} — Mover ficha {i + 1} ({stepTag(RED_EXIT, playerPieces[i])})
               </Button>
             ))}
           </div>
@@ -456,7 +464,7 @@ export default function ParchisPage() {
               {playerPieces.every(s => s >= GOAL) ? '¡Ganaste la partida!' : 'La IA ganó la partida.'}
             </p>
             <div className="flex flex-wrap gap-3 items-center">
-              <Button onClick={startGame} aria-label="Nueva partida (tecla N)">N — Nueva partida</Button>
+              <Button onClick={startGame} aria-label="Tecla N: Nueva partida">N — Nueva partida</Button>
               {!saved ? (
                 <>
                   <Button variant="secondary" onClick={handleSave}>Guardar puntuación</Button>

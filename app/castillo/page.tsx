@@ -980,17 +980,17 @@ export default function CastilloPage() {
             <span className="text-[#a78bfa] text-xs" aria-live="polite">Luz sagrada en {magicCD}t</span>
           )}
           {inventory.length > 0 && (
-            <span className="text-[#a78bfa] text-xs" aria-label={`Objetos: ${inventory.map(id => ITEM_NAME[id] ?? id).join(', ')}`}>
-              {inventory.map(id => ITEM_NAME[id] ?? id).join(' · ')}
+            <span className="text-[#a78bfa] text-xs">
+              <span className="sr-only">Objetos: </span>{inventory.map(id => ITEM_NAME[id] ?? id).join(' · ')}
             </span>
           )}
           {enemy && (
             <span
               className="text-[#f97316] font-medium"
               aria-live="polite"
-              aria-label={`En combate contra ${enemy.name}, vida ${enemy.hp} de ${enemy.maxHp}`}
             >
-              {enemy.name}: {enemy.hp}/{enemy.maxHp}
+              <span className="sr-only">En combate contra {enemy.name}, vida {enemy.hp} de {enemy.maxHp}</span>
+              <span aria-hidden="true">{enemy.name}: {enemy.hp}/{enemy.maxHp}</span>
             </span>
           )}
         </div>
@@ -999,6 +999,7 @@ export default function CastilloPage() {
         <div
           ref={historyEl}
           className="flex-1 overflow-y-auto border border-[#333] rounded p-4 mb-3 space-y-1.5 font-mono text-sm"
+          role="log"
           aria-live="polite"
           aria-label="Historial de la investigación"
           tabIndex={0}

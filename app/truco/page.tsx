@@ -28,7 +28,6 @@ type TrickResult = 'player' | 'ai' | 'tie'
 
 const SUITS: Suit[] = ['Espadas', 'Bastos', 'Copas', 'Oros']
 const RANKS: Rank[] = ['1', '2', '3', '4', '5', '6', '7', '10', '11', '12']
-const SUIT_ABBR: Record<Suit, string> = { Espadas: 'Esp', Bastos: 'Bas', Copas: 'Cop', Oros: 'Oro' }
 const RANK_NAME: Record<Rank, string> = {
   '1': 'As', '2': 'Dos', '3': 'Tres', '4': 'Cuatro', '5': 'Cinco',
   '6': 'Seis', '7': 'Siete', '10': 'Sota', '11': 'Caballo', '12': 'Rey',
@@ -67,6 +66,15 @@ function shuffle(d: Card[]): Card[] {
 }
 
 function cardLabel(c: Card) { return `${RANK_NAME[c.rank]} de ${c.suit}` }
+
+// Nombre del botón de una carta de la mano: empieza por lo que se ve en ella
+// («7 de Espadas»), para el control por voz (WCAG 2.5.3). El lector dice igual
+// «7» que «Siete»; el As y las figuras anteponen su nombre: «Sota, 10 de Oros».
+function cardFaceLabel(c: Card) {
+  return Number(c.rank) >= 2 && Number(c.rank) <= 7
+    ? `${c.rank} de ${c.suit}`
+    : `${RANK_NAME[c.rank]}, ${c.rank} de ${c.suit}`
+}
 
 // ── jerarquía truco ──────────────────────────────────────────────────────────
 
@@ -151,9 +159,9 @@ function CardVisual({ card, hidden }: { card?: Card | null; hidden?: boolean }) 
   }
   const red = card.suit === 'Oros' || card.suit === 'Copas'
   return (
-    <div aria-hidden="true" className={`w-10 h-14 rounded border-2 bg-[#1a1a1a] flex flex-col items-center justify-center gap-0.5 font-mono text-xs select-none ${red ? 'border-[#ef4444] text-[#ef4444]' : 'border-[#d4d4d4] text-[#d4d4d4]'}`}>
-      <span className="font-bold">{card.rank}</span>
-      <span className="text-[9px]">{SUIT_ABBR[card.suit]}</span>
+    <div aria-hidden="true" className={`w-14 h-14 rounded border-2 bg-[#1a1a1a] flex flex-col items-center justify-center gap-0.5 font-mono text-xs select-none ${red ? 'border-[#ef4444] text-[#ef4444]' : 'border-[#d4d4d4] text-[#d4d4d4]'}`}>
+      <span className="font-bold">{card.rank}</span>{' '}
+      <span className="text-[9px]">de {card.suit}</span>
     </div>
   )
 }
@@ -759,7 +767,7 @@ export default function TrucoPage() {
                 key={card.id}
                 onClick={() => isPlaying ? playCard(i) : undefined}
                 disabled={!isPlaying}
-                aria-label={`${i + 1}: ${cardLabel(card)}${isPlaying ? ' — pulsa para jugar' : ''}`}
+                aria-label={`${i + 1}: ${cardFaceLabel(card)}${isPlaying ? ' — pulsa para jugar' : ''}`}
                 className="focus:outline-none focus:ring-2 focus:ring-[#ffd700] rounded disabled:cursor-default"
               >
                 <CardVisual card={card} />
@@ -782,17 +790,17 @@ export default function TrucoPage() {
         {isPlaying && (
           <div className="flex flex-wrap gap-2" role="group" aria-label="Acciones de juego">
             {playerHand.map((card, i) => (
-              <Button key={card.id} onClick={() => playCard(i)} aria-label={`Jugar ${cardLabel(card)} (tecla ${i + 1})`}>
-                {i + 1} — {RANK_NAME[card.rank]} {SUIT_ABBR[card.suit]}
+              <Button key={card.id} onClick={() => playCard(i)} aria-label={`Tecla ${i + 1}: Jugar ${cardLabel(card)}`}>
+                {i + 1} — Jugar {cardLabel(card)}
               </Button>
             ))}
             {envidoAvail && !envidoDone && (
-              <Button variant="secondary" onClick={playerCallEnvido} aria-label={`Cantar ${ENVIDO_NAMES[Math.min(envidoLevel + 1, 3)]} (tecla E)`}>
-                E — {ENVIDO_NAMES[Math.min(envidoLevel + 1, 3)]}
+              <Button variant="secondary" onClick={playerCallEnvido} aria-label={`Tecla E: Cantar ${ENVIDO_NAMES[Math.min(envidoLevel + 1, 3)]}`}>
+                E — Cantar {ENVIDO_NAMES[Math.min(envidoLevel + 1, 3)]}
               </Button>
             )}
-            <Button variant="secondary" onClick={playerCallTruco} aria-label={`Cantar ${TRUCO_NAMES[Math.min(trucoLevel + 1, 3)]} (tecla T)`} disabled={trucoLevel >= 3}>
-              T — {TRUCO_NAMES[Math.min(trucoLevel + 1, 3)]}
+            <Button variant="secondary" onClick={playerCallTruco} aria-label={`Tecla T: Cantar ${TRUCO_NAMES[Math.min(trucoLevel + 1, 3)]}`} disabled={trucoLevel >= 3}>
+              T — Cantar {TRUCO_NAMES[Math.min(trucoLevel + 1, 3)]}
             </Button>
           </div>
         )}
@@ -800,11 +808,11 @@ export default function TrucoPage() {
         {/* Responder envido */}
         {phase === 'envido_response' && (
           <div className="flex flex-wrap gap-2" role="group" aria-label="Respuesta al envido">
-            <Button onClick={() => respondEnvido('accept')} aria-label="Aceptar envido (tecla S)">S — Quiero</Button>
-            <Button variant="secondary" onClick={() => respondEnvido('reject')} aria-label="Rechazar envido (tecla N)">N — No quiero</Button>
+            <Button onClick={() => respondEnvido('accept')} aria-label="Tecla S: Quiero (aceptar el envido)">S — Quiero</Button>
+            <Button variant="secondary" onClick={() => respondEnvido('reject')} aria-label="Tecla N: No quiero (rechazar el envido)">N — No quiero</Button>
             {envidoLevel < 3 && (
-              <Button variant="secondary" onClick={() => respondEnvido('raise')} aria-label={`Subir a ${ENVIDO_NAMES[envidoLevel + 1]} (tecla E)`}>
-                E — {ENVIDO_NAMES[envidoLevel + 1]}
+              <Button variant="secondary" onClick={() => respondEnvido('raise')} aria-label={`Tecla E: Subir a ${ENVIDO_NAMES[envidoLevel + 1]}`}>
+                E — Subir a {ENVIDO_NAMES[envidoLevel + 1]}
               </Button>
             )}
           </div>
@@ -813,11 +821,11 @@ export default function TrucoPage() {
         {/* Responder truco */}
         {phase === 'truco_response' && (
           <div className="flex flex-wrap gap-2" role="group" aria-label="Respuesta al truco">
-            <Button onClick={() => respondTruco('accept')} aria-label="Aceptar truco (tecla S)">S — Quiero</Button>
-            <Button variant="secondary" onClick={() => respondTruco('reject')} aria-label="Rechazar truco (tecla N)">N — No quiero</Button>
+            <Button onClick={() => respondTruco('accept')} aria-label="Tecla S: Quiero (aceptar el truco)">S — Quiero</Button>
+            <Button variant="secondary" onClick={() => respondTruco('reject')} aria-label="Tecla N: No quiero (rechazar el truco)">N — No quiero</Button>
             {trucoLevel < 3 && (
-              <Button variant="secondary" onClick={() => respondTruco('raise')} aria-label={`Subir a ${TRUCO_NAMES[trucoLevel + 1]} (tecla T)`}>
-                T — {TRUCO_NAMES[trucoLevel + 1]}
+              <Button variant="secondary" onClick={() => respondTruco('raise')} aria-label={`Tecla T: Subir a ${TRUCO_NAMES[trucoLevel + 1]}`}>
+                T — Subir a {TRUCO_NAMES[trucoLevel + 1]}
               </Button>
             )}
           </div>
@@ -831,7 +839,7 @@ export default function TrucoPage() {
                 if (phase === 'game_over') { setPlayerScore(0); setAiScore(0); startHand(0, 0, true) }
                 else startHand(playerScore, aiScore, !playerIsMano)
               }}
-              aria-label={phase === 'game_over' ? 'Nueva partida (tecla N)' : 'Nueva mano (tecla N)'}
+              aria-label={phase === 'game_over' ? 'Tecla N: Nueva partida' : 'Tecla N: Nueva mano'}
             >
               N — {phase === 'game_over' ? 'Nueva partida' : 'Nueva mano'}
             </Button>
