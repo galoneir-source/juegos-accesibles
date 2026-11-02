@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { audio } from '@/lib/audio'
 import { saveScore } from '@/app/actions/scores'
+import TouchControls from '@/components/games/TouchControls'
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -475,6 +476,7 @@ export default function Sokoban() {
           </button>
         </div>
       )}
+      <TouchControls />
     </main>
   )
 }
