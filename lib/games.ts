@@ -165,8 +165,26 @@ export const OG_IMAGE = {
   alt: 'Juegos Accesibles — más de 50 juegos gratis para personas ciegas',
 }
 
-// Open Graph y Twitter de una página, con la imagen común del sitio.
-export function socialMetadata(title: string, description: string, path: string): Pick<Metadata, 'openGraph' | 'twitter'> {
+type OgImage = typeof OG_IMAGE
+
+// Imagen propia de una página de juego o de categoría, generada en el build
+// por app/og/[image]/route.tsx a partir de este catálogo.
+export function pageOgImage(slug: string, alt: string): OgImage {
+  return { url: `/og/${slug}.png`, width: 1200, height: 630, alt }
+}
+
+// Slugs con imagen propia: todos los juegos y todas las categorías.
+export function ogImageSlugs(): string[] {
+  return [...GAMES.map((g) => g.href.slice(1)), ...CATEGORIES.map((c) => c.slug)]
+}
+
+// Open Graph y Twitter de una página; sin `image`, la imagen común del sitio.
+export function socialMetadata(
+  title: string,
+  description: string,
+  path: string,
+  image: OgImage = OG_IMAGE,
+): Pick<Metadata, 'openGraph' | 'twitter'> {
   return {
     openGraph: {
       title,
@@ -175,13 +193,13 @@ export function socialMetadata(title: string, description: string, path: string)
       siteName: SITE_NAME,
       locale: 'es_ES',
       type: 'website',
-      images: [OG_IMAGE],
+      images: [image],
     },
     twitter: {
       card: 'summary_large_image',
       title,
       description,
-      images: [OG_IMAGE],
+      images: [image],
     },
   }
 }
@@ -206,7 +224,7 @@ export function gameMetadata(slug: string): Metadata {
     title: tooLong ? { absolute: title } : title,
     description,
     alternates: { canonical: game.href },
-    ...socialMetadata(tooLong ? title : fullTitle, description, game.href),
+    ...socialMetadata(tooLong ? title : fullTitle, description, game.href, gameOgImage(game)),
   }
 }
 
@@ -218,7 +236,7 @@ export function categoryMetadata(id: string): Metadata {
     title: { absolute: category.title },
     description: category.meta,
     alternates: { canonical: path },
-    ...socialMetadata(category.title, category.meta, path),
+    ...socialMetadata(category.title, category.meta, path, pageOgImage(category.slug, `${category.title} — ${SITE_NAME}`)),
   }
 }
 
@@ -226,6 +244,10 @@ export function categoryMetadata(id: string): Metadata {
 export const GAME_SLUGS = GAMES.map((g) => g.href.slice(1))
 
 type Game = (typeof GAMES)[number]
+
+function gameOgImage(game: Game): OgImage {
+  return pageOgImage(game.href.slice(1), `${game.label}, juego accesible para ciegos — ${SITE_NAME}`)
+}
 
 function gameBySlug(slug: string): Game {
   const game = GAMES.find((g) => g.href === `/${slug}`)
@@ -253,7 +275,7 @@ export function gameJsonLd(slug: string): string {
     name: game.label,
     description: game.meta,
     url: `${SITE_URL}${game.href}`,
-    image: `${SITE_URL}${OG_IMAGE.url}`,
+    image: `${SITE_URL}${gameOgImage(game).url}`,
     genre: CATEGORIES.find((c) => c.id === game.category)?.label,
     gamePlatform: 'Web browser',
     applicationCategory: 'Game',
