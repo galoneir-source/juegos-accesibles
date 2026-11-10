@@ -141,6 +141,16 @@ export const CATEGORIES = [
       'Las aventuras de texto, también llamadas aventuras conversacionales o ficción interactiva, son accesibles por naturaleza: todo el juego es texto que lee tu lector de pantalla. Exploras escribiendo órdenes como «ir norte», «tomar llave» o «atacar», descubres el mapa sala a sala y resuelves el misterio de cada historia.',
       'Hay ambientaciones para todos los gustos: terror gótico, ciencia ficción, piratas, el antiguo Egipto, el Japón feudal, la Grecia mitológica o el Lejano Oeste. En muchas eliges al principio entre tres personajes con estilos de juego distintos.',
     ],
+    // La página de la categoría lista sus juegos agrupados por ambientación.
+    // Cada aventura tiene que estar en un grupo: si falta alguna, el build falla.
+    groups: [
+      { id: 'terror', label: 'Terror', ids: ['casa-encantada', 'castillo'] },
+      { id: 'ciencia-ficcion', label: 'Ciencia ficción y futuro', ids: ['aventura-espacio', 'corp', 'zona'] },
+      { id: 'fantasia', label: 'Fantasía', ids: ['aventura-texto', 'aventura-magica', 'abismo'] },
+      { id: 'mitologia', label: 'Mitología y civilizaciones antiguas', ids: ['egipto', 'templo', 'inca', 'grecia', 'bagdad', 'china', 'rusia'] },
+      { id: 'historia', label: 'Piratas, samuráis, vikingos y el Oeste', ids: ['pirata', 'samurai', 'vikingos', 'oeste'] },
+      { id: 'misterio', label: 'Misterio', ids: ['misterio'] },
+    ],
   },
 ]
 
