@@ -92,6 +92,7 @@ const INSTRUCTIONS =
   'Generala (Yahtzee). 13 turnos, 5 dados, hasta 3 tiradas por turno. ' +
   'Pulsa R o Espacio para tirar. Teclas 1-5 para guardar o liberar un dado. ' +
   'Flechas ↑↓ para navegar categorías, Enter para anotar. ' +
+  'Si la categoría vale 0 puntos, pulsa Enter otra vez para confirmar que la tachas. ' +
   'Sección superior: bonus de 35 pts si sumas 63 o más. ' +
   'Generala (×5 iguales): 50 pts, o 100 si es el primer tiro del turno. ' +
   'Tecla E relee el turno y los dados. Tecla H repite instrucciones.'
@@ -106,6 +107,9 @@ export default function GeneralaPage() {
   const heldRef      = useRef([false, false, false, false, false])
   const rollsRef     = useRef(3)   // tiradas restantes este turno
   const rolledRef    = useRef(false)
+  // Categoría que se iba a tachar con 0 puntos y espera un segundo Enter.
+  // Cualquier otra acción (tirar, guardar un dado, mover el cursor) la anula.
+  const pendingZeroRef = useRef<string | null>(null)
   const turnRef      = useRef(1)
   const scRef        = useRef(emptyScorecard())
   const cursorRef    = useRef(0)
@@ -125,6 +129,7 @@ export default function GeneralaPage() {
   function goPhase(p: Phase) { phaseRef.current = p; setPhaseState(p) }
 
   function startGame() {
+    pendingZeroRef.current = null
     const sc = emptyScorecard()
     diceRef.current   = [1, 1, 1, 1, 1]
     heldRef.current   = [false, false, false, false, false]
@@ -150,6 +155,7 @@ export default function GeneralaPage() {
 
   function rollDice() {
     if (phaseRef.current !== 'playing' || rollsRef.current === 0) return
+    pendingZeroRef.current = null
     const next = diceRef.current.map((d, i) =>
       heldRef.current[i] ? d : Math.floor(Math.random() * 6) + 1
     )
@@ -176,6 +182,7 @@ export default function GeneralaPage() {
 
   function toggleHold(i: number) {
     if (!rolledRef.current) return
+    pendingZeroRef.current = null
     const next = [...heldRef.current]
     next[i] = !next[i]
     heldRef.current = next
@@ -195,6 +202,15 @@ export default function GeneralaPage() {
     }
     const firstRoll = rollsRef.current === 2  // used exactly 1 roll
     const pts = calcScore(id, diceRef.current, firstRoll)
+    // Tachar (anotar 0) gasta la categoría para toda la partida: se pide un
+    // segundo Enter o clic, para que una pulsación accidental no la pierda.
+    if (pts === 0 && pendingZeroRef.current !== id) {
+      pendingZeroRef.current = id
+      const label = CATS.find(c => c.id === id)!.label
+      announcePolite(`Vas a tachar ${label} con 0 puntos. Pulsa Enter otra vez para confirmar, o elige otra categoría.`)
+      return
+    }
+    pendingZeroRef.current = null
     const newSc = { ...scRef.current, [id]: pts }
     scRef.current = newSc
     const newTotal = calcTotal(newSc)
@@ -240,6 +256,7 @@ export default function GeneralaPage() {
   }
 
   function moveCursor(delta: number) {
+    pendingZeroRef.current = null
     const next = (cursorRef.current + delta + CATS.length) % CATS.length
     cursorRef.current = next
     setCursor(next)

@@ -161,7 +161,7 @@ export const GAME_GUIDES: Record<string, GameGuide> = {
   },
   'generala': {
     como: 'La Generala, prima del Yahtzee, con cinco dados. Cada dado suena con una nota según su valor al tirarlo, y el lector de pantalla te dice el resultado de la tirada, qué dados tienes guardados y cuántos puntos daría cada categoría.',
-    controles: 'R o Espacio para tirar los dados; teclas del 1 al 5 para guardar o soltar cada dado; flechas arriba y abajo para recorrer las categorías y Enter para anotar. E relee el turno y los dados, y H repite las instrucciones.',
+    controles: 'R o Espacio para tirar los dados; teclas del 1 al 5 para guardar o soltar cada dado; flechas arriba y abajo para recorrer las categorías y Enter para anotar (si la categoría vale 0 puntos, un segundo Enter confirma que la tachas). E relee el turno y los dados, y H repite las instrucciones.',
     progreso: '13 turnos con hasta 3 tiradas cada uno. Si la sección de arriba suma 63 o más, ganas 35 puntos extra. La Generala (cinco dados iguales) vale 50 puntos, o 100 si sale en la primera tirada del turno.',
   },
   'bingo': {
