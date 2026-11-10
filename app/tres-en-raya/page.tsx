@@ -144,7 +144,7 @@ export default function TresEnRayaPage() {
         setAiThinking(false)
         busyRef.current = false
         audio.tresDraw()
-        announceAssertive(`La IA coloca en ${cellName(move)}. ¡Empate!`)
+        announceAssertive(`La IA coloca en ${cellName(move)}. ¡Empate! +30 puntos.`)
       } else {
         setAiThinking(false)
         busyRef.current = false
@@ -208,7 +208,7 @@ export default function TresEnRayaPage() {
           setPhase('end')
           busyRef.current = false
           audio.start()
-          announceAssertive(`Colocas en ${cellName(cur)}. ¡Has ganado!`)
+          announceAssertive(`Colocas en ${cellName(cur)}. ¡Has ganado! +100 puntos.`)
         } else if (newBoard.every(Boolean)) {
           phaseRef.current = 'end'
           setScore(30)
@@ -216,7 +216,7 @@ export default function TresEnRayaPage() {
           setPhase('end')
           busyRef.current = false
           audio.tresDraw()
-          announceAssertive(`Colocas en ${cellName(cur)}. ¡Empate!`)
+          announceAssertive(`Colocas en ${cellName(cur)}. ¡Empate! +30 puntos.`)
         } else {
           announcePolite(`Colocas en ${cellName(cur)}. La IA piensa…`)
           doAiMove(newBoard)
