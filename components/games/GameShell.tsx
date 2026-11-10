@@ -24,11 +24,15 @@ interface GameShellProps {
   // juego no tiene ese atajo y la barra no lo anuncia.
   helpKey?: string | null
   rereadKey?: string | null
+  // false: el marcador «Puntos» de la cabecera no es región viva. Para los
+  // juegos que ya dicen la puntuación en su propio anuncio; si no, el lector
+  // oye «Puntos: N» suelto, a destiempo, encima del mensaje del juego.
+  liveScore?: boolean
 }
 
 export default function GameShell({
   title, instructions, score, children, onHelp, onReread, disableKeyShortcuts,
-  helpKey = 'h', rereadKey = 'r',
+  helpKey = 'h', rereadKey = 'r', liveScore = true,
 }: GameShellProps) {
   useEffect(() => {
     if (disableKeyShortcuts) return
@@ -60,7 +64,7 @@ export default function GameShell({
         <div className="flex items-center justify-between px-6 py-4 border-b border-[#333]">
           <h1 className="text-xl font-bold text-[#ffd700]">{title} accesible para ciegos</h1>
           <div className="flex items-center gap-4">
-            <span aria-live="polite" className="text-lg font-mono">
+            <span aria-live={liveScore ? 'polite' : undefined} className="text-lg font-mono">
               Puntos: <strong>{score}</strong>
             </span>
             <Link href="/" className="text-[#ffd700] underline hover:text-white text-sm">

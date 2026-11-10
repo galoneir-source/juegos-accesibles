@@ -200,8 +200,18 @@ export default function GeneralaPage() {
     const newTotal = calcTotal(newSc)
 
     if (pts > 0) audio.correct(); else audio.incorrect()
-    const label = CATS.find(c => c.id === id)!.label
-    announcePolite(`${label}: ${pts} puntos anotados. Total acumulado: ${newTotal}.`)
+    const cat = CATS.find(c => c.id === id)!
+    // Un solo anuncio con la jugada y lo que cambia: dos seguidos se pisan y
+    // el lector solo oía el segundo («Turno 2 de 13…»), sin confirmar nada.
+    const scored = `Anotados ${pts} ${pts === 1 ? 'punto' : 'puntos'} en ${cat.label}. Total: ${newTotal}.`
+    let upper = ''
+    if (cat.section === 'upper') {
+      const sum = UPPER_IDS.reduce((a, uid) => a + (newSc[uid] ?? 0), 0)
+      const prevSum = sum - pts
+      upper = sum >= UPPER_BONUS_MIN
+        ? (prevSum < UPPER_BONUS_MIN ? ` ¡Bonus de la sección superior conseguido: ${UPPER_BONUS} puntos!` : '')
+        : ` Sección superior: ${sum} de ${UPPER_BONUS_MIN}, faltan ${UPPER_BONUS_MIN - sum} para el bonus.`
+    }
 
     const nextTurn = turnRef.current + 1
     if (nextTurn > N_TURNS) {
@@ -209,7 +219,7 @@ export default function GeneralaPage() {
       setTotal(newTotal)
       goPhase('done')
       audio.start()
-      announceAssertive(`Partida terminada. Puntuación final: ${newTotal} puntos.`)
+      announceAssertive(`${scored}${upper} Partida terminada. Puntuación final: ${newTotal} puntos.`)
       return
     }
 
@@ -226,7 +236,7 @@ export default function GeneralaPage() {
     setHeld([false, false, false, false, false])
     setRollsLeft(3)
     setHasRolled(false)
-    announcePolite(`Turno ${nextTurn} de ${N_TURNS}. Pulsa R o Espacio para tirar.`)
+    announcePolite(`${scored}${upper} Turno ${nextTurn} de ${N_TURNS}. Pulsa R o Espacio para tirar.`)
   }
 
   function moveCursor(delta: number) {
@@ -277,6 +287,10 @@ export default function GeneralaPage() {
   const bonusEarned = upperSum >= UPPER_BONUS_MIN
   const bonusPts   = bonusEarned ? UPPER_BONUS : 0
 
+  // Las filas de categoría anotan con su propio Enter y cortan la pulsación
+  // (stopPropagation): el juego también anota con Enter desde window, y sin
+  // eso una fila con el foco anotaba dos veces y la segunda avisaba «Debes
+  // tirar los dados antes de anotar».
   function catRowClass(i: number, cat: Cat): string {
     const base = 'flex items-center justify-between px-3 py-1.5 rounded text-sm cursor-pointer transition-colors'
     if (i === cursor && phase === 'playing') return `${base} bg-[#ffd700]/15 ring-1 ring-[#ffd700]/60`
@@ -290,7 +304,7 @@ export default function GeneralaPage() {
 
   if (phase === 'idle') {
     return (
-      <GameShell title="Generala" instructions={INSTRUCTIONS} score={0} rereadKey="e">
+      <GameShell title="Generala" instructions={INSTRUCTIONS} score={0} rereadKey="e" liveScore={false}>
         <div className="text-center space-y-6">
           <h2 className="text-xl text-[#ffd700]">Generala</h2>
           <p className="text-[#888] text-sm max-w-sm mx-auto">
@@ -313,7 +327,7 @@ export default function GeneralaPage() {
 
   if (phase === 'done') {
     return (
-      <GameShell title="Generala" instructions={INSTRUCTIONS} score={total} rereadKey="e">
+      <GameShell title="Generala" instructions={INSTRUCTIONS} score={total} rereadKey="e" liveScore={false}>
         <div className="text-center space-y-4">
           <h2 className="text-2xl text-[#ffd700]">Partida terminada</h2>
           <p className="text-3xl font-mono font-bold" aria-live="polite">
@@ -368,6 +382,7 @@ export default function GeneralaPage() {
       instructions={INSTRUCTIONS}
       score={total}
       rereadKey="e"
+      liveScore={false}
       onReread={() =>
         announcePolite(
           `Turno ${turn} de ${N_TURNS}. ${rollsLeft} tirada${rollsLeft !== 1 ? 's' : ''} restante${rollsLeft !== 1 ? 's' : ''}. ` +
@@ -450,7 +465,7 @@ export default function GeneralaPage() {
             <div>
               <div className="flex items-center justify-between mb-1">
                 <p className="text-[#ffd700] text-xs font-bold tracking-wide">SECCIÓN SUPERIOR</p>
-                <p className="text-[#999] text-xs" aria-live="polite">
+                <p className="text-[#999] text-xs">
                   {upperSum}/{UPPER_BONUS_MIN}
                   {bonusEarned
                     ? <span className="text-[#22c55e] ml-1">+{UPPER_BONUS}</span>
@@ -470,7 +485,7 @@ export default function GeneralaPage() {
                     onClick={() => scoreCategory(cat.id)}
                     role="button"
                     tabIndex={0}
-                    onKeyDown={e => e.key === 'Enter' && scoreCategory(cat.id)}
+                    onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); e.stopPropagation(); scoreCategory(cat.id) } }}
                   >
                     <span className={scored !== null ? 'text-[#999]' : 'text-[#ccc]'}>{cat.label}</span>
                     <span className="font-mono ml-2 shrink-0">
@@ -502,7 +517,7 @@ export default function GeneralaPage() {
                     onClick={() => scoreCategory(cat.id)}
                     role="button"
                     tabIndex={0}
-                    onKeyDown={e => e.key === 'Enter' && scoreCategory(cat.id)}
+                    onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); e.stopPropagation(); scoreCategory(cat.id) } }}
                   >
                     <span className={scored !== null ? 'text-[#999]' : 'text-[#ccc]'}>{cat.label}</span>
                     <span className="font-mono ml-2 shrink-0">
