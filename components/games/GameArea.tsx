@@ -10,17 +10,22 @@ import { useEffect, useRef } from 'react'
 // R a la siguiente región… Con role="application" y el foco dentro, pasan
 // solos al modo foco y dejan pasar todas las teclas al juego.
 //
-// Recibe el foco al montarse (al empezar la partida). Con Tab se sale de ella
-// y se puede volver a entrar. Los juegos siguen escuchando el teclado en
+// Recibe el foco al montarse (al empezar la partida). Escape lleva el foco al
+// título del juego, fuera de la zona, para leer la página en modo exploración;
+// con Tab también se sale, y con Tab o Mayús+Tab se vuelve a entrar. Los juegos siguen escuchando el teclado en
 // window: la pulsación sube desde aquí hasta allí.
 export default function GameArea({
   label,
   className = '',
+  escapeLeaves = true,
   children,
 }: {
   // Nombre del juego y sus teclas: es lo que lee el lector al entrar.
   label: string
   className?: string
+  // false en los juegos que usan Escape para jugar (el Solitario la usa para
+  // cancelar la selección): entonces Escape les llega a ellos.
+  escapeLeaves?: boolean
   children: React.ReactNode
 }) {
   const ref = useRef<HTMLDivElement>(null)
@@ -41,12 +46,24 @@ export default function GameArea({
     return () => observer.disconnect()
   }, [])
 
+  function onKeyDown(e: React.KeyboardEvent) {
+    if (!escapeLeaves || e.key !== 'Escape') return
+    // No llega al juego: Escape solo significa «salir de la zona».
+    e.preventDefault()
+    e.stopPropagation()
+    const title = document.querySelector('h1')
+    if (!title) return
+    if (!title.hasAttribute('tabindex')) title.setAttribute('tabindex', '-1')
+    title.focus()
+  }
+
   return (
     <div
       ref={ref}
       role="application"
       tabIndex={0}
-      aria-label={label}
+      aria-label={escapeLeaves ? `${label} Escape para salir de la zona de juego.` : label}
+      onKeyDown={onKeyDown}
       className={`rounded focus:outline-none focus-visible:ring-2 focus-visible:ring-[#ffd700] focus-visible:ring-offset-4 focus-visible:ring-offset-black ${className}`}
     >
       {children}
