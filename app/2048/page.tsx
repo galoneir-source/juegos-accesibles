@@ -6,6 +6,7 @@ import Button from '@/components/ui/Button'
 import { announceAssertive, announcePolite } from '@/lib/announce'
 import { audio } from '@/lib/audio'
 import { saveScore } from '@/app/actions/scores'
+import GameArea from '@/components/games/GameArea'
 
 const SIZE = 4
 
@@ -294,6 +295,10 @@ export default function Page2048() {
             </div>
           ))}
         </div>
+
+        <GameArea label="2048, zona de juego. Flechas para mover las fichas, R para leer el estado, H para las instrucciones.">
+          <p className="text-xs text-[#999] px-2 py-1">Flechas: mover fichas · R: estado · H: instrucciones</p>
+        </GameArea>
 
         {/* Game over overlay */}
         {phase === 'over' && (

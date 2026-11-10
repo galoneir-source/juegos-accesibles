@@ -6,6 +6,7 @@ import Button from '@/components/ui/Button'
 import { announceAssertive, announcePolite } from '@/lib/announce'
 import { audio } from '@/lib/audio'
 import { saveScore } from '@/app/actions/scores'
+import GameArea from '@/components/games/GameArea'
 
 // ─── Types & constants ────────────────────────────────────────────────────────
 
@@ -282,24 +283,26 @@ export default function TresEnRayaPage() {
           {aiThinking ? 'La IA piensa…' : 'Tu turno — coloca tu X'}
         </p>
 
-        <div className="grid grid-cols-3 gap-1.5 max-w-[210px] mx-auto" aria-hidden="true">
-          {board.map((cell, i) => (
-            <div
-              key={i}
-              className={[
-                'h-[65px] flex items-center justify-center text-3xl font-bold rounded border transition-colors',
-                i === cursor ? 'border-[#ffd700] bg-[#1a1a00]' : 'border-[#333] bg-[#111]',
-                cell === 'X' ? 'text-[#ffd700]' : 'text-[#888]',
-              ].join(' ')}
-            >
-              {cell ?? ''}
-            </div>
-          ))}
-        </div>
+        <GameArea label="Tres en Raya, tablero. Flechas para moverte, Enter para colocar tu X, R para leer la celda, H para las instrucciones." className="space-y-6">
+          <div className="grid grid-cols-3 gap-1.5 max-w-[210px] mx-auto" aria-hidden="true">
+            {board.map((cell, i) => (
+              <div
+                key={i}
+                className={[
+                  'h-[65px] flex items-center justify-center text-3xl font-bold rounded border transition-colors',
+                  i === cursor ? 'border-[#ffd700] bg-[#1a1a00]' : 'border-[#333] bg-[#111]',
+                  cell === 'X' ? 'text-[#ffd700]' : 'text-[#888]',
+                ].join(' ')}
+              >
+                {cell ?? ''}
+              </div>
+            ))}
+          </div>
 
-        <p className="text-xs text-[#999] text-center">
-          Flechas: mover &nbsp;|&nbsp; Enter: colocar &nbsp;|&nbsp; R: leer celda &nbsp;|&nbsp; H: instrucciones
-        </p>
+          <p className="text-xs text-[#999] text-center">
+            Flechas: mover &nbsp;|&nbsp; Enter: colocar &nbsp;|&nbsp; R: leer celda &nbsp;|&nbsp; H: instrucciones
+          </p>
+        </GameArea>
       </div>
     </GameShell>
   )

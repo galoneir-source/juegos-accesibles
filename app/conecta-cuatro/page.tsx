@@ -6,6 +6,7 @@ import Button from '@/components/ui/Button'
 import { announceAssertive, announcePolite } from '@/lib/announce'
 import { audio } from '@/lib/audio'
 import { saveScore } from '@/app/actions/scores'
+import GameArea from '@/components/games/GameArea'
 
 const ROWS = 6
 const COLS = 7
@@ -421,23 +422,25 @@ export default function ConectaCuatroPage() {
         </div>
 
         {/* Column buttons — click to select & drop */}
-        <div className="flex gap-1.5" role="group" aria-label="Seleccionar columna y soltar ficha">
-          {Array.from({ length: COLS }, (_, c) => (
-            <button
-              key={c}
-              className={`w-9 sm:w-11 h-8 text-xs rounded font-bold transition-colors ${
-                c === col
-                  ? 'bg-yellow-500 text-black'
-                  : 'bg-[#162030] text-[#556] hover:bg-[#1e3048]'
-              }`}
-              onClick={() => { moveCol(c); setTimeout(handleDrop, 0) }}
-              disabled={thinking}
-              aria-label={`Columna ${c + 1}: ${describeCol(c, board)}`}
-            >
-              {c + 1}
-            </button>
-          ))}
-        </div>
+        <GameArea label="Conecta 4, zona de juego. Flechas izquierda y derecha para elegir columna, Enter para soltar la ficha, I para leer la columna, R para el estado, H para las instrucciones.">
+          <div className="flex gap-1.5" role="group" aria-label="Seleccionar columna y soltar ficha">
+            {Array.from({ length: COLS }, (_, c) => (
+              <button
+                key={c}
+                className={`w-9 sm:w-11 h-8 text-xs rounded font-bold transition-colors ${
+                  c === col
+                    ? 'bg-yellow-500 text-black'
+                    : 'bg-[#162030] text-[#556] hover:bg-[#1e3048]'
+                }`}
+                onClick={() => { moveCol(c); setTimeout(handleDrop, 0) }}
+                disabled={thinking}
+                aria-label={`Columna ${c + 1}: ${describeCol(c, board)}`}
+              >
+                {c + 1}
+              </button>
+            ))}
+          </div>
+        </GameArea>
 
         {/* Column summary — shows stacked pieces as compact text */}
         <div className="flex gap-1.5" aria-hidden="true">

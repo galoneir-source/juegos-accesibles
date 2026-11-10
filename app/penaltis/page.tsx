@@ -6,6 +6,7 @@ import Button from '@/components/ui/Button'
 import { announceAssertive, announcePolite } from '@/lib/announce'
 import { audio } from '@/lib/audio'
 import { saveScore } from '@/app/actions/scores'
+import GameArea from '@/components/games/GameArea'
 
 // ─── Types & constants ────────────────────────────────────────────────────────
 
@@ -346,27 +347,29 @@ export default function PenaltisPage() {
           <p className="text-center text-sm py-2 text-white" role="status">{lastMsg}</p>
         )}
 
-        {!busy && (
-          <div className="flex gap-3 justify-center mt-4" role="group" aria-label={label}>
-            {DIRS.map(dir => (
-              <Button
-                key={dir}
-                size="lg"
-                variant="secondary"
-                onClick={() => isShooting ? shoot(dir) : defend(dir)}
-                className="flex-1 flex flex-col items-center gap-1"
-                aria-label={`${isShooting ? 'Disparar' : 'Lanzarse'} a la ${DIR_NAME[dir]}`}
-              >
-                <span className="text-2xl">{DIR_ARROW[dir]}</span>
-                <span className="text-xs capitalize">{DIR_NAME[dir]}</span>
-              </Button>
-            ))}
-          </div>
-        )}
+        <GameArea label="Penaltis, zona de juego. Flecha izquierda, flecha abajo o Espacio, y flecha derecha para elegir el lado, H para las instrucciones." className="space-y-2">
+          {!busy && (
+            <div className="flex gap-3 justify-center mt-4" role="group" aria-label={label}>
+              {DIRS.map(dir => (
+                <Button
+                  key={dir}
+                  size="lg"
+                  variant="secondary"
+                  onClick={() => isShooting ? shoot(dir) : defend(dir)}
+                  className="flex-1 flex flex-col items-center gap-1"
+                  aria-label={`${isShooting ? 'Disparar' : 'Lanzarse'} a la ${DIR_NAME[dir]}`}
+                >
+                  <span className="text-2xl">{DIR_ARROW[dir]}</span>
+                  <span className="text-xs capitalize">{DIR_NAME[dir]}</span>
+                </Button>
+              ))}
+            </div>
+          )}
 
-        <p className="text-xs text-[#999] text-center mt-3">
-          ← izquierda &nbsp;|&nbsp; ↓ / espacio — centro &nbsp;|&nbsp; → derecha
-        </p>
+          <p className="text-xs text-[#999] text-center mt-3">
+            ← izquierda &nbsp;|&nbsp; ↓ / espacio — centro &nbsp;|&nbsp; → derecha
+          </p>
+        </GameArea>
       </div>
     </GameShell>
   )

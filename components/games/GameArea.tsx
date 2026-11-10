@@ -26,7 +26,19 @@ export default function GameArea({
   const ref = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    ref.current?.focus()
+    const area = ref.current
+    if (!area) return
+    area.focus()
+    // Si desaparece el botón que tenía el foco (las acciones cambian en cada
+    // turno de los juegos de cartas), el foco caería en <body> y el lector
+    // volvería al modo exploración: se devuelve a la zona. Solo si no está en
+    // ningún otro sitio, para no quitárselo a quien está fuera de la zona.
+    const observer = new MutationObserver(() => {
+      const active = document.activeElement
+      if (!active || active === document.body) area.focus()
+    })
+    observer.observe(area, { childList: true, subtree: true })
+    return () => observer.disconnect()
   }, [])
 
   return (

@@ -6,6 +6,7 @@ import Button from '@/components/ui/Button'
 import { announceAssertive, announcePolite } from '@/lib/announce'
 import { audio } from '@/lib/audio'
 import { saveScore } from '@/app/actions/scores'
+import GameArea from '@/components/games/GameArea'
 
 const FALLBACK_WORDS = [
   { word: 'ELEFANTE', hint: 'Animal grande con trompa' },
@@ -211,26 +212,28 @@ export default function HangmanPage() {
           )}
         </div>
 
-        <div role="group" aria-label="Teclado de letras" className="flex flex-wrap gap-2">
-          {LETTERS.map(l => (
-            <Button
-              key={l}
-              variant="secondary"
-              size="sm"
-              disabled={guessed.has(l)}
-              onClick={() => tryLetter(l)}
-              aria-label={`Letra ${l}`}
-              aria-pressed={guessed.has(l)}
-              className={guessed.has(l) ? (wordData.word.includes(l) ? '!border-[#22c55e] !text-[#22c55e]' : '!border-[#ef4444] !text-[#ef4444] opacity-40') : ''}
-            >
-              {l}
-            </Button>
-          ))}
-        </div>
+        <GameArea label="Ahorcado, zona de juego. Escribe una letra para probarla, 1 para las instrucciones, 2 para releer el estado." className="space-y-6">
+          <div role="group" aria-label="Teclado de letras" className="flex flex-wrap gap-2">
+            {LETTERS.map(l => (
+              <Button
+                key={l}
+                variant="secondary"
+                size="sm"
+                disabled={guessed.has(l)}
+                onClick={() => tryLetter(l)}
+                aria-label={`Letra ${l}`}
+                aria-pressed={guessed.has(l)}
+                className={guessed.has(l) ? (wordData.word.includes(l) ? '!border-[#22c55e] !text-[#22c55e]' : '!border-[#ef4444] !text-[#ef4444] opacity-40') : ''}
+              >
+                {l}
+              </Button>
+            ))}
+          </div>
 
-        <p className="text-sm text-[#999]">
-          Presiona la tecla de la letra en tu teclado, o haz click en el botón.
-        </p>
+          <p className="text-sm text-[#999]">
+            Presiona la tecla de la letra en tu teclado, o haz click en el botón.
+          </p>
+        </GameArea>
       </div>
     </GameShell>
   )

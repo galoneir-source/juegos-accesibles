@@ -6,6 +6,7 @@ import Button from '@/components/ui/Button'
 import { announceAssertive, announcePolite } from '@/lib/announce'
 import { audio } from '@/lib/audio'
 import { saveScore } from '@/app/actions/scores'
+import GameArea from '@/components/games/GameArea'
 
 const WORDS = [
   'CAMPO', 'CARTA', 'BARCO', 'PERRO', 'LIBRO', 'NEGRO', 'SUELO', 'VERDE',
@@ -328,38 +329,40 @@ export default function WordlePage() {
         </p>
 
         {/* On-screen keyboard */}
-        <div role="group" aria-label="Teclado en pantalla" className="space-y-1.5 w-full max-w-xs">
-          {KEY_ROWS.map((row, ri) => (
-            <div key={ri} className="flex justify-center gap-1">
-              {row.map(key => {
-                const ks       = keyStates[key]
-                const isAction = key === 'ENTER' || key === '⌫'
-                const label    = key === '⌫' ? 'Borrar'
-                              : key === 'ENTER' ? 'Enter: confirmar intento'
-                              : `Letra ${key}${ks ? `, ${STATE_LABEL[ks as LetterState]}` : ''}`
-                return (
-                  <button
-                    key={key}
-                    onClick={() => pressKey(key)}
-                    aria-label={label}
-                    className={`
-                      h-10 rounded font-bold text-sm select-none transition-colors cursor-pointer
-                      focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#ffd700]
-                      ${isAction ? 'px-2 text-xs min-w-[3rem]' : 'w-8'}
-                      ${ks
-                        ? STATE_KEY[ks]
-                        : 'bg-[#555] text-[#f0f0f0] border border-[#666] hover:bg-[#666]'}
-                    `}
-                  >
-                    {key}
-                  </button>
-                )
-              })}
-            </div>
-          ))}
-        </div>
+        <GameArea label="Wordle, zona de juego. Escribe las letras con el teclado, Enter para confirmar el intento, Retroceso para borrar, 1 para las instrucciones, 2 para releer el último intento." className="flex flex-col items-center gap-4">
+          <div role="group" aria-label="Teclado en pantalla" className="space-y-1.5 w-full max-w-xs">
+            {KEY_ROWS.map((row, ri) => (
+              <div key={ri} className="flex justify-center gap-1">
+                {row.map(key => {
+                  const ks       = keyStates[key]
+                  const isAction = key === 'ENTER' || key === '⌫'
+                  const label    = key === '⌫' ? 'Borrar'
+                                : key === 'ENTER' ? 'Enter: confirmar intento'
+                                : `Letra ${key}${ks ? `, ${STATE_LABEL[ks as LetterState]}` : ''}`
+                  return (
+                    <button
+                      key={key}
+                      onClick={() => pressKey(key)}
+                      aria-label={label}
+                      className={`
+                        h-10 rounded font-bold text-sm select-none transition-colors cursor-pointer
+                        focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#ffd700]
+                        ${isAction ? 'px-2 text-xs min-w-[3rem]' : 'w-8'}
+                        ${ks
+                          ? STATE_KEY[ks]
+                          : 'bg-[#555] text-[#f0f0f0] border border-[#666] hover:bg-[#666]'}
+                      `}
+                    >
+                      {key}
+                    </button>
+                  )
+                })}
+              </div>
+            ))}
+          </div>
 
-        <p className="text-xs text-[#999]">Teclado físico o botones en pantalla</p>
+          <p className="text-xs text-[#999]">Teclado físico o botones en pantalla</p>
+        </GameArea>
       </div>
     </GameShell>
   )

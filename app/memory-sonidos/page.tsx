@@ -6,6 +6,7 @@ import Button from '@/components/ui/Button'
 import { announceAssertive, announcePolite } from '@/lib/announce'
 import { audio } from '@/lib/audio'
 import { saveScore } from '@/app/actions/scores'
+import GameArea from '@/components/games/GameArea'
 
 const SOUND_NAMES = ['Do', 'Re', 'Mi', 'Fa', 'Sol', 'La', 'Si', 'Do alto']
 const INITIAL_LENGTH = 3
@@ -167,22 +168,24 @@ export default function MemorySonidosPage() {
           </p>
         </div>
 
-        <div className="grid grid-cols-4 gap-3" role="group" aria-label="Tonos musicales">
-          {SOUND_NAMES.map((name, i) => (
-            <Button
-              key={i}
-              variant="secondary"
-              size="lg"
-              disabled={phase !== 'input'}
-              onClick={() => pressSound(i)}
-              aria-label={`Tono ${i + 1}: ${name}`}
-              className={`flex flex-col items-center gap-1 h-20 ${activeBtn === i ? '!bg-[#ffd700] !text-black !border-[#ffd700]' : ''}`}
-            >
-              <span className="text-2xl font-bold text-[#ffd700]">{i + 1}</span>{' '}
-              <span className="text-xs">{name}</span>
-            </Button>
-          ))}
-        </div>
+        <GameArea label="Memory de Sonidos, zona de juego. Teclas del 1 al 8 para repetir los tonos, R para el estado, H para las instrucciones.">
+          <div className="grid grid-cols-4 gap-3" role="group" aria-label="Tonos musicales">
+            {SOUND_NAMES.map((name, i) => (
+              <Button
+                key={i}
+                variant="secondary"
+                size="lg"
+                disabled={phase !== 'input'}
+                onClick={() => pressSound(i)}
+                aria-label={`Tono ${i + 1}: ${name}`}
+                className={`flex flex-col items-center gap-1 h-20 ${activeBtn === i ? '!bg-[#ffd700] !text-black !border-[#ffd700]' : ''}`}
+              >
+                <span className="text-2xl font-bold text-[#ffd700]">{i + 1}</span>{' '}
+                <span className="text-xs">{name}</span>
+              </Button>
+            ))}
+          </div>
+        </GameArea>
 
         {phase === 'input' && (
           <div>

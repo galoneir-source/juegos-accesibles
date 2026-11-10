@@ -6,6 +6,7 @@ import Button from '@/components/ui/Button'
 import { announceAssertive, announcePolite } from '@/lib/announce'
 import { audio } from '@/lib/audio'
 import { saveScore } from '@/app/actions/scores'
+import GameArea from '@/components/games/GameArea'
 
 // ── tipos ──────────────────────────────────────────────────────────────────
 
@@ -787,76 +788,78 @@ export default function TrucoPage() {
         )}
 
         {/* Acciones: turno jugador */}
-        {isPlaying && (
-          <div className="flex flex-wrap gap-2" role="group" aria-label="Acciones de juego">
-            {playerHand.map((card, i) => (
-              <Button key={card.id} onClick={() => playCard(i)} aria-label={`Tecla ${i + 1}: Jugar ${cardLabel(card)}`}>
-                {i + 1} — Jugar {cardLabel(card)}
+        <GameArea label="Truco, zona de juego. 1, 2 y 3 para jugar una carta, E para envido, T para truco, S para aceptar, N para rechazar o nueva mano, I para el estado." className="space-y-5">
+          {isPlaying && (
+            <div className="flex flex-wrap gap-2" role="group" aria-label="Acciones de juego">
+              {playerHand.map((card, i) => (
+                <Button key={card.id} onClick={() => playCard(i)} aria-label={`Tecla ${i + 1}: Jugar ${cardLabel(card)}`}>
+                  {i + 1} — Jugar {cardLabel(card)}
+                </Button>
+              ))}
+              {envidoAvail && !envidoDone && (
+                <Button variant="secondary" onClick={playerCallEnvido} aria-label={`Tecla E: Cantar ${ENVIDO_NAMES[Math.min(envidoLevel + 1, 3)]}`}>
+                  E — Cantar {ENVIDO_NAMES[Math.min(envidoLevel + 1, 3)]}
+                </Button>
+              )}
+              <Button variant="secondary" onClick={playerCallTruco} aria-label={`Tecla T: Cantar ${TRUCO_NAMES[Math.min(trucoLevel + 1, 3)]}`} disabled={trucoLevel >= 3}>
+                T — Cantar {TRUCO_NAMES[Math.min(trucoLevel + 1, 3)]}
               </Button>
-            ))}
-            {envidoAvail && !envidoDone && (
-              <Button variant="secondary" onClick={playerCallEnvido} aria-label={`Tecla E: Cantar ${ENVIDO_NAMES[Math.min(envidoLevel + 1, 3)]}`}>
-                E — Cantar {ENVIDO_NAMES[Math.min(envidoLevel + 1, 3)]}
+            </div>
+          )}
+
+          {/* Responder envido */}
+          {phase === 'envido_response' && (
+            <div className="flex flex-wrap gap-2" role="group" aria-label="Respuesta al envido">
+              <Button onClick={() => respondEnvido('accept')} aria-label="Tecla S: Quiero (aceptar el envido)">S — Quiero</Button>
+              <Button variant="secondary" onClick={() => respondEnvido('reject')} aria-label="Tecla N: No quiero (rechazar el envido)">N — No quiero</Button>
+              {envidoLevel < 3 && (
+                <Button variant="secondary" onClick={() => respondEnvido('raise')} aria-label={`Tecla E: Subir a ${ENVIDO_NAMES[envidoLevel + 1]}`}>
+                  E — Subir a {ENVIDO_NAMES[envidoLevel + 1]}
+                </Button>
+              )}
+            </div>
+          )}
+
+          {/* Responder truco */}
+          {phase === 'truco_response' && (
+            <div className="flex flex-wrap gap-2" role="group" aria-label="Respuesta al truco">
+              <Button onClick={() => respondTruco('accept')} aria-label="Tecla S: Quiero (aceptar el truco)">S — Quiero</Button>
+              <Button variant="secondary" onClick={() => respondTruco('reject')} aria-label="Tecla N: No quiero (rechazar el truco)">N — No quiero</Button>
+              {trucoLevel < 3 && (
+                <Button variant="secondary" onClick={() => respondTruco('raise')} aria-label={`Tecla T: Subir a ${TRUCO_NAMES[trucoLevel + 1]}`}>
+                  T — Subir a {TRUCO_NAMES[trucoLevel + 1]}
+                </Button>
+              )}
+            </div>
+          )}
+
+          {/* Fin de mano / partida */}
+          {(phase === 'hand_over' || phase === 'game_over') && (
+            <div className="flex flex-wrap gap-3 items-center">
+              <Button
+                onClick={() => {
+                  if (phase === 'game_over') { setPlayerScore(0); setAiScore(0); startHand(0, 0, true) }
+                  else startHand(playerScore, aiScore, !playerIsMano)
+                }}
+                aria-label={phase === 'game_over' ? 'Tecla N: Nueva partida' : 'Tecla N: Nueva mano'}
+              >
+                N — {phase === 'game_over' ? 'Nueva partida' : 'Nueva mano'}
               </Button>
-            )}
-            <Button variant="secondary" onClick={playerCallTruco} aria-label={`Tecla T: Cantar ${TRUCO_NAMES[Math.min(trucoLevel + 1, 3)]}`} disabled={trucoLevel >= 3}>
-              T — Cantar {TRUCO_NAMES[Math.min(trucoLevel + 1, 3)]}
-            </Button>
-          </div>
-        )}
+              {!saved ? (
+                <>
+                  <Button variant="secondary" onClick={handleSave}>Guardar puntuación</Button>
+                  {saveError && <p role="alert" className="text-[#ef4444] text-sm">{saveError}</p>}
+                </>
+              ) : (
+                <p role="status" className="text-[#22c55e] text-sm">Guardado.</p>
+              )}
+            </div>
+          )}
 
-        {/* Responder envido */}
-        {phase === 'envido_response' && (
-          <div className="flex flex-wrap gap-2" role="group" aria-label="Respuesta al envido">
-            <Button onClick={() => respondEnvido('accept')} aria-label="Tecla S: Quiero (aceptar el envido)">S — Quiero</Button>
-            <Button variant="secondary" onClick={() => respondEnvido('reject')} aria-label="Tecla N: No quiero (rechazar el envido)">N — No quiero</Button>
-            {envidoLevel < 3 && (
-              <Button variant="secondary" onClick={() => respondEnvido('raise')} aria-label={`Tecla E: Subir a ${ENVIDO_NAMES[envidoLevel + 1]}`}>
-                E — Subir a {ENVIDO_NAMES[envidoLevel + 1]}
-              </Button>
-            )}
-          </div>
-        )}
-
-        {/* Responder truco */}
-        {phase === 'truco_response' && (
-          <div className="flex flex-wrap gap-2" role="group" aria-label="Respuesta al truco">
-            <Button onClick={() => respondTruco('accept')} aria-label="Tecla S: Quiero (aceptar el truco)">S — Quiero</Button>
-            <Button variant="secondary" onClick={() => respondTruco('reject')} aria-label="Tecla N: No quiero (rechazar el truco)">N — No quiero</Button>
-            {trucoLevel < 3 && (
-              <Button variant="secondary" onClick={() => respondTruco('raise')} aria-label={`Tecla T: Subir a ${TRUCO_NAMES[trucoLevel + 1]}`}>
-                T — Subir a {TRUCO_NAMES[trucoLevel + 1]}
-              </Button>
-            )}
-          </div>
-        )}
-
-        {/* Fin de mano / partida */}
-        {(phase === 'hand_over' || phase === 'game_over') && (
-          <div className="flex flex-wrap gap-3 items-center">
-            <Button
-              onClick={() => {
-                if (phase === 'game_over') { setPlayerScore(0); setAiScore(0); startHand(0, 0, true) }
-                else startHand(playerScore, aiScore, !playerIsMano)
-              }}
-              aria-label={phase === 'game_over' ? 'Tecla N: Nueva partida' : 'Tecla N: Nueva mano'}
-            >
-              N — {phase === 'game_over' ? 'Nueva partida' : 'Nueva mano'}
-            </Button>
-            {!saved ? (
-              <>
-                <Button variant="secondary" onClick={handleSave}>Guardar puntuación</Button>
-                {saveError && <p role="alert" className="text-[#ef4444] text-sm">{saveError}</p>}
-              </>
-            ) : (
-              <p role="status" className="text-[#22c55e] text-sm">Guardado.</p>
-            )}
-          </div>
-        )}
-
-        <p className="text-xs text-[#999]">
-          I: estado · E: Envido · T: Truco · S: aceptar · N: rechazar/nueva mano · 1/2/3: jugar carta
-        </p>
+          <p className="text-xs text-[#999]">
+            I: estado · E: Envido · T: Truco · S: aceptar · N: rechazar/nueva mano · 1/2/3: jugar carta
+          </p>
+        </GameArea>
       </div>
     </GameShell>
   )

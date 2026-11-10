@@ -6,6 +6,7 @@ import Button from '@/components/ui/Button'
 import { announceAssertive, announcePolite } from '@/lib/announce'
 import { audio } from '@/lib/audio'
 import { saveScore } from '@/app/actions/scores'
+import GameArea from '@/components/games/GameArea'
 
 // ── tipos ──────────────────────────────────────────────────────────────────
 
@@ -687,49 +688,51 @@ export default function PokerPage() {
         )}
 
         {/* Acciones en juego */}
-        {isPlaying && isPlayerTurn && (
-          <div className="flex flex-wrap gap-2" role="group" aria-label="Tus acciones">
-            <Button variant="secondary" onClick={() => playerAct('fold')} aria-label="Tecla F: Retirarme">F — Retirarme</Button>
-            <Button onClick={() => playerAct(needed === 0 ? 'check' : 'call')} aria-label={needed === 0 ? 'Tecla C: Pasar' : `Tecla C: Igualar ${needed} fichas`}>
-              C — {needed === 0 ? 'Pasar' : `Igualar ${needed}`}
-            </Button>
-            <Button onClick={() => playerAct('raise')} aria-label={`Tecla R: Subir ${raiseAmount} fichas`}>
-              R — Subir {raiseAmount}
-            </Button>
-            <div className="flex items-center gap-1 ml-2" role="group" aria-label={`Ajuste de subida: ${raiseAmount} fichas`}>
-              <Button variant="ghost" size="sm" onClick={() => setRaiseAmount(r => Math.max(RAISE_STEP, r - RAISE_STEP))} aria-label="Reducir subida (tecla -)">−</Button>
-              <span className="text-xs text-[#888] w-12 text-center">{raiseAmount}</span>
-              <Button variant="ghost" size="sm" onClick={() => setRaiseAmount(r => r + RAISE_STEP)} aria-label="Aumentar subida (tecla +)">+</Button>
+        <GameArea label="Póker, zona de juego. F para retirarte, C para igualar o pasar, R para subir, más y menos para ajustar la subida, I para el estado, N para nueva mano." className="space-y-5">
+          {isPlaying && isPlayerTurn && (
+            <div className="flex flex-wrap gap-2" role="group" aria-label="Tus acciones">
+              <Button variant="secondary" onClick={() => playerAct('fold')} aria-label="Tecla F: Retirarme">F — Retirarme</Button>
+              <Button onClick={() => playerAct(needed === 0 ? 'check' : 'call')} aria-label={needed === 0 ? 'Tecla C: Pasar' : `Tecla C: Igualar ${needed} fichas`}>
+                C — {needed === 0 ? 'Pasar' : `Igualar ${needed}`}
+              </Button>
+              <Button onClick={() => playerAct('raise')} aria-label={`Tecla R: Subir ${raiseAmount} fichas`}>
+                R — Subir {raiseAmount}
+              </Button>
+              <div className="flex items-center gap-1 ml-2" role="group" aria-label={`Ajuste de subida: ${raiseAmount} fichas`}>
+                <Button variant="ghost" size="sm" onClick={() => setRaiseAmount(r => Math.max(RAISE_STEP, r - RAISE_STEP))} aria-label="Reducir subida (tecla -)">−</Button>
+                <span className="text-xs text-[#888] w-12 text-center">{raiseAmount}</span>
+                <Button variant="ghost" size="sm" onClick={() => setRaiseAmount(r => r + RAISE_STEP)} aria-label="Aumentar subida (tecla +)">+</Button>
+              </div>
             </div>
-          </div>
-        )}
+          )}
 
-        {isPlaying && !isPlayerTurn && (
-          <p className="text-[#888] text-sm" aria-live="polite">Turno de la IA…</p>
-        )}
+          {isPlaying && !isPlayerTurn && (
+            <p className="text-[#888] text-sm" aria-live="polite">Turno de la IA…</p>
+          )}
 
-        {/* Fin de mano */}
-        {phase === 'finished' && (
-          <div className="flex flex-wrap gap-3 items-center">
-            {playerChips > 0 && aiChips > 0 ? (
-              <Button onClick={newGame} aria-label="Tecla N: Nueva mano">N — Nueva mano</Button>
-            ) : (
-              <Button onClick={firstGame}>Nueva partida</Button>
-            )}
-            {!saved ? (
-              <>
-                <Button variant="secondary" onClick={handleSave}>Guardar puntuación</Button>
-                {saveError && <p role="alert" className="text-[#ef4444] text-sm">{saveError}</p>}
-              </>
-            ) : (
-              <p role="status" className="text-[#22c55e] text-sm">Guardado.</p>
-            )}
-          </div>
-        )}
+          {/* Fin de mano */}
+          {phase === 'finished' && (
+            <div className="flex flex-wrap gap-3 items-center">
+              {playerChips > 0 && aiChips > 0 ? (
+                <Button onClick={newGame} aria-label="Tecla N: Nueva mano">N — Nueva mano</Button>
+              ) : (
+                <Button onClick={firstGame}>Nueva partida</Button>
+              )}
+              {!saved ? (
+                <>
+                  <Button variant="secondary" onClick={handleSave}>Guardar puntuación</Button>
+                  {saveError && <p role="alert" className="text-[#ef4444] text-sm">{saveError}</p>}
+                </>
+              ) : (
+                <p role="status" className="text-[#22c55e] text-sm">Guardado.</p>
+              )}
+            </div>
+          )}
 
-        <p className="text-xs text-[#999]">
-          I: estado · F: retirarme · C: igualar/pasar · R: subir · +/−: ajustar subida · N: nueva mano
-        </p>
+          <p className="text-xs text-[#999]">
+            I: estado · F: retirarme · C: igualar/pasar · R: subir · +/−: ajustar subida · N: nueva mano
+          </p>
+        </GameArea>
       </div>
     </GameShell>
   )
