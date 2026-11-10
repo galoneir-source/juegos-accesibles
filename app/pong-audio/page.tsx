@@ -6,6 +6,7 @@ import Button from '@/components/ui/Button'
 import { announceAssertive, announcePolite } from '@/lib/announce'
 import { audio } from '@/lib/audio'
 import { saveScore } from '@/app/actions/scores'
+import GameArea from '@/components/games/GameArea'
 
 type Phase = 'idle' | 'playing' | 'won' | 'lost'
 
@@ -462,17 +463,19 @@ export default function PongAudioPage() {
           </span>
         </div>
 
-        <canvas
-          ref={canvasRef}
-          width={W}
-          height={H}
-          aria-hidden="true"
-          className="w-full max-w-[560px] border border-[#333] rounded block mx-auto bg-[#0a0a0a]"
-        />
+        <GameArea label="Pong de Audio, zona de juego. Flechas arriba y abajo para mover la paleta, Espacio para escuchar la pelota, R para el estado, H para las instrucciones." className="space-y-3">
+          <canvas
+            ref={canvasRef}
+            width={W}
+            height={H}
+            aria-hidden="true"
+            className="w-full max-w-[560px] border border-[#333] rounded block mx-auto bg-[#0a0a0a]"
+          />
 
-        <p className="text-xs text-[#999] text-center">
-          ↑↓ / W S — mover paleta &nbsp;|&nbsp; Espacio — escuchar pelota &nbsp;|&nbsp; R — leer estado &nbsp;|&nbsp; H — instrucciones
-        </p>
+          <p className="text-xs text-[#999] text-center">
+            ↑↓ / W S — mover paleta &nbsp;|&nbsp; Espacio — escuchar pelota &nbsp;|&nbsp; R — leer estado &nbsp;|&nbsp; H — instrucciones
+          </p>
+        </GameArea>
       </div>
     </GameShell>
   )

@@ -6,6 +6,7 @@ import Button from '@/components/ui/Button'
 import { announceAssertive, announcePolite } from '@/lib/announce'
 import { audio } from '@/lib/audio'
 import { saveScore } from '@/app/actions/scores'
+import GameArea from '@/components/games/GameArea'
 
 // ── Board ─────────────────────────────────────────────────────────────────────
 const COLS = 11
@@ -630,17 +631,19 @@ export default function FroggerPage() {
             <strong className={timer <= 10 ? 'text-[#ef4444]' : 'text-[#f0f0f0]'}>{timer}s</strong>
           </span>
         </div>
-        <canvas
-          ref={canvasRef}
-          width={W}
-          height={H}
-          aria-hidden="true"
-          className="block mx-auto border border-[#333] rounded bg-black"
-          style={{ maxWidth: '100%' }}
-        />
-        <p className="text-xs text-[#999] text-center">
-          ↑ ↓ ← → / WASD — saltar &nbsp;|&nbsp; E — escuchar peligros &nbsp;|&nbsp; R — estado &nbsp;|&nbsp; H — instrucciones
-        </p>
+        <GameArea label="Frogger, zona de juego. Flechas para saltar, E para escuchar los peligros, R para el estado, H para las instrucciones." className="space-y-3">
+          <canvas
+            ref={canvasRef}
+            width={W}
+            height={H}
+            aria-hidden="true"
+            className="block mx-auto border border-[#333] rounded bg-black"
+            style={{ maxWidth: '100%' }}
+          />
+          <p className="text-xs text-[#999] text-center">
+            ↑ ↓ ← → / WASD — saltar &nbsp;|&nbsp; E — escuchar peligros &nbsp;|&nbsp; R — estado &nbsp;|&nbsp; H — instrucciones
+          </p>
+        </GameArea>
       </div>
     </GameShell>
   )

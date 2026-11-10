@@ -4,6 +4,7 @@ import { useEffect } from 'react'
 import Link from 'next/link'
 import Button from '@/components/ui/Button'
 import { announcePolite } from '@/lib/announce'
+import VolumeControl from '@/components/games/VolumeControl'
 
 interface GameShellProps {
   title: string
@@ -83,10 +84,11 @@ export default function GameShell({
         {children}
       </main>
 
-      <footer className="px-6 py-3 border-t border-[#333] text-center">
+      <footer className="px-6 py-3 border-t border-[#333] flex flex-wrap items-center justify-center gap-x-6 gap-y-2">
         <Button variant="ghost" size="sm" onClick={() => announcePolite(instructions)}>
           Escuchar instrucciones
         </Button>
+        <VolumeControl />
       </footer>
     </div>
   )

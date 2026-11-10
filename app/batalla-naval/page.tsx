@@ -6,6 +6,7 @@ import Button from '@/components/ui/Button'
 import { announceAssertive, announcePolite } from '@/lib/announce'
 import { audio } from '@/lib/audio'
 import { saveScore } from '@/app/actions/scores'
+import GameArea from '@/components/games/GameArea'
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -536,17 +537,19 @@ export default function BatallaNavalPage() {
             <strong className="text-[#ffd700]">{horizontal ? 'Horizontal' : 'Vertical'}</strong>
           </div>
 
-          <canvas
-            ref={pCanvas}
-            width={CW}
-            height={CH}
-            aria-hidden="true"
-            className="border border-[#333] rounded block"
-          />
+          <GameArea label="Batalla Naval, colocar la flota. Flechas para mover, R para rotar, Enter para colocar, A para colocar toda la flota automáticamente." className="space-y-4">
+            <canvas
+              ref={pCanvas}
+              width={CW}
+              height={CH}
+              aria-hidden="true"
+              className="border border-[#333] rounded block"
+            />
 
-          <p className="text-xs text-[#999]">
-            Flechas: mover &nbsp;|&nbsp; R: rotar &nbsp;|&nbsp; Enter: colocar &nbsp;|&nbsp; A: auto-colocar todo
-          </p>
+            <p className="text-xs text-[#999]">
+              Flechas: mover &nbsp;|&nbsp; R: rotar &nbsp;|&nbsp; Enter: colocar &nbsp;|&nbsp; A: auto-colocar todo
+            </p>
+          </GameArea>
 
           <ul className="space-y-1 text-sm" aria-label="Estado de la flota">
             {FLEET.map((def, i) => (
@@ -581,20 +584,22 @@ export default function BatallaNavalPage() {
           </span>
         </div>
 
-        <div className="flex gap-4 flex-wrap">
-          <div>
-            <p className="text-xs text-[#999] mb-1" aria-hidden="true">Tu flota</p>
-            <canvas ref={pCanvas} width={CW} height={CH} aria-hidden="true" className="border border-[#333] rounded block" />
+        <GameArea label="Batalla Naval, océano enemigo. Flechas para mover el cursor, Enter para disparar, R para leer el estado, H para las instrucciones." className="space-y-4">
+          <div className="flex gap-4 flex-wrap">
+            <div>
+              <p className="text-xs text-[#999] mb-1" aria-hidden="true">Tu flota</p>
+              <canvas ref={pCanvas} width={CW} height={CH} aria-hidden="true" className="border border-[#333] rounded block" />
+            </div>
+            <div>
+              <p className="text-xs text-[#999] mb-1" aria-hidden="true">Océano enemigo</p>
+              <canvas ref={eCanvas} width={CW} height={CH} aria-hidden="true" className="border border-[#333] rounded block" />
+            </div>
           </div>
-          <div>
-            <p className="text-xs text-[#999] mb-1" aria-hidden="true">Océano enemigo</p>
-            <canvas ref={eCanvas} width={CW} height={CH} aria-hidden="true" className="border border-[#333] rounded block" />
-          </div>
-        </div>
 
-        <p className="text-xs text-[#999]">
-          Flechas: mover cursor &nbsp;|&nbsp; Enter: disparar &nbsp;|&nbsp; R: leer estado &nbsp;|&nbsp; H: instrucciones
-        </p>
+          <p className="text-xs text-[#999]">
+            Flechas: mover cursor &nbsp;|&nbsp; Enter: disparar &nbsp;|&nbsp; R: leer estado &nbsp;|&nbsp; H: instrucciones
+          </p>
+        </GameArea>
       </div>
     </GameShell>
   )

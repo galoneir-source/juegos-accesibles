@@ -1,8 +1,55 @@
 let ctx: AudioContext | null = null
+let master: GainNode | null = null
+
+// Volumen de los efectos (0–1), común a todos los juegos y guardado en el
+// navegador. Va por un nodo de ganancia propio, así que no toca la voz del
+// lector de pantalla.
+const VOLUME_KEY = 'juegos-volumen'
+const VOLUME_EVENT = 'juegos-volumen'
+
+export function getVolume(): number {
+  try {
+    const v = Number(localStorage.getItem(VOLUME_KEY))
+    if (localStorage.getItem(VOLUME_KEY) !== null && v >= 0 && v <= 1) return v
+  } catch {
+    // Sin acceso al almacenamiento (modo privado, bloqueado…): volumen máximo.
+  }
+  return 1
+}
+
+export function setVolume(v: number) {
+  const vol = Math.max(0, Math.min(1, v))
+  try {
+    localStorage.setItem(VOLUME_KEY, String(vol))
+  } catch {
+    // Se aplica igualmente, aunque no se pueda guardar.
+  }
+  if (master) master.gain.value = vol
+  window.dispatchEvent(new Event(VOLUME_EVENT))
+}
+
+export function subscribeVolume(callback: () => void) {
+  window.addEventListener(VOLUME_EVENT, callback)
+  window.addEventListener('storage', callback)
+  return () => {
+    window.removeEventListener(VOLUME_EVENT, callback)
+    window.removeEventListener('storage', callback)
+  }
+}
 
 function getCtx(): AudioContext {
-  if (!ctx) ctx = new AudioContext()
+  if (!ctx) {
+    ctx = new AudioContext()
+    master = ctx.createGain()
+    master.gain.value = getVolume()
+    master.connect(ctx.destination)
+  }
   return ctx
+}
+
+function output(): AudioNode {
+  getCtx()
+  return master!
 }
 
 function playTone(freq: number, duration: number, type: OscillatorType = 'sine', gain = 0.3, delay = 0) {
@@ -15,7 +62,7 @@ function playTone(freq: number, duration: number, type: OscillatorType = 'sine',
   gn.gain.linearRampToValueAtTime(gain, ac.currentTime + delay + 0.01)
   gn.gain.linearRampToValueAtTime(0, ac.currentTime + delay + duration)
   osc.connect(gn)
-  gn.connect(ac.destination)
+  gn.connect(output())
   osc.start(ac.currentTime + delay)
   osc.stop(ac.currentTime + delay + duration + 0.05)
 }
@@ -33,7 +80,7 @@ function playPannedTone(freq: number, duration: number, pan: number, gain = 0.3,
   gn.gain.linearRampToValueAtTime(0, ac.currentTime + delay + duration)
   osc.connect(gn)
   gn.connect(panner)
-  panner.connect(ac.destination)
+  panner.connect(output())
   osc.start(ac.currentTime + delay)
   osc.stop(ac.currentTime + delay + duration + 0.05)
 }

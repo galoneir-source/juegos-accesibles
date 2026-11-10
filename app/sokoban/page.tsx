@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { audio } from '@/lib/audio'
 import { saveScore } from '@/app/actions/scores'
+import GameArea from '@/components/games/GameArea'
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -388,7 +389,6 @@ export default function Sokoban() {
     setPhaseSync('playing')
     setTimeout(() => {
       doLoadLevel(0)
-      canvasRef.current?.focus()
     }, 50)
   }
 
@@ -447,18 +447,19 @@ export default function Sokoban() {
 
       {phase === 'playing' && (
         <div className="flex flex-col items-center gap-3">
-          <canvas
-            ref={canvasRef}
-            width={CANVAS}
-            height={CANVAS}
-            aria-hidden="true"
-            tabIndex={-1}
-            className="border border-[#333] rounded"
-            style={{ maxWidth: '100%' }}
-          />
-          <p className="text-[#999] text-xs text-center">
-            Flechas/WASD: mover · Z: deshacer · R: reiniciar · N: siguiente nivel · E: explorar
-          </p>
+          <GameArea label="Sokoban, zona de juego. Flechas para moverte, Z para deshacer, R para reiniciar, N para el siguiente nivel, E para explorar." className="flex flex-col items-center gap-3">
+            <canvas
+              ref={canvasRef}
+              width={CANVAS}
+              height={CANVAS}
+              aria-hidden="true"
+              className="border border-[#333] rounded"
+              style={{ maxWidth: '100%' }}
+            />
+            <p className="text-[#999] text-xs text-center">
+              Flechas/WASD: mover · Z: deshacer · R: reiniciar · N: siguiente nivel · E: explorar
+            </p>
+          </GameArea>
         </div>
       )}
 

@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { audio } from '@/lib/audio'
 import { saveScore } from '@/app/actions/scores'
+import GameArea from '@/components/games/GameArea'
 
 // ─── Types & constants ────────────────────────────────────────────────────────
 
@@ -225,7 +226,6 @@ export default function Quince() {
     setPhaseSync('playing')
     setTimeout(() => {
       redraw(t, -1)
-      canvasRef.current?.focus()
       polite(`Puzle ${DIFF_LABEL[d]}. Flechas o WASD para deslizar fichas hacia el hueco. E para explorar, B para leer el tablero completo, R para reiniciar.`)
     }, 50)
   }
@@ -296,18 +296,19 @@ export default function Quince() {
               <p className="text-3xl font-bold text-[#4CAF50]">{calcScore}</p>
             </div>
           </div>
-          <canvas
-            ref={canvasRef}
-            width={CS}
-            height={CS}
-            aria-hidden="true"
-            tabIndex={-1}
-            className="border border-[#333] rounded"
-            style={{ maxWidth: '100%' }}
-          />
-          <p className="text-[#999] text-xs">
-            Flechas/WASD: deslizar · E: explorar hueco · B: leer tablero · R: reiniciar
-          </p>
+          <GameArea label="Puzle del quince, tablero. Flechas para deslizar las fichas, E para explorar el hueco, B para leer el tablero, R para reiniciar." className="flex flex-col items-center gap-4">
+            <canvas
+              ref={canvasRef}
+              width={CS}
+              height={CS}
+              aria-hidden="true"
+              className="border border-[#333] rounded"
+              style={{ maxWidth: '100%' }}
+            />
+            <p className="text-[#999] text-xs">
+              Flechas/WASD: deslizar · E: explorar hueco · B: leer tablero · R: reiniciar
+            </p>
+          </GameArea>
         </div>
       )}
 
