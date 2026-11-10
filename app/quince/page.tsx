@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from 'react'
 import { audio } from '@/lib/audio'
 import { saveScore } from '@/app/actions/scores'
 import GameArea from '@/components/games/GameArea'
+import TouchControls from '@/components/games/TouchControls'
 
 // ─── Types & constants ────────────────────────────────────────────────────────
 
@@ -333,6 +334,7 @@ export default function Quince() {
           </div>
         </div>
       )}
+      <TouchControls />
     </main>
   )
 }

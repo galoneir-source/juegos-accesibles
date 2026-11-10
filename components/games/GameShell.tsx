@@ -5,6 +5,7 @@ import Link from 'next/link'
 import Button from '@/components/ui/Button'
 import { announcePolite } from '@/lib/announce'
 import VolumeControl from '@/components/games/VolumeControl'
+import TouchControls from '@/components/games/TouchControls'
 
 interface GameShellProps {
   title: string
@@ -82,6 +83,7 @@ export default function GameShell({
 
       <main id="main-content" className="flex-1 px-6 py-8 max-w-2xl mx-auto w-full">
         {children}
+        <TouchControls />
       </main>
 
       <footer className="px-6 py-3 border-t border-[#333] flex flex-wrap items-center justify-center gap-x-6 gap-y-2">
