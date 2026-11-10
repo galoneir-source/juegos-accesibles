@@ -417,7 +417,7 @@ export default function SolitarioPage() {
     <GameShell title="Solitario" instructions={INSTRUCTIONS} score={state.score} disableKeyShortcuts helpKey="i">
       <div className="space-y-3">
 
-        <GameArea label="Solitario, zona de juego. Flechas izquierda y derecha para moverte entre montones, 1 a 7 para ir a una columna, S mazo, W descarte, F fundaciones, Enter para seleccionar o colocar, A auto-fundación, D robar, Escape cancelar, R describir, I instrucciones." className="space-y-3">
+        <GameArea escapeLeaves={false} label="Solitario, zona de juego. Flechas izquierda y derecha para moverte entre montones, 1 a 7 para ir a una columna, S mazo, W descarte, F fundaciones, Enter para seleccionar o colocar, A auto-fundación, D robar, Escape cancelar, R describir, I instrucciones." className="space-y-3">
           {/* Top row: stock, waste, foundations */}
           <div className="flex gap-2 flex-wrap items-start">
             <button className={pileClass('stock')} onClick={() => interactWith('stock')} aria-label={pileButtonLabel(state, 'stock')}>
