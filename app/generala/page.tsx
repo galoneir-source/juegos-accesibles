@@ -304,7 +304,7 @@ export default function GeneralaPage() {
 
   if (phase === 'idle') {
     return (
-      <GameShell title="Generala" instructions={INSTRUCTIONS} score={0} rereadKey="e" liveScore={false}>
+      <GameShell title="Generala" instructions={INSTRUCTIONS} score={0} rereadKey="e">
         <div className="text-center space-y-6">
           <h2 className="text-xl text-[#ffd700]">Generala</h2>
           <p className="text-[#888] text-sm max-w-sm mx-auto">
@@ -327,7 +327,7 @@ export default function GeneralaPage() {
 
   if (phase === 'done') {
     return (
-      <GameShell title="Generala" instructions={INSTRUCTIONS} score={total} rereadKey="e" liveScore={false}>
+      <GameShell title="Generala" instructions={INSTRUCTIONS} score={total} rereadKey="e">
         <div className="text-center space-y-4">
           <h2 className="text-2xl text-[#ffd700]">Partida terminada</h2>
           <p className="text-3xl font-mono font-bold" aria-live="polite">
@@ -382,7 +382,7 @@ export default function GeneralaPage() {
       instructions={INSTRUCTIONS}
       score={total}
       rereadKey="e"
-      liveScore={false}
+     
       onReread={() =>
         announcePolite(
           `Turno ${turn} de ${N_TURNS}. ${rollsLeft} tirada${rollsLeft !== 1 ? 's' : ''} restante${rollsLeft !== 1 ? 's' : ''}. ` +

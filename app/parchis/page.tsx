@@ -219,7 +219,7 @@ export default function ParchisPage() {
       const pts = 100
       setScore(pts)
       setPhase('finished')
-      announceAssertive('¡Ganaste! Todas tus fichas llegaron a la meta.')
+      announceAssertive(`¡Ganaste! Todas tus fichas llegaron a la meta. +${pts} puntos.`)
       return
     }
 
