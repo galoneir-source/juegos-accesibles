@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { audio } from '@/lib/audio'
 import { saveScore } from '@/app/actions/scores'
+import TouchControls from '@/components/games/TouchControls'
 
 // ─── Types & constants ────────────────────────────────────────────────────────
 
@@ -387,6 +388,7 @@ export default function Tragaperras() {
           </button>
         </div>
       )}
+      <TouchControls />
     </main>
   )
 }
