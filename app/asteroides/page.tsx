@@ -6,6 +6,7 @@ import Button from '@/components/ui/Button'
 import { announceAssertive, announcePolite } from '@/lib/announce'
 import { audio } from '@/lib/audio'
 import { saveScore } from '@/app/actions/scores'
+import GameArea from '@/components/games/GameArea'
 
 // ── Constants ─────────────────────────────────────────────────────────────────
 const W = 600
@@ -519,17 +520,19 @@ export default function AsteroidsPage() {
           <span>Ola: <strong className="text-[#ffd700]">{wave}</strong></span>
           <span>Puntos: <strong className="text-[#f0f0f0]">{score}</strong></span>
         </div>
-        <canvas
-          ref={canvasRef}
-          width={W}
-          height={H}
-          aria-hidden="true"
-          className="block mx-auto border border-[#333] rounded bg-black"
-          style={{ maxWidth: '100%' }}
-        />
-        <p className="text-xs text-[#999] text-center">
-          ← → / A D — girar &nbsp;|&nbsp; ↑ / W — propulsar &nbsp;|&nbsp; Espacio — disparar &nbsp;|&nbsp; E — escanear &nbsp;|&nbsp; R — estado
-        </p>
+        <GameArea label="Asteroides, zona de juego. Flechas izquierda y derecha para girar, flecha arriba para propulsar, Espacio para disparar, E para escanear, R para el estado." className="space-y-3">
+          <canvas
+            ref={canvasRef}
+            width={W}
+            height={H}
+            aria-hidden="true"
+            className="block mx-auto border border-[#333] rounded bg-black"
+            style={{ maxWidth: '100%' }}
+          />
+          <p className="text-xs text-[#999] text-center">
+            ← → / A D — girar &nbsp;|&nbsp; ↑ / W — propulsar &nbsp;|&nbsp; Espacio — disparar &nbsp;|&nbsp; E — escanear &nbsp;|&nbsp; R — estado
+          </p>
+        </GameArea>
       </div>
     </GameShell>
   )

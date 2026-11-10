@@ -10,12 +10,18 @@ export function announceAssertive(message: string) {
   next.textContent = message
 }
 
+let pendingPolite = 0
+
 export function announcePolite(message: string) {
   if (typeof document === 'undefined') return
   const el = document.getElementById('status-announcer')
   if (!el) return
+  // Se vacía y se escribe en el fotograma siguiente para que un mensaje igual
+  // al anterior se vuelva a leer. Si llega otro antes de ese fotograma, el
+  // pendiente se descarta: con pulsaciones rápidas se escribe solo el último.
+  cancelAnimationFrame(pendingPolite)
   el.textContent = ''
-  requestAnimationFrame(() => {
+  pendingPolite = requestAnimationFrame(() => {
     el.textContent = message
   })
 }

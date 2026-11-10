@@ -6,6 +6,7 @@ import Button from '@/components/ui/Button'
 import { announceAssertive, announcePolite } from '@/lib/announce'
 import { audio } from '@/lib/audio'
 import { saveScore } from '@/app/actions/scores'
+import GameArea from '@/components/games/GameArea'
 
 // ── tipos ──────────────────────────────────────────────────────────────────
 
@@ -447,39 +448,41 @@ export default function ParchisPage() {
         )}
 
         {/* Botones de acción cuando el jugador elige ficha */}
-        {phase === 'player_choose' && (
-          <div className="flex flex-wrap gap-2" role="group" aria-label="Elige ficha a mover">
-            {movablePieces.filter(m => m.canMove).map(({ i }) => (
-              <Button key={i} onClick={() => movePiece(i)} aria-label={`Tecla ${i + 1}: Mover ficha ${i + 1} (${stepTag(RED_EXIT, playerPieces[i])})`}>
-                {i + 1} — Mover ficha {i + 1} ({stepTag(RED_EXIT, playerPieces[i])})
-              </Button>
-            ))}
-          </div>
-        )}
-
-        {/* Fin de partida */}
-        {phase === 'finished' && (
-          <div className="space-y-3">
-            <p role="status" className={`text-lg font-bold ${playerPieces.every(s => s >= GOAL) ? 'text-[#22c55e]' : 'text-[#ef4444]'}`}>
-              {playerPieces.every(s => s >= GOAL) ? '¡Ganaste la partida!' : 'La IA ganó la partida.'}
-            </p>
-            <div className="flex flex-wrap gap-3 items-center">
-              <Button onClick={startGame} aria-label="Tecla N: Nueva partida">N — Nueva partida</Button>
-              {!saved ? (
-                <>
-                  <Button variant="secondary" onClick={handleSave}>Guardar puntuación</Button>
-                  {saveError && <p role="alert" className="text-[#ef4444] text-sm">{saveError}</p>}
-                </>
-              ) : (
-                <p role="status" className="text-[#22c55e] text-sm">Guardado.</p>
-              )}
+        <GameArea label="Parchís, zona de juego. R para lanzar el dado, 1 a 4 para mover una ficha, I para el estado, N para nueva partida." className="space-y-5">
+          {phase === 'player_choose' && (
+            <div className="flex flex-wrap gap-2" role="group" aria-label="Elige ficha a mover">
+              {movablePieces.filter(m => m.canMove).map(({ i }) => (
+                <Button key={i} onClick={() => movePiece(i)} aria-label={`Tecla ${i + 1}: Mover ficha ${i + 1} (${stepTag(RED_EXIT, playerPieces[i])})`}>
+                  {i + 1} — Mover ficha {i + 1} ({stepTag(RED_EXIT, playerPieces[i])})
+                </Button>
+              ))}
             </div>
-          </div>
-        )}
+          )}
 
-        <p className="text-xs text-[#999]">
-          R: lanzar dado · 1-4: mover ficha · I: estado · N: nueva partida
-        </p>
+          {/* Fin de partida */}
+          {phase === 'finished' && (
+            <div className="space-y-3">
+              <p role="status" className={`text-lg font-bold ${playerPieces.every(s => s >= GOAL) ? 'text-[#22c55e]' : 'text-[#ef4444]'}`}>
+                {playerPieces.every(s => s >= GOAL) ? '¡Ganaste la partida!' : 'La IA ganó la partida.'}
+              </p>
+              <div className="flex flex-wrap gap-3 items-center">
+                <Button onClick={startGame} aria-label="Tecla N: Nueva partida">N — Nueva partida</Button>
+                {!saved ? (
+                  <>
+                    <Button variant="secondary" onClick={handleSave}>Guardar puntuación</Button>
+                    {saveError && <p role="alert" className="text-[#ef4444] text-sm">{saveError}</p>}
+                  </>
+                ) : (
+                  <p role="status" className="text-[#22c55e] text-sm">Guardado.</p>
+                )}
+              </div>
+            </div>
+          )}
+
+          <p className="text-xs text-[#999]">
+            R: lanzar dado · 1-4: mover ficha · I: estado · N: nueva partida
+          </p>
+        </GameArea>
       </div>
     </GameShell>
   )

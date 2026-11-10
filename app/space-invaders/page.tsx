@@ -6,6 +6,7 @@ import Button from '@/components/ui/Button'
 import { announceAssertive, announcePolite } from '@/lib/announce'
 import { audio } from '@/lib/audio'
 import { saveScore } from '@/app/actions/scores'
+import GameArea from '@/components/games/GameArea'
 
 // ── Canvas ────────────────────────────────────────────────────────────────────
 const W = 560
@@ -556,16 +557,18 @@ export default function SpaceInvadersPage() {
           </span>
           <span className="text-[#999]">{lv.name}</span>
         </div>
-        <canvas
-          ref={canvasRef}
-          width={W}
-          height={H}
-          aria-hidden="true"
-          className="w-full max-w-[560px] border border-[#333] rounded block mx-auto bg-black"
-        />
-        <p className="text-xs text-[#999] text-center">
-          ← → / A D — mover &nbsp;|&nbsp; Espacio — disparar &nbsp;|&nbsp; E — ubicar nave y aliens &nbsp;|&nbsp; R — estado &nbsp;|&nbsp; H — instrucciones
-        </p>
+        <GameArea label="Space Invaders, zona de juego. Flechas izquierda y derecha para moverte, Espacio para disparar, E para ubicar la nave y los alienígenas, R para el estado, H para las instrucciones." className="space-y-3">
+          <canvas
+            ref={canvasRef}
+            width={W}
+            height={H}
+            aria-hidden="true"
+            className="w-full max-w-[560px] border border-[#333] rounded block mx-auto bg-black"
+          />
+          <p className="text-xs text-[#999] text-center">
+            ← → / A D — mover &nbsp;|&nbsp; Espacio — disparar &nbsp;|&nbsp; E — ubicar nave y aliens &nbsp;|&nbsp; R — estado &nbsp;|&nbsp; H — instrucciones
+          </p>
+        </GameArea>
       </div>
     </GameShell>
   )

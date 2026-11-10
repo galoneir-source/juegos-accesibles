@@ -6,6 +6,7 @@ import Button from '@/components/ui/Button'
 import { announceAssertive, announcePolite } from '@/lib/announce'
 import { audio } from '@/lib/audio'
 import { saveScore } from '@/app/actions/scores'
+import GameArea from '@/components/games/GameArea'
 
 type Rank = 'A' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9' | '10' | 'J' | 'Q' | 'K'
 type Suit = 'Picas' | 'Corazones' | 'Diamantes' | 'Tréboles'
@@ -416,104 +417,106 @@ export default function SolitarioPage() {
     <GameShell title="Solitario" instructions={INSTRUCTIONS} score={state.score} disableKeyShortcuts helpKey="i">
       <div className="space-y-3">
 
-        {/* Top row: stock, waste, foundations */}
-        <div className="flex gap-2 flex-wrap items-start">
-          <button className={pileClass('stock')} onClick={() => interactWith('stock')} aria-label={pileButtonLabel(state, 'stock')}>
-            <p className="text-xs text-[#888] mb-1">Mazo</p>{' '}
-            {state.stock.length > 0
-              ? <div aria-hidden="true" className="w-12 h-16 rounded border border-[#444] bg-[#1e1e2e] flex items-center justify-center text-[#888] text-sm font-mono">{state.stock.length}</div>
-              : <div aria-hidden="true" className="w-12 h-16 rounded border border-dashed border-[#444] flex items-center justify-center text-[#999] text-xl">↺</div>
-            }
-          </button>
+        <GameArea label="Solitario, zona de juego. Flechas izquierda y derecha para moverte entre montones, 1 a 7 para ir a una columna, S mazo, W descarte, F fundaciones, Enter para seleccionar o colocar, A auto-fundación, D robar, Escape cancelar, R describir, I instrucciones." className="space-y-3">
+          {/* Top row: stock, waste, foundations */}
+          <div className="flex gap-2 flex-wrap items-start">
+            <button className={pileClass('stock')} onClick={() => interactWith('stock')} aria-label={pileButtonLabel(state, 'stock')}>
+              <p className="text-xs text-[#888] mb-1">Mazo</p>{' '}
+              {state.stock.length > 0
+                ? <div aria-hidden="true" className="w-12 h-16 rounded border border-[#444] bg-[#1e1e2e] flex items-center justify-center text-[#888] text-sm font-mono">{state.stock.length}</div>
+                : <div aria-hidden="true" className="w-12 h-16 rounded border border-dashed border-[#444] flex items-center justify-center text-[#999] text-xl">↺</div>
+              }
+            </button>
 
-          <button className={pileClass('waste')} onClick={() => interactWith('waste')} aria-label={pileButtonLabel(state, 'waste')}>
-            <p className="text-xs text-[#888] mb-1">Descarte</p>{' '}
-            {state.waste.length > 0
-              ? <CardVis card={state.waste[state.waste.length - 1]} />
-              : <div aria-hidden="true" className="w-12 h-16 rounded border border-dashed border-[#333]" />
-            }
-          </button>
+            <button className={pileClass('waste')} onClick={() => interactWith('waste')} aria-label={pileButtonLabel(state, 'waste')}>
+              <p className="text-xs text-[#888] mb-1">Descarte</p>{' '}
+              {state.waste.length > 0
+                ? <CardVis card={state.waste[state.waste.length - 1]} />
+                : <div aria-hidden="true" className="w-12 h-16 rounded border border-dashed border-[#333]" />
+              }
+            </button>
 
-          <div className="flex-1 min-w-4" />
+            <div className="flex-1 min-w-4" />
 
-          {([0,1,2,3] as const).map(fi => {
-            const id = `f${fi}` as PileId
-            const found = state.foundations[fi]
-            const suit = FOUND_SUIT[fi]
-            return (
-              <button key={id} className={pileClass(id)} onClick={() => interactWith(id)} aria-label={pileButtonLabel(state, id)}>
-                <p className="text-xs text-[#888] mb-1">{SUIT_SYM[suit]}</p>{' '}
-                {found.length > 0
-                  ? <CardVis card={found[found.length - 1]} />
-                  : <div aria-hidden="true" className={`w-12 h-16 rounded border border-dashed border-[#333] flex items-center justify-center text-2xl ${RED_SUITS.has(suit) ? 'text-[#7f2222]' : 'text-[#999]'}`}>{SUIT_SYM[suit]}</div>
-                }
-              </button>
-            )
-          })}
-        </div>
-
-        {/* Tableau */}
-        <div className="flex gap-1 items-start overflow-x-auto pb-2">
-          {([0,1,2,3,4,5,6] as const).map(ci => {
-            const id = `c${ci}` as PileId
-            const col = state.tableau[ci]
-            const selStart = selection?.pile === id ? selection.cardIndex : -1
-            return (
-              <button
-                key={id}
-                className={`${pileClass(id)} flex-1 min-w-[2.5rem] flex flex-col min-h-[10rem]`}
-                onClick={() => interactWith(id)}
-                aria-label={pileButtonLabel(state, id)}
-              >
-                <p className="text-xs text-[#888] mb-1 text-center">{ci+1}</p>{' '}
-                {col.length === 0
-                  ? <div aria-hidden="true" className="mx-auto w-8 h-12 rounded border border-dashed border-[#333] flex items-center justify-center text-[#999] text-xs">K</div>
-                  : <div className="flex flex-col" style={{ gap: 0 }}>
-                      {col.map((card, i) => (
-                        <div
-                          key={i}
-                          aria-hidden="true"
-                          className={i > 0 ? '-mt-8' : ''}
-                          style={{ zIndex: i, position: 'relative' }}
-                        >
-                          <div className={i >= selStart && selStart >= 0 ? 'ring-1 ring-[#22c55e] rounded' : ''}>
-                            <CardVis card={card} mini />
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                }
-              </button>
-            )
-          })}
-        </div>
-
-        {state.won && (
-          <div role="status" className="text-xl font-bold text-[#22c55e] text-center py-4">
-            ¡Enhorabuena! Has ganado.
-            <span className="block text-base text-[#ffd700] mt-1">Puntuación: {state.score}</span>
+            {([0,1,2,3] as const).map(fi => {
+              const id = `f${fi}` as PileId
+              const found = state.foundations[fi]
+              const suit = FOUND_SUIT[fi]
+              return (
+                <button key={id} className={pileClass(id)} onClick={() => interactWith(id)} aria-label={pileButtonLabel(state, id)}>
+                  <p className="text-xs text-[#888] mb-1">{SUIT_SYM[suit]}</p>{' '}
+                  {found.length > 0
+                    ? <CardVis card={found[found.length - 1]} />
+                    : <div aria-hidden="true" className={`w-12 h-16 rounded border border-dashed border-[#333] flex items-center justify-center text-2xl ${RED_SUITS.has(suit) ? 'text-[#7f2222]' : 'text-[#999]'}`}>{SUIT_SYM[suit]}</div>
+                  }
+                </button>
+              )
+            })}
           </div>
-        )}
 
-        <div className="flex gap-3 flex-wrap items-center">
-          {state.won && !saved && (
-            <>
-              <Button onClick={handleSave}>Guardar puntuación</Button>
-              {saveError && <p role="alert" className="text-[#ef4444] text-sm">{saveError}</p>}
-            </>
+          {/* Tableau */}
+          <div className="flex gap-1 items-start overflow-x-auto pb-2">
+            {([0,1,2,3,4,5,6] as const).map(ci => {
+              const id = `c${ci}` as PileId
+              const col = state.tableau[ci]
+              const selStart = selection?.pile === id ? selection.cardIndex : -1
+              return (
+                <button
+                  key={id}
+                  className={`${pileClass(id)} flex-1 min-w-[2.5rem] flex flex-col min-h-[10rem]`}
+                  onClick={() => interactWith(id)}
+                  aria-label={pileButtonLabel(state, id)}
+                >
+                  <p className="text-xs text-[#888] mb-1 text-center">{ci+1}</p>{' '}
+                  {col.length === 0
+                    ? <div aria-hidden="true" className="mx-auto w-8 h-12 rounded border border-dashed border-[#333] flex items-center justify-center text-[#999] text-xs">K</div>
+                    : <div className="flex flex-col" style={{ gap: 0 }}>
+                        {col.map((card, i) => (
+                          <div
+                            key={i}
+                            aria-hidden="true"
+                            className={i > 0 ? '-mt-8' : ''}
+                            style={{ zIndex: i, position: 'relative' }}
+                          >
+                            <div className={i >= selStart && selStart >= 0 ? 'ring-1 ring-[#22c55e] rounded' : ''}>
+                              <CardVis card={card} mini />
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                  }
+                </button>
+              )
+            })}
+          </div>
+
+          {state.won && (
+            <div role="status" className="text-xl font-bold text-[#22c55e] text-center py-4">
+              ¡Enhorabuena! Has ganado.
+              <span className="block text-base text-[#ffd700] mt-1">Puntuación: {state.score}</span>
+            </div>
           )}
-          {saved && <p role="status" className="text-[#22c55e] text-sm">Guardado.</p>}
-          <Button variant="secondary" onClick={startGame}>N — Nueva partida</Button>
-        </div>
 
-        {selection && (
-          <p role="status" className="text-xs text-[#22c55e]">
-            Seleccionado: {(() => { const c = getSelCards(state, selection); return c.length === 1 ? cardLabel(c[0]) : `${c.length} cartas` })()}
-            {' '}— navega y pulsa Enter para colocar, Escape para cancelar.
-          </p>
-        )}
+          <div className="flex gap-3 flex-wrap items-center">
+            {state.won && !saved && (
+              <>
+                <Button onClick={handleSave}>Guardar puntuación</Button>
+                {saveError && <p role="alert" className="text-[#ef4444] text-sm">{saveError}</p>}
+              </>
+            )}
+            {saved && <p role="status" className="text-[#22c55e] text-sm">Guardado.</p>}
+            <Button variant="secondary" onClick={startGame}>N — Nueva partida</Button>
+          </div>
 
-        <p className="text-xs text-[#999]">← →: mover foco · 1-7: columna · S: mazo · W: descarte · F: fundaciones · Enter: seleccionar/colocar · A: auto-fundación · D: robar · Esc: cancelar · R: describir</p>
+          {selection && (
+            <p role="status" className="text-xs text-[#22c55e]">
+              Seleccionado: {(() => { const c = getSelCards(state, selection); return c.length === 1 ? cardLabel(c[0]) : `${c.length} cartas` })()}
+              {' '}— navega y pulsa Enter para colocar, Escape para cancelar.
+            </p>
+          )}
+
+          <p className="text-xs text-[#999]">← →: mover foco · 1-7: columna · S: mazo · W: descarte · F: fundaciones · Enter: seleccionar/colocar · A: auto-fundación · D: robar · Esc: cancelar · R: describir</p>
+        </GameArea>
       </div>
     </GameShell>
   )

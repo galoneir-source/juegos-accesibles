@@ -6,6 +6,7 @@ import Button from '@/components/ui/Button'
 import { announceAssertive, announcePolite } from '@/lib/announce'
 import { audio } from '@/lib/audio'
 import { saveScore } from '@/app/actions/scores'
+import GameArea from '@/components/games/GameArea'
 
 // ── Categories ────────────────────────────────────────────────────────────────
 
@@ -375,67 +376,69 @@ export default function GeneralaPage() {
       <div className="flex flex-col lg:flex-row gap-5">
 
         {/* Left: dice + controls */}
-        <div className="flex flex-col items-center gap-4 lg:w-52 shrink-0">
+        <GameArea label="Generala, zona de juego. R o Espacio para tirar, 1 a 5 para guardar o liberar un dado, flechas arriba y abajo para elegir categoría, Enter para anotar, E para releer el turno, H para las instrucciones." className="shrink-0">
+          <div className="flex flex-col items-center gap-4 lg:w-52 shrink-0">
 
-          {/* Turn/rolls status */}
-          <div className="text-center">
-            <p className="text-[#ffd700] font-bold text-sm">Turno {turn}/{N_TURNS}</p>
-            <p className="text-[#888] text-xs">
-              {rollsLeft} tirada{rollsLeft !== 1 ? 's' : ''} restante{rollsLeft !== 1 ? 's' : ''}
-            </p>
+            {/* Turn/rolls status */}
+            <div className="text-center">
+              <p className="text-[#ffd700] font-bold text-sm">Turno {turn}/{N_TURNS}</p>
+              <p className="text-[#888] text-xs">
+                {rollsLeft} tirada{rollsLeft !== 1 ? 's' : ''} restante{rollsLeft !== 1 ? 's' : ''}
+              </p>
+            </div>
+
+            {/* Dice */}
+            <div
+              role="group"
+              aria-label="Dados (teclas 1-5 para guardar)"
+              className="flex gap-2 flex-wrap justify-center"
+            >
+              {dice.map((d, i) => (
+                <button
+                  key={i}
+                  onClick={() => toggleHold(i)}
+                  disabled={!hasRolled}
+                  aria-label={`Dado ${i + 1}: ${d}${held[i] ? ', guardado' : ''}`}
+                  aria-pressed={held[i]}
+                  className={`
+                    w-14 h-14 rounded-xl text-2xl font-bold font-mono
+                    border-2 transition-all duration-150 select-none
+                    ${held[i]
+                      ? 'bg-yellow-500/20 border-yellow-400 text-yellow-300 shadow-[0_0_10px_2px_rgba(250,204,21,0.3)]'
+                      : hasRolled
+                        ? 'bg-[#0d1b2a] border-[#334] text-[#ddd] hover:border-[#556] cursor-pointer'
+                        : 'bg-[#080f18] border-[#222] text-[#999] cursor-default'
+                    }
+                  `}
+                >
+                  {hasRolled ? d : '·'}
+                </button>
+              ))}
+            </div>
+
+            {/* Key hints */}
+            {hasRolled && (
+              <p className="text-[#999] text-xs text-center">
+                {held.map((h, i) => h ? `[${i + 1}✓]` : `[${i + 1}]`).join(' ')}
+              </p>
+            )}
+
+            {/* Roll button */}
+            <Button
+              size="lg"
+              onClick={rollDice}
+              disabled={rollsLeft === 0}
+            >
+              {hasRolled ? `Tirar de nuevo (${rollsLeft})` : 'Tirar dados'}
+            </Button>
+
+            {hasRolled && (
+              <p className="text-[#999] text-xs text-center">
+                ↑↓ categoría · Enter anotar
+              </p>
+            )}
           </div>
-
-          {/* Dice */}
-          <div
-            role="group"
-            aria-label="Dados (teclas 1-5 para guardar)"
-            className="flex gap-2 flex-wrap justify-center"
-          >
-            {dice.map((d, i) => (
-              <button
-                key={i}
-                onClick={() => toggleHold(i)}
-                disabled={!hasRolled}
-                aria-label={`Dado ${i + 1}: ${d}${held[i] ? ', guardado' : ''}`}
-                aria-pressed={held[i]}
-                className={`
-                  w-14 h-14 rounded-xl text-2xl font-bold font-mono
-                  border-2 transition-all duration-150 select-none
-                  ${held[i]
-                    ? 'bg-yellow-500/20 border-yellow-400 text-yellow-300 shadow-[0_0_10px_2px_rgba(250,204,21,0.3)]'
-                    : hasRolled
-                      ? 'bg-[#0d1b2a] border-[#334] text-[#ddd] hover:border-[#556] cursor-pointer'
-                      : 'bg-[#080f18] border-[#222] text-[#999] cursor-default'
-                  }
-                `}
-              >
-                {hasRolled ? d : '·'}
-              </button>
-            ))}
-          </div>
-
-          {/* Key hints */}
-          {hasRolled && (
-            <p className="text-[#999] text-xs text-center">
-              {held.map((h, i) => h ? `[${i + 1}✓]` : `[${i + 1}]`).join(' ')}
-            </p>
-          )}
-
-          {/* Roll button */}
-          <Button
-            size="lg"
-            onClick={rollDice}
-            disabled={rollsLeft === 0}
-          >
-            {hasRolled ? `Tirar de nuevo (${rollsLeft})` : 'Tirar dados'}
-          </Button>
-
-          {hasRolled && (
-            <p className="text-[#999] text-xs text-center">
-              ↑↓ categoría · Enter anotar
-            </p>
-          )}
-        </div>
+        </GameArea>
 
         {/* Right: scorecard */}
         <div className="flex-1 min-w-0">

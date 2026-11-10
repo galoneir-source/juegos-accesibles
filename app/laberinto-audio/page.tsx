@@ -6,6 +6,7 @@ import Button from '@/components/ui/Button'
 import { announceAssertive, announcePolite } from '@/lib/announce'
 import { audio } from '@/lib/audio'
 import { saveScore } from '@/app/actions/scores'
+import GameArea from '@/components/games/GameArea'
 
 // Cell walls: true = wall exists
 type Cell = { n: boolean; e: boolean; s: boolean; w: boolean }
@@ -387,17 +388,19 @@ export default function LaberintoAudioPage() {
           <span>Pasos restantes: <strong className="text-white">{lv.maxSteps - steps}</strong></span>
         </div>
 
-        <canvas
-          ref={canvasRef}
-          width={CANVAS_SIZE}
-          height={CANVAS_SIZE}
-          aria-hidden="true"
-          className="w-full max-w-[420px] border border-[#333] rounded block mx-auto"
-        />
+        <GameArea label="Laberinto de Audio, zona de juego. Flechas para moverte, Espacio para la brújula, R para releer la posición." className="space-y-3">
+          <canvas
+            ref={canvasRef}
+            width={CANVAS_SIZE}
+            height={CANVAS_SIZE}
+            aria-hidden="true"
+            className="w-full max-w-[420px] border border-[#333] rounded block mx-auto"
+          />
 
-        <p className="text-xs text-[#999] text-center">
-          Flechas / WASD — moverse &nbsp;|&nbsp; Espacio — brújula &nbsp;|&nbsp; R — releer posición
-        </p>
+          <p className="text-xs text-[#999] text-center">
+            Flechas / WASD — moverse &nbsp;|&nbsp; Espacio — brújula &nbsp;|&nbsp; R — releer posición
+          </p>
+        </GameArea>
       </div>
     </GameShell>
   )

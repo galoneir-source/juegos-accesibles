@@ -6,6 +6,7 @@ import Button from '@/components/ui/Button'
 import { announceAssertive, announcePolite } from '@/lib/announce'
 import { audio } from '@/lib/audio'
 import { saveScore } from '@/app/actions/scores'
+import GameArea from '@/components/games/GameArea'
 
 // ── Canvas ────────────────────────────────────────────────────────────────────
 const COLS = 10
@@ -577,17 +578,19 @@ export default function TetrisPage() {
             — PAUSADO — Pulsa P para continuar
           </p>
         )}
-        <canvas
-          ref={canvasRef}
-          width={W}
-          height={H}
-          aria-hidden="true"
-          className="block mx-auto border border-[#333] rounded bg-black"
-          style={{ maxWidth: '100%' }}
-        />
-        <p className="text-xs text-[#999] text-center">
-          ← → mover &nbsp;|&nbsp; ↑ / X rotar &nbsp;|&nbsp; ↓ bajar &nbsp;|&nbsp; Espacio caída &nbsp;|&nbsp; P pausa &nbsp;|&nbsp; R estado
-        </p>
+        <GameArea label="Tetris, zona de juego. Flechas izquierda y derecha para mover, flecha arriba o X para rotar, flecha abajo para bajar, Espacio para dejar caer, P para pausa, R para el estado." className="space-y-3">
+          <canvas
+            ref={canvasRef}
+            width={W}
+            height={H}
+            aria-hidden="true"
+            className="block mx-auto border border-[#333] rounded bg-black"
+            style={{ maxWidth: '100%' }}
+          />
+          <p className="text-xs text-[#999] text-center">
+            ← → mover &nbsp;|&nbsp; ↑ / X rotar &nbsp;|&nbsp; ↓ bajar &nbsp;|&nbsp; Espacio caída &nbsp;|&nbsp; P pausa &nbsp;|&nbsp; R estado
+          </p>
+        </GameArea>
       </div>
     </GameShell>
   )

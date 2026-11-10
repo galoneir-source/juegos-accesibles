@@ -6,6 +6,7 @@ import Button from '@/components/ui/Button'
 import { announceAssertive, announcePolite } from '@/lib/announce'
 import { audio } from '@/lib/audio'
 import { saveScore } from '@/app/actions/scores'
+import GameArea from '@/components/games/GameArea'
 
 type Suit = 'Picas' | 'Corazones' | 'Diamantes' | 'Tréboles'
 type Rank = 'A' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9' | '10' | 'J' | 'Q' | 'K'
@@ -333,37 +334,39 @@ export default function BlackjackPage() {
         )}
 
         {/* Actions */}
-        {isPlaying && (
-          <div className="flex flex-wrap gap-3" role="group" aria-label="Acciones disponibles">
-            <Button onClick={handleHit} aria-label="Tecla P: Pedir carta">
-              P — Pedir carta
-            </Button>
-            <Button variant="secondary" onClick={handleStand} aria-label="Tecla S: Plantarse">
-              S — Plantarse
-            </Button>
-            {canDouble && (
-              <Button variant="secondary" onClick={handleDouble} aria-label="Tecla D: Doblar apuesta">
-                D — Doblar
+        <GameArea label="Blackjack, zona de juego. P para pedir carta, S para plantarte, D para doblar, R para releer la mano, I para las instrucciones, N para nueva partida." className="space-y-8">
+          {isPlaying && (
+            <div className="flex flex-wrap gap-3" role="group" aria-label="Acciones disponibles">
+              <Button onClick={handleHit} aria-label="Tecla P: Pedir carta">
+                P — Pedir carta
               </Button>
-            )}
-          </div>
-        )}
+              <Button variant="secondary" onClick={handleStand} aria-label="Tecla S: Plantarse">
+                S — Plantarse
+              </Button>
+              {canDouble && (
+                <Button variant="secondary" onClick={handleDouble} aria-label="Tecla D: Doblar apuesta">
+                  D — Doblar
+                </Button>
+              )}
+            </div>
+          )}
 
-        {isFinished && (
-          <div className="flex flex-wrap gap-3 items-center">
-            {!saved ? (
-              <>
-                <Button onClick={handleSave}>Guardar puntuación</Button>
-                {saveError && <p role="alert" className="text-[#ef4444] text-sm">{saveError}</p>}
-              </>
-            ) : (
-              <p role="status" className="text-[#22c55e] text-sm">Guardado.</p>
-            )}
-            <Button variant="secondary" onClick={startGame}>N — Nueva partida</Button>
-          </div>
-        )}
+          {isFinished && (
+            <div className="flex flex-wrap gap-3 items-center">
+              {!saved ? (
+                <>
+                  <Button onClick={handleSave}>Guardar puntuación</Button>
+                  {saveError && <p role="alert" className="text-[#ef4444] text-sm">{saveError}</p>}
+                </>
+              ) : (
+                <p role="status" className="text-[#22c55e] text-sm">Guardado.</p>
+              )}
+              <Button variant="secondary" onClick={startGame}>N — Nueva partida</Button>
+            </div>
+          )}
 
-        <p className="text-xs text-[#999]">Tecla I: instrucciones · Tecla R: releer mano · Tecla N: nueva partida</p>
+          <p className="text-xs text-[#999]">Tecla I: instrucciones · Tecla R: releer mano · Tecla N: nueva partida</p>
+        </GameArea>
       </div>
     </GameShell>
   )

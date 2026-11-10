@@ -6,6 +6,7 @@ import Button from '@/components/ui/Button'
 import { announceAssertive, announcePolite } from '@/lib/announce'
 import { audio } from '@/lib/audio'
 import { saveScore } from '@/app/actions/scores'
+import GameArea from '@/components/games/GameArea'
 
 // ── Constants ─────────────────────────────────────────────────────────────────
 
@@ -248,7 +249,12 @@ export default function BuscaminasPage() {
       const { rows, cols } = cfg()
       const newR = Math.max(0, Math.min(rows - 1, curRRef.current + dr))
       const newC = Math.max(0, Math.min(cols - 1, curCRef.current + dc))
-      if (newR === curRRef.current && newC === curCRef.current) return
+      if (newR === curRRef.current && newC === curCRef.current) {
+        // Sin esto, una flecha contra el borde no daba ninguna respuesta.
+        audio.wall()
+        announcePolite(`Borde. Fila ${newR + 1}, columna ${newC + 1}.`)
+        return
+      }
       curRRef.current = newR
       curCRef.current = newC
 
@@ -267,7 +273,15 @@ export default function BuscaminasPage() {
       const r = curRRef.current
       const c = curCRef.current
       const cell = boardRef.current[r]?.[c]
-      if (!cell || cell.revealed || cell.flagged) return
+      if (!cell) return
+      if (cell.revealed) {
+        announcePolite(`Ya descubierta: ${cellLabel(cell)}.`)
+        return
+      }
+      if (cell.flagged) {
+        announcePolite('Tiene bandera. Quítala con F para revelarla.')
+        return
+      }
 
       // Place mines on first reveal (first-click protection)
       if (!minedRef.current) {
@@ -322,7 +336,11 @@ export default function BuscaminasPage() {
       const r = curRRef.current
       const c = curCRef.current
       const cell = boardRef.current[r]?.[c]
-      if (!cell || cell.revealed) return
+      if (!cell) return
+      if (cell.revealed) {
+        announcePolite(`Ya descubierta: ${cellLabel(cell)}. Solo se ponen banderas en celdas ocultas.`)
+        return
+      }
 
       const newFlagged = !cell.flagged
       boardRef.current = boardRef.current.map((row, ri) =>
@@ -466,17 +484,19 @@ export default function BuscaminasPage() {
           <span>Banderas: <strong className="text-[#ef4444]">{flagsLeft}</strong> restantes</span>
           <span className="text-[#888]">{DIFF[difficulty].label} — {DIFF[difficulty].rows}×{DIFF[difficulty].cols}</span>
         </div>
-        <canvas
-          ref={canvasRef}
-          width={CANVAS_SIZE}
-          height={CANVAS_SIZE}
-          aria-hidden="true"
-          className="block mx-auto border border-[#333] rounded bg-black"
-          style={{ maxWidth: '100%' }}
-        />
-        <p className="text-xs text-[#999] text-center">
-          ↑ ↓ ← → / WASD — mover &nbsp;|&nbsp; Enter / Espacio — revelar &nbsp;|&nbsp; F — bandera &nbsp;|&nbsp; E — leer vecinas &nbsp;|&nbsp; R — estado
-        </p>
+        <GameArea label="Buscaminas, tablero. Flechas para moverte, Enter para revelar, F para poner o quitar bandera, E para leer las vecinas, R para el estado, H para las instrucciones." className="space-y-3">
+          <canvas
+            ref={canvasRef}
+            width={CANVAS_SIZE}
+            height={CANVAS_SIZE}
+            aria-hidden="true"
+            className="block mx-auto border border-[#333] rounded bg-black"
+            style={{ maxWidth: '100%' }}
+          />
+          <p className="text-xs text-[#999] text-center">
+            ↑ ↓ ← → / WASD — mover &nbsp;|&nbsp; Enter / Espacio — revelar &nbsp;|&nbsp; F — bandera &nbsp;|&nbsp; E — leer vecinas &nbsp;|&nbsp; R — estado
+          </p>
+        </GameArea>
       </div>
     </GameShell>
   )

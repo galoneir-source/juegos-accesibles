@@ -6,6 +6,7 @@ import Button from '@/components/ui/Button'
 import { announceAssertive, announcePolite } from '@/lib/announce'
 import { audio } from '@/lib/audio'
 import { saveScore } from '@/app/actions/scores'
+import GameArea from '@/components/games/GameArea'
 
 // ── tipos ──────────────────────────────────────────────────────────────────
 
@@ -696,57 +697,59 @@ export default function GinRummyPage() {
         )}
 
         {/* Acciones */}
-        {isPlaying && (
-          <div className="flex flex-wrap gap-2" role="group" aria-label="Acciones disponibles">
-            {turnStep === 'draw' ? (
-              <>
-                <Button onClick={drawFromDeck} aria-label="Tecla M: Robar del mazo">M — Robar del mazo</Button>
-                <Button variant="secondary" onClick={drawFromDiscard} disabled={!topDiscard} aria-label="Tecla D: Robar del descarte">
-                  D — Robar del descarte
-                </Button>
-                {canCall && !canGin && (
-                  <Button variant="secondary" onClick={() => playerCall(false)} aria-label={`Tecla L: Llamar (${playerDw} puntos)`}>
-                    L — Llamar ({playerDw} puntos)
+        <GameArea label="Gin Rummy, zona de juego. M para robar del mazo, D para robar del descarte, 1 a 0 para seleccionar carta, R para descartar, L para llamar, G para Gin, H para leer la mano, I para las instrucciones, N para nueva partida." className="space-y-6">
+          {isPlaying && (
+            <div className="flex flex-wrap gap-2" role="group" aria-label="Acciones disponibles">
+              {turnStep === 'draw' ? (
+                <>
+                  <Button onClick={drawFromDeck} aria-label="Tecla M: Robar del mazo">M — Robar del mazo</Button>
+                  <Button variant="secondary" onClick={drawFromDiscard} disabled={!topDiscard} aria-label="Tecla D: Robar del descarte">
+                    D — Robar del descarte
                   </Button>
-                )}
-                {canGin && (
-                  <Button onClick={() => playerCall(true)} aria-label="Tecla G: Gin">
-                    G — GIN
+                  {canCall && !canGin && (
+                    <Button variant="secondary" onClick={() => playerCall(false)} aria-label={`Tecla L: Llamar (${playerDw} puntos)`}>
+                      L — Llamar ({playerDw} puntos)
+                    </Button>
+                  )}
+                  {canGin && (
+                    <Button onClick={() => playerCall(true)} aria-label="Tecla G: Gin">
+                      G — GIN
+                    </Button>
+                  )}
+                </>
+              ) : (
+                <>
+                  <Button
+                    onClick={discardSelected}
+                    disabled={selectedIdx === null}
+                    aria-label={`Tecla R: Descartar${selectedIdx !== null ? `: ${cardLabel(playerHand[selectedIdx])}` : ' la carta seleccionada'}`}
+                  >
+                    R — Descartar{selectedIdx !== null ? `: ${RANK_NAMES[playerHand[selectedIdx].rank]}` : ''}
                   </Button>
-                )}
-              </>
-            ) : (
-              <>
-                <Button
-                  onClick={discardSelected}
-                  disabled={selectedIdx === null}
-                  aria-label={`Tecla R: Descartar${selectedIdx !== null ? `: ${cardLabel(playerHand[selectedIdx])}` : ' la carta seleccionada'}`}
-                >
-                  R — Descartar{selectedIdx !== null ? `: ${RANK_NAMES[playerHand[selectedIdx].rank]}` : ''}
-                </Button>
-              </>
-            )}
-            <Button variant="secondary" onClick={readHand} aria-label="Tecla H: Leer mano completa">H — Leer mano completa</Button>
-          </div>
-        )}
+                </>
+              )}
+              <Button variant="secondary" onClick={readHand} aria-label="Tecla H: Leer mano completa">H — Leer mano completa</Button>
+            </div>
+          )}
 
-        {phase === 'finished' && (
-          <div className="flex flex-wrap gap-3 items-center">
-            {!saved ? (
-              <>
-                <Button onClick={handleSave}>Guardar puntuación</Button>
-                {saveError && <p role="alert" className="text-[#ef4444] text-sm">{saveError}</p>}
-              </>
-            ) : (
-              <p role="status" className="text-[#22c55e] text-sm">Guardado.</p>
-            )}
-            <Button variant="secondary" onClick={startGame}>N — Nueva partida</Button>
-          </div>
-        )}
+          {phase === 'finished' && (
+            <div className="flex flex-wrap gap-3 items-center">
+              {!saved ? (
+                <>
+                  <Button onClick={handleSave}>Guardar puntuación</Button>
+                  {saveError && <p role="alert" className="text-[#ef4444] text-sm">{saveError}</p>}
+                </>
+              ) : (
+                <p role="status" className="text-[#22c55e] text-sm">Guardado.</p>
+              )}
+              <Button variant="secondary" onClick={startGame}>N — Nueva partida</Button>
+            </div>
+          )}
 
-        <p className="text-xs text-[#999]">
-          I: instrucciones · H: leer mano · M: robar mazo · D: robar descarte · 1-0: seleccionar carta · R: descartar · L: llamar · G: Gin · N: nueva partida
-        </p>
+          <p className="text-xs text-[#999]">
+            I: instrucciones · H: leer mano · M: robar mazo · D: robar descarte · 1-0: seleccionar carta · R: descartar · L: llamar · G: Gin · N: nueva partida
+          </p>
+        </GameArea>
       </div>
     </GameShell>
   )

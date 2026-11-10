@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { audio } from '@/lib/audio'
 import { saveScore } from '@/app/actions/scores'
+import GameArea from '@/components/games/GameArea'
 import TouchControls from '@/components/games/TouchControls'
 
 // ─── Types & constants ────────────────────────────────────────────────────────
@@ -280,7 +281,6 @@ export default function Tragaperras() {
     setPhaseSync('idle')
     setTimeout(() => {
       redraw(['cereza', 'cereza', 'cereza'], [false, false, false], 0)
-      canvasRef.current?.focus()
       polite(`Tragaperras. ${START_CREDITS} créditos. Espacio para girar. Teclas 1, 2, 3 para retener rodillos. Q para salir.`)
     }, 50)
   }
@@ -341,15 +341,16 @@ export default function Tragaperras() {
 
       {showGame && (
         <div className="flex flex-col items-center gap-4">
-          <canvas
-            ref={canvasRef}
-            width={W}
-            height={H}
-            aria-hidden="true"
-            tabIndex={-1}
-            className="border border-[#333] rounded"
-            style={{ maxWidth: '100%' }}
-          />
+          <GameArea label="Tragaperras, zona de juego. Espacio para girar, 1, 2 y 3 para retener rodillos después de perder, Q para salir.">
+            <canvas
+              ref={canvasRef}
+              width={W}
+              height={H}
+              aria-hidden="true"
+              className="border border-[#333] rounded"
+              style={{ maxWidth: '100%' }}
+            />
+          </GameArea>
 
           <div className="flex gap-8 text-center min-w-[300px]">
             <div>

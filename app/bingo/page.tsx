@@ -6,6 +6,7 @@ import Button from '@/components/ui/Button'
 import { announceAssertive, announcePolite } from '@/lib/announce'
 import { audio } from '@/lib/audio'
 import { saveScore } from '@/app/actions/scores'
+import GameArea from '@/components/games/GameArea'
 
 // ── Constants ─────────────────────────────────────────────────────────────────
 
@@ -311,18 +312,20 @@ export default function BingoPage() {
         )}
 
         {/* Actions */}
-        {phase === 'playing' && (
-          <>
-            <Button
-              size="lg"
-              onClick={callNext}
-              disabled={callCount >= 75}
-            >
-              {callCount >= 75 ? 'Sin más bolas' : 'Siguiente número'}
-            </Button>
-            <p className="text-xs text-[#999]">Espacio o Enter para el siguiente número</p>
-          </>
-        )}
+        <GameArea label="Bingo, zona de juego. Espacio o Enter para el siguiente número, R para el estado, H para las instrucciones." className="flex flex-col items-center gap-4">
+          {phase === 'playing' && (
+            <>
+              <Button
+                size="lg"
+                onClick={callNext}
+                disabled={callCount >= 75}
+              >
+                {callCount >= 75 ? 'Sin más bolas' : 'Siguiente número'}
+              </Button>
+              <p className="text-xs text-[#999]">Espacio o Enter para el siguiente número</p>
+            </>
+          )}
+        </GameArea>
 
         {phase === 'bingo' && (
           <div className="text-center space-y-4">
