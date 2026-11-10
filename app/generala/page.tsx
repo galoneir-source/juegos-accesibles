@@ -280,7 +280,9 @@ export default function GeneralaPage() {
   function catRowClass(i: number, cat: Cat): string {
     const base = 'flex items-center justify-between px-3 py-1.5 rounded text-sm cursor-pointer transition-colors'
     if (i === cursor && phase === 'playing') return `${base} bg-[#ffd700]/15 ring-1 ring-[#ffd700]/60`
-    if (scorecard[cat.id] !== null) return `${base} opacity-50`
+    // Sin opacity: bajaba el texto gris a un contraste de 2,2:1 (axe). El gris del
+    // texto y el fondo ya distinguen las categorías anotadas.
+    if (scorecard[cat.id] !== null) return `${base} bg-[#111] cursor-default`
     return `${base} hover:bg-[#1a2a3a]`
   }
 
@@ -468,16 +470,16 @@ export default function GeneralaPage() {
                     onClick={() => scoreCategory(cat.id)}
                     role="button"
                     tabIndex={0}
-                    aria-label={`${cat.label}: ${scored !== null ? scored + ' pts (anotada)' : potential !== null ? potential + ' pts potenciales' : 'disponible'}`}
                     onKeyDown={e => e.key === 'Enter' && scoreCategory(cat.id)}
                   >
                     <span className={scored !== null ? 'text-[#999]' : 'text-[#ccc]'}>{cat.label}</span>
                     <span className="font-mono ml-2 shrink-0">
+                      <span className="sr-only">: </span>
                       {scored !== null
-                        ? <span className="text-[#888]">{scored}</span>
+                        ? <span className="text-[#888]">{scored}<span className="sr-only"> pts (anotada)</span></span>
                         : potential !== null
-                          ? <span className="text-[#22c55e]">{potential}</span>
-                          : <span className="text-[#333]">—</span>
+                          ? <span className="text-[#22c55e]">{potential}<span className="sr-only"> pts potenciales</span></span>
+                          : <><span aria-hidden="true" className="text-[#333]">—</span><span className="sr-only">disponible</span></>
                       }
                     </span>
                   </div>
@@ -500,17 +502,18 @@ export default function GeneralaPage() {
                     onClick={() => scoreCategory(cat.id)}
                     role="button"
                     tabIndex={0}
-                    aria-label={`${cat.label}: ${scored !== null ? scored + ' pts (anotada)' : potential !== null ? potential + ' pts potenciales' : 'disponible'}. ${cat.hint}.`}
                     onKeyDown={e => e.key === 'Enter' && scoreCategory(cat.id)}
                   >
                     <span className={scored !== null ? 'text-[#999]' : 'text-[#ccc]'}>{cat.label}</span>
                     <span className="font-mono ml-2 shrink-0">
+                      <span className="sr-only">: </span>
                       {scored !== null
-                        ? <span className="text-[#888]">{scored}</span>
+                        ? <span className="text-[#888]">{scored}<span className="sr-only"> pts (anotada)</span></span>
                         : potential !== null
-                          ? <span className={potential > 0 ? 'text-[#22c55e]' : 'text-[#999]'}>{potential}</span>
-                          : <span className="text-[#333]">—</span>
+                          ? <span className={potential > 0 ? 'text-[#22c55e]' : 'text-[#999]'}>{potential}<span className="sr-only"> pts potenciales</span></span>
+                          : <><span aria-hidden="true" className="text-[#333]">—</span><span className="sr-only">disponible</span></>
                       }
+                      <span className="sr-only">. {cat.hint}.</span>
                     </span>
                   </div>
                 )
