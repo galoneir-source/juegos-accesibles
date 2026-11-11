@@ -38,6 +38,8 @@ const SMALL_BLIND = 25
 const BIG_BLIND = 50
 const STARTING_CHIPS = 1000
 const RAISE_STEP = 50
+// subidas máximas por ronda de apuestas (evita que la IA suba sin fin)
+const MAX_RAISES_PER_STREET = 3
 
 const INSTRUCTIONS = `Póker Texas Hold'em. Tienes ${STARTING_CHIPS} fichas. Cada mano: pagas la ciega (${SMALL_BLIND} o ${BIG_BLIND} fichas) y recibes 2 cartas. Se reparten 5 cartas comunitarias en tres rondas: Flop (3 cartas), Turn (1) y River (1). Gana quien forme la mejor mano de 5 cartas entre las 7 disponibles.
 Manos de mayor a menor: Escalera de Color, Póker (4 iguales), Full (trío+pareja), Color (5 mismo palo), Escalera (5 consecutivas), Trío, Doble pareja, Pareja, Carta alta.
@@ -261,10 +263,14 @@ export default function PokerPage() {
     }
   })
 
+  // subidas hechas en la ronda de apuestas actual (se pone a 0 en cada calle)
+  const streetRaisesRef = useRef(0)
+
   // ── iniciar mano ─────────────────────────────────────────────────────────
 
   const startHand = useCallback((pChips: number, aChips: number, pIsDealer: boolean, hNum: number) => {
     if (pChips <= 0 || aChips <= 0) return
+    streetRaisesRef.current = 0
 
     const freshDeck = shuffle(createDeck())
     const pHand = freshDeck.slice(0, 2)
@@ -369,6 +375,11 @@ export default function PokerPage() {
       const callFirst = Math.min(needed, pc)
       const raisePart = Math.min(ra, pc - callFirst)
       if (raisePart <= 0) { announceAssertive('No tienes fichas suficientes para subir.'); return }
+      if (streetRaisesRef.current >= MAX_RAISES_PER_STREET) {
+        announceAssertive(`Ya hubo ${MAX_RAISES_PER_STREET} subidas en esta ronda. Iguala (C) o retírate (F).`)
+        return
+      }
+      streetRaisesRef.current += 1
       const total = callFirst + raisePart
       newPc -= total
       newPb += total
@@ -382,6 +393,13 @@ export default function PokerPage() {
     setPot(newPot)
     setIsPlayerTurn(false)
 
+    // igualar una subida cierra la ronda de apuestas: la IA no vuelve a decidir
+    // (solo con la ciega grande sin subidas la IA conserva su opción)
+    if (action === 'call' && needed > 0 && streetRaisesRef.current > 0) {
+      setTimeout(() => advanceStreet(plh, ah, com, d, st, newPot, newPc, ac), 500)
+      return
+    }
+
     // turno de la IA tras breve pausa
     setTimeout(() => {
       aiAct(plh, ah, com, d, st, newPot, newPc, ac, newPb, ab)
@@ -393,7 +411,15 @@ export default function PokerPage() {
     pot: number, pc: number, ac: number, pb: number, ab: number
   ) {
     const needed = toCallAmount(ab, pb, false)
-    const { action, raiseAmount: ra } = aiDecide(ah, com, pot, needed, st)
+    const decision = aiDecide(ah, com, pot, needed, st)
+    let action = decision.action
+    const ra = decision.raiseAmount
+    // sin fichas para subir o con el tope de subidas alcanzado: iguala o pasa
+    if (action === 'raise' &&
+        (streetRaisesRef.current >= MAX_RAISES_PER_STREET || ac - Math.min(needed, ac) <= 0)) {
+      action = needed > 0 ? 'call' : 'check'
+    }
+    if (action === 'raise') streetRaisesRef.current += 1
 
     let newAc = ac
     let newAb = ab
@@ -447,6 +473,7 @@ export default function PokerPage() {
     }
     const next = nextStreets[st]
     if (!next) return
+    streetRaisesRef.current = 0
 
     if (next === 'showdown') {
       doShowdown(plh, ah, com, pot, pc, ac)

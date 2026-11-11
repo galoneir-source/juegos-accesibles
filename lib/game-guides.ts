@@ -145,8 +145,8 @@ export const GAME_GUIDES: Record<string, GameGuide> = {
     progreso: 'El As vale 1 u 11 y las figuras, 10. El dealer pide hasta tener 17 o más. Se juega con puntos, no con dinero.',
   },
   'gin-rummy': {
-    como: 'El lector de pantalla te lee cada carta que robas y la que descarta la IA, y te avisa de tus puntos sueltos en cada turno. Cada carta de la mano tiene una tecla del 1 al 0, así que puedes elegirla sin moverte por la pantalla. Con H oyes tu mano completa cuando quieras.',
-    controles: 'En tu turno roba del mazo con M o del descarte con D; luego elige una carta con las teclas del 1 al 0 y descártala con R. L para cerrar (llamar) y G para cantar Gin. H lee tu mano, I repite las instrucciones y N empieza una partida nueva.',
+    como: 'El lector de pantalla te lee cada carta que robas y la que descarta la IA, y te avisa de tus puntos sueltos en cada turno. Cada carta de la mano tiene una tecla del 1 al 0 (y la U para la que acabas de robar, que es la 11.ª), así que puedes elegirla sin moverte por la pantalla. Con H oyes tu mano completa cuando quieras.',
+    controles: 'En tu turno roba del mazo con M o del descarte con D; luego elige una carta con las teclas del 1 al 0, o la recién robada con U, y descártala con R. L para cerrar (llamar) y G para cantar Gin. H lee tu mano, I repite las instrucciones y N empieza una partida nueva.',
     progreso: 'Forma tríos o cuartetos del mismo valor y escaleras de 3 o más cartas del mismo palo. Puedes cerrar cuando tus cartas sueltas sumen 10 puntos o menos; con 0 puntos cantas Gin y ganas una bonificación.',
   },
   'poker': {

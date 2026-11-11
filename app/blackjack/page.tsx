@@ -178,8 +178,8 @@ export default function BlackjackPage() {
       audio.gameOver()
       announceAssertive(`Recibes: ${cardLabel(card)}. Valor: ${val}. ¡Bust! Te pasaste de 21. Presiona N para jugar de nuevo.`)
     } else if (val === 21) {
-      announceAssertive(`Recibes: ${cardLabel(card)}. ¡21! Plantado automáticamente.`)
-      finishWithStand(newHand, newDeck, doubled)
+      // un solo anuncio: dos announceAssertive seguidos se pisan y se pierde la carta
+      finishWithStand(newHand, newDeck, doubled, `Recibes: ${cardLabel(card)}. ¡21! Plantado automáticamente.`)
     } else {
       announceAssertive(`Recibes: ${cardLabel(card)}. Valor total: ${val}. Tecla P: otra carta. Tecla S: plantarte.`)
     }
@@ -208,12 +208,11 @@ export default function BlackjackPage() {
       audio.gameOver()
       announceAssertive(`Doblas. Recibes: ${cardLabel(card)}. Valor: ${val}. ¡Bust! Presiona N para jugar de nuevo.`)
     } else {
-      announceAssertive(`Doblas. Recibes: ${cardLabel(card)}. Valor: ${val}. Turno del dealer.`)
-      finishWithStand(newHand, newDeck, true)
+      finishWithStand(newHand, newDeck, true, `Doblas. Recibes: ${cardLabel(card)}. Valor: ${val}.`)
     }
   }
 
-  function finishWithStand(pHand: Card[], currentDeck: Card[], isDoubled: boolean) {
+  function finishWithStand(pHand: Card[], currentDeck: Card[], isDoubled: boolean, prefix = '') {
     const [finalDealer, finalDeck] = runDealerTurn(dealerHand, currentDeck)
     const pVal = handValue(pHand)
     const dVal = handValue(finalDealer)
@@ -238,7 +237,7 @@ export default function BlackjackPage() {
 
     const dealerStr = finalDealer.map(cardLabel).join(', ')
     const ptsTxt = pts > 0 ? ` +${pts} puntos.` : ''
-    announceAssertive(`${OUTCOME_TEXT[out]} Tu mano: ${pVal}. Dealer: ${dealerStr} (${dVal}).${ptsTxt} Presiona N para jugar de nuevo.`)
+    announceAssertive(`${prefix ? prefix + ' ' : ''}${OUTCOME_TEXT[out]} Tu mano: ${pVal}. Dealer: ${dealerStr} (${dVal}).${ptsTxt} Presiona N para jugar de nuevo.`)
   }
 
   useEffect(() => {

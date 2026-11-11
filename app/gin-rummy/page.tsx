@@ -41,11 +41,17 @@ const RANK_ORDER: Record<Rank, number> = {
 
 const INSTRUCTIONS = `Gin Rummy. Objetivo: forma combinaciones con tus 10 cartas y llama cuando tu puntaje de cartas sueltas sea bajo.
 Combinaciones válidas: trío o cuarteto del mismo rango (ej: tres Reinas), o escalera de 3 o más cartas del mismo palo en orden (ej: 4-5-6 de Picas).
-Cada turno: roba una carta del mazo (tecla M) o del descarte (tecla D), luego descarta una carta de tu mano (teclas 1-0 para seleccionar y R para descartar).
+Cada turno: roba una carta del mazo (tecla M) o del descarte (tecla D), luego descarta una carta de tu mano (teclas 1 a 0 para seleccionar, U para la carta recién robada, y R para descartar).
 Cuando tengas 10 o menos puntos en cartas no combinadas, puedes llamar con tecla L (Llamada). Con 0 puntos puedes Gin con tecla G (bonificación extra).
 Tecla H para ver tu mano completa. Tecla I para repetir instrucciones. Tecla N para nueva partida.`
 
 // ── utilidades de baraja ────────────────────────────────────────────────────
+
+// Tecla de cada carta de la mano: 1-9, 0 para la 10.ª y U para la 11.ª
+// (la recién robada, que siempre queda la última).
+function cardKey(i: number): string {
+  return i < 9 ? String(i + 1) : i === 9 ? '0' : 'U'
+}
 
 function createDeck(): Card[] {
   return SUITS.flatMap(suit =>
@@ -289,7 +295,7 @@ export default function GinRummyPage() {
     audio.deal()
     announceAssertive(
       `Robas del mazo: ${cardLabel(card)}. Tu mano (${newHand.length} cartas): ${newHand.map(cardLabel).join(', ')}. ` +
-      `Puntos sueltos: ${deadwood}. Selecciona una carta (1-0) y pulsa R para descartar.`
+      `Puntos sueltos: ${deadwood}. Selecciona una carta (1 a 0, U la robada) y pulsa R para descartar.`
     )
   }
 
@@ -316,7 +322,7 @@ export default function GinRummyPage() {
     audio.deal()
     announceAssertive(
       `Robas del descarte: ${cardLabel(card)}. Tu mano (${newHand.length} cartas): ${newHand.map(cardLabel).join(', ')}. ` +
-      `Puntos sueltos: ${deadwood}. Selecciona una carta (1-0) y pulsa R para descartar.`
+      `Puntos sueltos: ${deadwood}. Selecciona una carta (1 a 0, U la robada) y pulsa R para descartar.`
     )
   }
 
@@ -325,7 +331,7 @@ export default function GinRummyPage() {
   function discardSelected() {
     const { playerHand: ph, selectedIdx: si, discardPile: dp, deck: d, aiHand: ah, turnStep: ts, phase: p } = stateRef.current
     if (p !== 'playing' || ts !== 'discard' || si === null) {
-      announceAssertive('Primero selecciona una carta con las teclas 1-0.')
+      announceAssertive('Primero selecciona una carta con las teclas 1 a 0 (U para la recién robada).')
       return
     }
     const card = ph[si]
@@ -500,9 +506,9 @@ export default function GinRummyPage() {
       ? `Combinaciones: ${melds.map(m => m.map(cardLabel).join('+'))?.join(' | ')}.`
       : 'Sin combinaciones aún.'
     announcePolite(
-      `Tu mano: ${ph.map((c, i) => `${i + 1 <= 9 ? i + 1 : 0}: ${cardLabel(c)}`).join(', ')}. ` +
+      `Tu mano: ${ph.map((c, i) => `${cardKey(i)}: ${cardLabel(c)}`).join(', ')}. ` +
       `Puntos sueltos: ${deadwood}. ${meldStr} ` +
-      (ts === 'draw' ? 'Roba: M (mazo) o D (descarte).' : 'Selecciona carta (1-0) y R para descartar.')
+      (ts === 'draw' ? 'Roba: M (mazo) o D (descarte).' : 'Selecciona carta (1 a 0, U la robada) y R para descartar.')
     )
   }, [])
 
@@ -542,9 +548,9 @@ export default function GinRummyPage() {
           playerCall(true)
           break
         default: {
-          // teclas 1-9 y 0 para seleccionar cartas
+          // teclas 1-9, 0 y U para seleccionar cartas
           if (ts !== 'discard') break
-          const n = key === '0' ? 10 : parseInt(key)
+          const n = key === '0' ? 10 : key === 'u' ? 11 : parseInt(key)
           if (!isNaN(n) && n >= 1 && n <= ph.length) {
             const idx = n - 1
             setSelectedIdx(prev => {
@@ -673,7 +679,7 @@ export default function GinRummyPage() {
                     return next
                   })
                 }}
-                aria-label={`${i + 1 <= 9 ? i + 1 : 0}: ${cardFaceLabel(card)}${selectedIdx === i ? ' (seleccionada)' : ''}`}
+                aria-label={`${cardKey(i)}: ${cardFaceLabel(card)}${selectedIdx === i ? ' (seleccionada)' : ''}`}
                 aria-pressed={selectedIdx === i}
                 disabled={!isPlaying}
                 className="focus:outline-none focus:ring-2 focus:ring-[#ffd700] rounded disabled:cursor-default"
@@ -697,7 +703,7 @@ export default function GinRummyPage() {
         )}
 
         {/* Acciones */}
-        <GameArea label="Gin Rummy, zona de juego. M para robar del mazo, D para robar del descarte, 1 a 0 para seleccionar carta, R para descartar, L para llamar, G para Gin, H para leer la mano, I para las instrucciones, N para nueva partida." className="space-y-6">
+        <GameArea label="Gin Rummy, zona de juego. M para robar del mazo, D para robar del descarte, 1 a 0 para seleccionar carta, U para la recién robada, R para descartar, L para llamar, G para Gin, H para leer la mano, I para las instrucciones, N para nueva partida." className="space-y-6">
           {isPlaying && (
             <div className="flex flex-wrap gap-2" role="group" aria-label="Acciones disponibles">
               {turnStep === 'draw' ? (
@@ -747,7 +753,7 @@ export default function GinRummyPage() {
           )}
 
           <p className="text-xs text-[#999]">
-            I: instrucciones · H: leer mano · M: robar mazo · D: robar descarte · 1-0: seleccionar carta · R: descartar · L: llamar · G: Gin · N: nueva partida
+            I: instrucciones · H: leer mano · M: robar mazo · D: robar descarte · 1-0: seleccionar carta · U: carta robada · R: descartar · L: llamar · G: Gin · N: nueva partida
           </p>
         </GameArea>
       </div>

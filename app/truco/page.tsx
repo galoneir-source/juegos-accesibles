@@ -648,7 +648,9 @@ export default function TrucoPage() {
       switch (key) {
         case 'i': readStatus(); break
         case 'n':
-          if (ph === 'hand_over' || ph === 'game_over') {
+          if (ph === 'envido_response') respondEnvido('reject')
+          else if (ph === 'truco_response') respondTruco('reject')
+          else if (ph === 'hand_over' || ph === 'game_over') {
             const { playerScore: ps, aiScore: as, playerIsMano: pim } = stateRef.current
             if (ph === 'game_over') {
               setPlayerScore(0); setAiScore(0)
