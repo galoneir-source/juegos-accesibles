@@ -360,7 +360,12 @@ export default function SolitarioPage() {
         announcePolite(describePile(s, p) + (selection ? ' (tienes carta seleccionada)' : ''))
         return
       }
-      if (k === 'Enter' || k === ' ') { e.preventDefault(); interactWith(focus); return }
+      if (k === 'Enter' || k === ' ') {
+        // con el foco en un botón (un montón, Nueva partida, Guardar…) manda
+        // el propio botón: su clic actúa sobre ese montón, no sobre el cursor
+        if (e.target instanceof HTMLElement && e.target.closest('button, a, select, textarea')) return
+        e.preventDefault(); interactWith(focus); return
+      }
       if (k === 'Escape') { setSelection(null); announcePolite('Selección cancelada.'); return }
       if (k === 'a' || k === 'A') { autoFoundation(); return }
       if (k === 'd' || k === 'D') { interactWith('stock'); return }

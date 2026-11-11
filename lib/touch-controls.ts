@@ -127,7 +127,7 @@ export const TOUCH_CONTROLS: Record<string, TouchGroup[]> = {
 
   'gin-rummy': [
     { label: 'Robar', keys: [{ key: 'm', label: 'Robar del mazo' }, { key: 'd', label: 'Robar del descarte' }] },
-    { label: 'Tu mano', keys: numbers('Carta', ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0']) },
+    { label: 'Tu mano', keys: [...numbers('Carta', ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0']), { key: 'u', label: 'Carta 11 (robada)' }] },
     {
       label: 'Acciones',
       keys: [
