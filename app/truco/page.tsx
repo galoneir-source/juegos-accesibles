@@ -45,7 +45,7 @@ const TRUCO_REJECT_PTS = [0, 1, 2, 3]
 
 const WIN_SCORE = 15
 
-const INSTRUCTIONS = `Truco argentino 1 contra 1. Primero en llegar a ${WIN_SCORE} puntos gana. Mazo español de 40 cartas, sin ochos ni nueves. Cada mano: 3 cartas y 3 bazas. Quien gane 2 bazas gana la mano y suma puntos de truco.
+const INSTRUCTIONS = `Truco argentino 1 contra 1. Primero en llegar a ${WIN_SCORE} puntos gana. Mazo español de 40 cartas, sin ochos ni nueves. Cada mano: 3 cartas y 3 bazas. Quien gane 2 bazas gana la mano y suma puntos de truco. En la primera baza sale el mano (se alterna en cada mano); en las siguientes, quien ganó la anterior. Si una baza queda parda, la mano es para quien gane la otra. El envido empatado lo gana el mano.
 Jerarquía de cartas, de mayor a menor: As de Espadas, As de Bastos, Siete de Espadas, Siete de Oros, Treses, Doses, Ases de Copas y Oros, Reyes, Caballos, Sotas, Sietes de Copas y Bastos, Seises, Cincos, Cuatros.
 Envido (antes de jugar tu primera carta): pulsa E para cantar Envido (2 pts si ganas la comparación), otra E para Real Envido (3 pts), otra E para Falta Envido (5 pts). Si la IA canta: S para aceptar, N para rechazar.
 Truco (antes de jugar una carta): pulsa T para cantar Truco (2 pts para el ganador de la mano), otra T para Retruco (3 pts), otra T para Vale Cuatro (4 pts). Si la IA canta: S para aceptar, N para rechazar, T para subir.
@@ -124,6 +124,29 @@ function handWinner(tricks: TrickResult[], playerIsMano: boolean): 'player' | 'a
   return playerIsMano ? 'player' : 'ai'
 }
 
+// Quién sale en la baza siguiente: en la primera, el mano; después, quien
+// ganó la anterior; tras una parda vuelve a salir el mano.
+function trickLeader(tricks: TrickResult[], playerIsMano: boolean): 'player' | 'ai' {
+  const last = tricks[tricks.length - 1]
+  if (!last || last === 'tie') return playerIsMano ? 'player' : 'ai'
+  return last
+}
+
+// La mano se decide antes de la 3.ª baza si alguien gana 2, o si en las dos
+// primeras hay exactamente una parda (gana quien ganó la otra).
+function handIsDecided(tricks: TrickResult[]): boolean {
+  const pw = tricks.filter(t => t === 'player').length
+  const aw = tricks.filter(t => t === 'ai').length
+  if (tricks.length >= 3 || pw >= 2 || aw >= 2) return true
+  return tricks.length === 2 && (tricks[0] === 'tie') !== (tricks[1] === 'tie')
+}
+
+// Envido empatado: gana el mano
+function envidoWinner(pe: number, ae: number, playerIsMano: boolean): 'player' | 'ai' {
+  if (pe !== ae) return pe > ae ? 'player' : 'ai'
+  return playerIsMano ? 'player' : 'ai'
+}
+
 // ── IA ────────────────────────────────────────────────────────────────────────
 
 function aiPickCard(hand: Card[], tricks: TrickResult[]): number {
@@ -134,6 +157,18 @@ function aiPickCard(hand: Card[], tricks: TrickResult[]): number {
   }
   // jugar la más fuerte
   return hand.reduce((b, c, i) => trucoRank(c) > trucoRank(hand[b]) ? i : b, 0)
+}
+
+// Segunda en la baza: la carta más baja que gana a la tuya; si ninguna gana,
+// la más baja de todas.
+function aiPickResponse(hand: Card[], playerCard: Card): number {
+  const pr = trucoRank(playerCard)
+  let best = -1
+  hand.forEach((c, i) => {
+    if (trucoRank(c) > pr && (best < 0 || trucoRank(c) < trucoRank(hand[best]))) best = i
+  })
+  if (best >= 0) return best
+  return hand.reduce((b, c, i) => trucoRank(c) < trucoRank(hand[b]) ? i : b, 0)
 }
 
 function aiRespondEnvido(aiHand: Card[], level: number): 'accept' | 'raise' | 'reject' {
@@ -174,6 +209,8 @@ export default function TrucoPage() {
   const [playerHand, setPlayerHand] = useState<Card[]>([])
   const [aiHand, setAiHand] = useState<Card[]>([])
   const [lastAiCard, setLastAiCard] = useState<Card | null>(null)
+  // carta con la que ha salido la IA en la baza en curso (espera la tuya)
+  const [aiLeadCard, setAiLeadCard] = useState<Card | null>(null)
   const [tricks, setTricks] = useState<TrickResult[]>([])
   const [playerIsMano, setPlayerIsMano] = useState(true)
 
@@ -195,15 +232,23 @@ export default function TrucoPage() {
   const [saved, setSaved] = useState(false)
   const [saveError, setSaveError] = useState('')
 
+  // Cada mano tiene un número; un temporizador de una mano anterior (p. ej. si
+  // se pulsa N dos veces seguidas) no debe actuar sobre la nueva.
+  const handIdRef = useRef(0)
+  function later(fn: () => void, ms: number) {
+    const id = handIdRef.current
+    setTimeout(() => { if (handIdRef.current === id) fn() }, ms)
+  }
+
   const stateRef = useRef({
-    phase, playerHand, aiHand, lastAiCard, tricks, playerIsMano,
+    phase, playerHand, aiHand, lastAiCard, aiLeadCard, tricks, playerIsMano,
     envidoLevel, envidoCalledBy, envidoDone, envidoAvail,
     trucoLevel, trucoCalledBy, trucoAccepted,
     playerScore, aiScore,
   })
   useEffect(() => {
     stateRef.current = {
-      phase, playerHand, aiHand, lastAiCard, tricks, playerIsMano,
+      phase, playerHand, aiHand, lastAiCard, aiLeadCard, tricks, playerIsMano,
       envidoLevel, envidoCalledBy, envidoDone, envidoAvail,
       trucoLevel, trucoCalledBy, trucoAccepted,
       playerScore, aiScore,
@@ -213,6 +258,7 @@ export default function TrucoPage() {
   // ── iniciar mano ─────────────────────────────────────────────────────────
 
   function startHand(pScore: number, aScore: number, pIsMano: boolean) {
+    handIdRef.current++
     const deck = shuffle(createDeck())
     const ph = deck.slice(0, 3)
     const ah = deck.slice(3, 6)
@@ -220,6 +266,7 @@ export default function TrucoPage() {
     setPlayerHand(ph)
     setAiHand(ah)
     setLastAiCard(null)
+    setAiLeadCard(null)
     setTricks([])
     setPlayerIsMano(pIsMano)
     setEnvidoLevel(0)
@@ -237,23 +284,65 @@ export default function TrucoPage() {
 
     // ¿la IA quiere cantar envido antes que el jugador actúe?
     if (calcEnvido(ah) >= 28) {
-      setTimeout(() => {
+      // mientras la IA canta, ni N reparte otra vez ni se puede jugar
+      setPhase('ai_plays')
+      later(() => {
         setEnvidoLevel(1)
         setEnvidoCalledBy('ai')
         setPhase('envido_response')
         announceAssertive(
-          `Nueva mano. Tu mano: ${ph.map(cardLabel).join(', ')}. ` +
+          `Nueva mano. ${pIsMano ? 'Eres mano.' : 'La IA es mano.'} Tu mano: ${ph.map(cardLabel).join(', ')}. ` +
           `La IA canta ¡Envido! S para aceptar (2 pts), N para no quiero (la IA gana 1 pt), E para subir a Real Envido.`
         )
       }, 600)
-    } else {
+    } else if (pIsMano) {
       setPhase('player_turn')
       announcePolite(
-        `Nueva mano. ${pIsMano ? 'Eres mano.' : 'La IA es mano.'} ` +
+        `Nueva mano. Eres mano. ` +
         `Tu mano: ${ph.map(cardLabel).join(', ')}. ` +
         `E=Envido, T=Truco. Juega con 1, 2 o 3.`
       )
+    } else {
+      setPhase('ai_plays')
+      announcePolite(`Nueva mano. La IA es mano y sale primero. Tu mano: ${ph.map(cardLabel).join(', ')}.`)
+      later(() => aiLead(''), 1500)
     }
+  }
+
+  // ── la IA sale en la baza ─────────────────────────────────────────────────
+
+  function aiLead(intro: string) {
+    const { aiHand: ah, playerHand: ph, tricks: tr } = stateRef.current
+    if (ah.length === 0) return
+    const idx = aiPickCard(ah, tr)
+    const card = ah[idx]
+    setAiHand(ah.filter((_, i) => i !== idx))
+    setAiLeadCard(card)
+    setLastAiCard(card)
+    setPhase('player_turn')
+    audio.deal()
+    announcePolite(
+      `${intro}La IA sale con ${cardLabel(card)}. ` +
+      `Tu mano: ${ph.map((c, i) => `${i + 1}: ${cardLabel(c)}`).join(', ')}. Juega con 1, 2 o 3.`
+    )
+  }
+
+  // Lo que se dice tras un canto: si va a salir la IA, aún no juegas tú
+  function playPrompt() {
+    const { tricks: tr, playerIsMano: pim, aiLeadCard: lead } = stateRef.current
+    return !lead && trickLeader(tr, pim) === 'ai' ? 'Ahora sale la IA.' : 'Juega con 1, 2 o 3.'
+  }
+
+  // Vuelve el turno tras un canto: si le toca salir a la IA y aún no ha
+  // jugado, sale ella; si no, juegas tú.
+  function resumePlay() {
+    const { tricks: tr, playerIsMano: pim, aiLeadCard: lead } = stateRef.current
+    if (!lead && trickLeader(tr, pim) === 'ai') {
+      setPhase('ai_plays')
+      later(() => aiLead(''), 1500)
+      return
+    }
+    setPhase('player_turn')
   }
 
   // ── iniciar turno (con checks de IA para truco) ───────────────────────────
@@ -270,9 +359,14 @@ export default function TrucoPage() {
       )
       return
     }
-    setPhase('player_turn')
     const pw = trix.filter(t => t === 'player').length
     const aw = trix.filter(t => t === 'ai').length
+    if (trickLeader(trix, stateRef.current.playerIsMano) === 'ai') {
+      setPhase('ai_plays')
+      aiLead(`Bazas: tú ${pw}, IA ${aw}. ${tAcc ? `Truco en juego (${TRUCO_WIN_PTS[tLvl]} pts). ` : ''}`)
+      return
+    }
+    setPhase('player_turn')
     if (trix.length > 0) {
       announcePolite(
         `Bazas: tú ${pw}, IA ${aw}. Tu mano: ${ph.map((c, i) => `${i + 1}: ${cardLabel(c)}`).join(', ')}. ` +
@@ -285,7 +379,7 @@ export default function TrucoPage() {
 
   function playCard(idx: number) {
     const { phase: ph, playerHand: hand, aiHand: ah, tricks: tr, envidoAvail: ea,
-      trucoLevel: tl, trucoAccepted: ta } = stateRef.current
+      trucoLevel: tl, trucoAccepted: ta, aiLeadCard: lead } = stateRef.current
     if (ph !== 'player_turn' || idx >= hand.length) return
 
     const card = hand[idx]
@@ -294,10 +388,22 @@ export default function TrucoPage() {
     if (ea) setEnvidoAvail(false)
 
     audio.click()
+    if (lead) {
+      // la IA ya salió: tu carta cierra la baza
+      const pr = trucoRank(card)
+      const ar = trucoRank(lead)
+      const result: TrickResult = pr > ar ? 'player' : ar > pr ? 'ai' : 'tie'
+      const rMsg = result === 'player' ? 'Ganas la baza.' : result === 'ai' ? 'La IA gana la baza.' : 'Parda (empate).'
+      setAiLeadCard(null)
+      setPhase('ai_plays')
+      announcePolite(`Juegas ${cardLabel(card)}. ${rMsg}`)
+      later(() => finalizeTrick(result, newHand, ah, tr, tl, ta), 500)
+      return
+    }
     announcePolite(`Juegas ${cardLabel(card)}.`)
     setPhase('ai_plays')
 
-    setTimeout(() => {
+    later(() => {
       runAiTurn(card, newHand, ah, tr, tl, ta)
     }, 700)
   }
@@ -306,7 +412,7 @@ export default function TrucoPage() {
     playerCard: Card, pHand: Card[], ah: Card[], tr: TrickResult[],
     tl: number, ta: boolean
   ) {
-    const idx = aiPickCard(ah, tr)
+    const idx = aiPickResponse(ah, playerCard)
     const aiCard = ah[idx]
     const newAiHand = ah.filter((_, i) => i !== idx)
 
@@ -321,7 +427,7 @@ export default function TrucoPage() {
     const rMsg = result === 'player' ? 'Ganas la baza.' : result === 'ai' ? 'La IA gana la baza.' : 'Parda (empate).'
     announcePolite(`La IA juega ${cardLabel(aiCard)}. ${rMsg}`)
 
-    setTimeout(() => {
+    later(() => {
       finalizeTrick(result, pHand, newAiHand, tr, tl, ta)
     }, 500)
   }
@@ -333,9 +439,7 @@ export default function TrucoPage() {
     const newTricks = [...prevTricks, result]
     setTricks(newTricks)
 
-    const pw = newTricks.filter(t => t === 'player').length
-    const aw = newTricks.filter(t => t === 'ai').length
-    const handDone = newTricks.length === 3 || pw >= 2 || aw >= 2
+    const handDone = handIsDecided(newTricks)
 
     if (handDone) {
       const { playerIsMano: pim, playerScore: ps, aiScore: as } = stateRef.current
@@ -399,7 +503,7 @@ export default function TrucoPage() {
     } else if (aiResp === 'accept') {
       const playerEnvido = calcEnvido(phand)
       const aiEnvido = calcEnvido(ah)
-      const envWinner = playerEnvido >= aiEnvido ? 'player' : 'ai'
+      const envWinner = envidoWinner(playerEnvido, aiEnvido, stateRef.current.playerIsMano)
       const pts = ENVIDO_WIN_PTS[nextLvl]
       setEnvidoDone(true)
       setEnvidoAvail(false)
@@ -418,7 +522,7 @@ export default function TrucoPage() {
         endGameFromEnvido(newPs, newAs)
         return
       }
-      setPhase('player_turn')
+      resumePlay()
     } else {
       // rechaza: jugador gana los puntos de rechazo
       const pts = ENVIDO_REJECT_PTS[nextLvl]
@@ -427,7 +531,7 @@ export default function TrucoPage() {
       announcePolite(`Cantas ${ENVIDO_NAMES[nextLvl]}. La IA dice no quiero. Ganas ${pts} pt/s de envido.`)
       const newPs = ps + pts
       if (newPs >= WIN_SCORE) { endGameFromEnvido(newPs, as); return }
-      setPhase('player_turn')
+      resumePlay()
     }
   }
 
@@ -447,7 +551,7 @@ export default function TrucoPage() {
       if (aiResp === 'accept' || newLvl === 3) {
         const pe = calcEnvido(ph)
         const ae = calcEnvido(ah)
-        const winner = pe >= ae ? 'player' : 'ai'
+        const winner = envidoWinner(pe, ae, stateRef.current.playerIsMano)
         const pts = ENVIDO_WIN_PTS[newLvl]
         setEnvidoDone(true)
         setEnvidoAvail(false)
@@ -459,7 +563,7 @@ export default function TrucoPage() {
         announcePolite(`Subes a ${ENVIDO_NAMES[newLvl]}. La IA dice no quiero. Ganas ${pts} pt/s.`)
         const newPs = ps + pts
         if (newPs >= WIN_SCORE) { endGameFromEnvido(newPs, as); return }
-        setPhase('player_turn')
+        resumePlay()
       }
       return
     }
@@ -467,7 +571,7 @@ export default function TrucoPage() {
     if (action === 'accept') {
       const pe = calcEnvido(ph)
       const ae = calcEnvido(ah)
-      const winner = pe >= ae ? 'player' : 'ai'
+      const winner = envidoWinner(pe, ae, stateRef.current.playerIsMano)
       const pts = ENVIDO_WIN_PTS[el]
       setEnvidoDone(true)
       setEnvidoAvail(false)
@@ -482,7 +586,7 @@ export default function TrucoPage() {
     announcePolite(`Dices no quiero. La IA gana ${pts} pt/s de envido.`)
     const newAs = as + pts
     if (newAs >= WIN_SCORE) { endGameFromEnvido(ps, newAs); return }
-    setPhase('player_turn')
+    resumePlay()
   }
 
   function resolveEnvidoWinner(
@@ -500,7 +604,7 @@ export default function TrucoPage() {
       const newAs = as + pts
       if (newAs >= WIN_SCORE) { endGameFromEnvido(ps, newAs); return }
     }
-    setPhase('player_turn')
+    resumePlay()
   }
 
   function endGameFromEnvido(ps: number, as: number) {
@@ -542,9 +646,9 @@ export default function TrucoPage() {
     } else if (aiResp === 'accept') {
       setTrucoAccepted(true)
       announcePolite(
-        `Cantas ${TRUCO_NAMES[nextLvl]}. La IA acepta. ${TRUCO_WIN_PTS[nextLvl]} puntos para el ganador de la mano. Juega con 1, 2 o 3.`
+        `Cantas ${TRUCO_NAMES[nextLvl]}. La IA acepta. ${TRUCO_WIN_PTS[nextLvl]} puntos para el ganador de la mano. ${playPrompt()}`
       )
-      setPhase('player_turn')
+      resumePlay()
     } else {
       // rechaza: jugador gana pts de rechazo
       const pts = TRUCO_REJECT_PTS[nextLvl]
@@ -579,8 +683,8 @@ export default function TrucoPage() {
       const aiResp = aiRespondTruco(ah, newLvl)
       if (aiResp === 'accept') {
         setTrucoAccepted(true)
-        announcePolite(`Subes a ${TRUCO_NAMES[newLvl]}. La IA acepta. ${TRUCO_WIN_PTS[newLvl]} pts al ganador. Juega con 1, 2 o 3.`)
-        setPhase('player_turn')
+        announcePolite(`Subes a ${TRUCO_NAMES[newLvl]}. La IA acepta. ${TRUCO_WIN_PTS[newLvl]} pts al ganador. ${playPrompt()}`)
+        resumePlay()
       } else {
         const pts = TRUCO_REJECT_PTS[newLvl]
         setPlayerScore(s => s + pts)
@@ -599,8 +703,8 @@ export default function TrucoPage() {
 
     if (action === 'accept') {
       setTrucoAccepted(true)
-      announcePolite(`Aceptas ${TRUCO_NAMES[tl]}. ${TRUCO_WIN_PTS[tl]} pts al ganador de la mano. Juega con 1, 2 o 3.`)
-      setPhase('player_turn')
+      announcePolite(`Aceptas ${TRUCO_NAMES[tl]}. ${TRUCO_WIN_PTS[tl]} pts al ganador de la mano. ${playPrompt()}`)
+      resumePlay()
       return
     }
 
@@ -622,7 +726,8 @@ export default function TrucoPage() {
 
   const readStatus = useCallback(() => {
     const { phase: ph, playerHand: phand, tricks: tr, envidoLevel: el,
-      trucoLevel: tl, trucoAccepted: ta, playerScore: ps, aiScore: as, envidoAvail: ea } = stateRef.current
+      trucoLevel: tl, trucoAccepted: ta, playerScore: ps, aiScore: as, envidoAvail: ea,
+      aiLeadCard: lead } = stateRef.current
     if (ph === 'idle') { announcePolite('Pulsa Comenzar para jugar Truco.'); return }
     const pw = tr.filter(t => t === 'player').length
     const aw = tr.filter(t => t === 'ai').length
@@ -632,6 +737,7 @@ export default function TrucoPage() {
       (ta ? `Truco aceptado (${TRUCO_WIN_PTS[tl]} pts en juego). ` : '') +
       (el > 0 ? `Envido cantado: ${ENVIDO_NAMES[el]}. ` : '') +
       (ea ? 'Puedes cantar envido (E). ' : '') +
+      (lead ? `La IA ha salido con ${cardLabel(lead)}. ` : '') +
       (ph === 'player_turn' ? 'Tu turno: 1/2/3 para jugar.' : ph === 'envido_response' ? 'Respondiendo envido: S/N/E.' : ph === 'truco_response' ? 'Respondiendo truco: S/N/T.' : '')
     )
   }, [])
@@ -743,7 +849,7 @@ export default function TrucoPage() {
             {aiHand.map((_, i) => <CardVisual key={i} hidden />)}
           </div>
           {lastAiCard && (
-            <p className="text-[#888] text-xs mt-1" aria-live="polite">Última carta: {cardLabel(lastAiCard)}</p>
+            <p className="text-[#888] text-xs mt-1">Última carta: {cardLabel(lastAiCard)}</p>
           )}
         </section>
 

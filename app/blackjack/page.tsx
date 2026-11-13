@@ -12,7 +12,7 @@ type Suit = 'Picas' | 'Corazones' | 'Diamantes' | 'Tréboles'
 type Rank = 'A' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9' | '10' | 'J' | 'Q' | 'K'
 interface Card { rank: Rank; suit: Suit }
 type Phase = 'idle' | 'playing' | 'finished'
-type Outcome = 'blackjack' | 'win' | 'double_win' | 'push' | 'bust' | 'lose'
+type Outcome = 'blackjack' | 'dealer_blackjack' | 'win' | 'double_win' | 'push' | 'bust' | 'lose'
 
 const SUITS: Suit[] = ['Picas', 'Corazones', 'Diamantes', 'Tréboles']
 const RANKS: Rank[] = ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K']
@@ -27,6 +27,7 @@ const OUTCOME_TEXT: Record<Outcome, string> = {
   double_win: '¡Ganaste con doble apuesta!',
   push: 'Empate.',
   bust: 'Te pasaste de 21.',
+  dealer_blackjack: 'El dealer tiene blackjack.',
   lose: 'El dealer gana.',
 }
 
@@ -36,6 +37,7 @@ const OUTCOME_PTS: Record<Outcome, number> = {
   double_win: 200,
   push: 25,
   bust: 0,
+  dealer_blackjack: 0,
   lose: 0,
 }
 
@@ -144,14 +146,30 @@ export default function BlackjackPage() {
     setSaveError('')
 
     const pVal = handValue(pCards)
+    const dVal = handValue(dCards)
 
-    if (pVal === 21) {
-      const pts = OUTCOME_PTS['blackjack']
+    // blackjack (21 en dos cartas) de cualquiera de los dos: la mano acaba ya
+    if (pVal === 21 || dVal === 21) {
+      const yours = `Tu mano: ${pCards.map(cardLabel).join(' y ')}.`
+      const dealers = `Dealer: ${dCards.map(cardLabel).join(' y ')}.`
       setPhase('finished')
-      setOutcome('blackjack')
-      setScore(s => s + pts)
-      audio.correct()
-      announceAssertive(`¡Blackjack! Tu mano: ${pCards.map(cardLabel).join(' y ')}. +${pts} puntos.`)
+      if (pVal === 21 && dVal === 21) {
+        const pts = OUTCOME_PTS['push']
+        setOutcome('push')
+        setScore(s => s + pts)
+        audio.click()
+        announceAssertive(`Los dos tenéis blackjack. Empate. ${yours} ${dealers} +${pts} puntos. Presiona N para jugar de nuevo.`)
+      } else if (pVal === 21) {
+        const pts = OUTCOME_PTS['blackjack']
+        setOutcome('blackjack')
+        setScore(s => s + pts)
+        audio.correct()
+        announceAssertive(`¡Blackjack! ${yours} +${pts} puntos. Presiona N para jugar de nuevo.`)
+      } else {
+        setOutcome('dealer_blackjack')
+        audio.gameOver()
+        announceAssertive(`El dealer tiene blackjack. ${dealers} ${yours} Pierdes la mano. Presiona N para jugar de nuevo.`)
+      }
       return
     }
 

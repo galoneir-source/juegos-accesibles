@@ -35,7 +35,7 @@ interface GameState {
 
 interface Selection { pile: PileId; cardIndex: number }
 
-const INSTRUCTIONS = 'Solitario Klondike. Objetivo: llevar todas las cartas a las cuatro fundaciones, una por palo, de As a Rey. Flechas izquierda y derecha para moverte entre pilas. 1 a 7 para ir directamente a una columna. S para el mazo, W para el descarte, F para ciclar por las fundaciones. Enter o Espacio para seleccionar una pila o colocar la carta seleccionada. Escape cancela la selección. A mueve automáticamente la carta al palo correspondiente. D roba una carta del mazo. R describe la pila actual. N nueva partida. I repite instrucciones. Puntuación: 15 puntos por carta a fundación, 5 puntos por girar carta oculta, 5 puntos por robo a columna.'
+const INSTRUCTIONS = 'Solitario Klondike. Objetivo: llevar todas las cartas a las cuatro fundaciones, una por palo, de As a Rey. Flechas izquierda y derecha para moverte entre pilas. 1 a 7 para ir directamente a una columna. S para el mazo, W para el descarte, F para ciclar por las fundaciones. Enter o Espacio para seleccionar una pila o colocar la carta seleccionada. Escape cancela la selección. A mueve automáticamente la carta al palo correspondiente. D roba una carta del mazo. R describe la pila actual. N nueva partida. I repite instrucciones. Puntuación: 15 puntos por carta a fundación, 5 puntos por girar carta oculta, 5 puntos por robo a columna. Devolver una carta de la fundación a una columna resta 15 puntos.'
 
 function color(s: Suit) { return RED_SUITS.has(s) ? 'rojo' : 'negro' }
 function cardLabel(c: Card) {
@@ -150,7 +150,9 @@ function applyMove(state: GameState, sel: Selection, target: PileId): { state: G
   if (!canToTableau(cards[0], state.tableau[ci])) return null
   const { s, flipped } = removeFrom()
   s.tableau[ci] = [...s.tableau[ci], ...cards]
-  const pts = (sel.pile === 'waste' ? 5 : 0) + (flipped ? 5 : 0)
+  // sacar una carta de la fundación resta lo que dio al entrar (como en el
+  // Klondike clásico); si no, ida y vuelta sumaría 15 puntos cada vez
+  const pts = sel.pile.startsWith('f') ? -Math.min(15, s.score) : (sel.pile === 'waste' ? 5 : 0) + (flipped ? 5 : 0)
   s.score += pts
   return { state: s, flipped, pts }
 }
@@ -178,6 +180,19 @@ function describePile(state: GameState, pile: PileId): string {
   const faceDown = col.filter(c => !c.faceUp).length
   const faceUp = col.length - faceDown
   return `Columna ${ci+1}: ${cardLabel(top)}${faceUp > 1 ? `, más ${faceUp-1} visible${faceUp-1!==1?'s':''}` : ''}${faceDown > 0 ? `, ${faceDown} oculta${faceDown!==1?'s':''}` : ''}.`
+}
+
+// Lo que dice R: como describePile, pero en las columnas nombra todas las
+// cartas boca arriba, de la de más abajo a la de arriba.
+function describePileFull(state: GameState, pile: PileId): string {
+  if (!pile.startsWith('c')) return describePile(state, pile)
+  const ci = parseInt(pile[1])
+  const col = state.tableau[ci]
+  const up = col.filter(c => c.faceUp)
+  if (up.length < 2) return describePile(state, pile)
+  const faceDown = col.length - up.length
+  const hidden = faceDown > 0 ? ` ${faceDown} oculta${faceDown !== 1 ? 's' : ''} debajo.` : ''
+  return `Columna ${ci+1}, de abajo arriba: ${up.map(cardLabel).join(', ')}.${hidden}`
 }
 
 // Nombre accesible de los botones de los montones. Empieza por lo que se ve
@@ -241,7 +256,7 @@ export default function SolitarioPage() {
 
   const readFocus = useCallback(() => {
     if (!state) return
-    let desc = describePile(state, focus)
+    let desc = describePileFull(state, focus)
     if (selection) {
       const cards = getSelCards(state, selection)
       const d = cards.length === 1 ? cardLabel(cards[0]) : `${cards.length} cartas: ${cardLabel(cards[0])} hasta ${cardLabel(cards[cards.length-1])}`
@@ -290,6 +305,7 @@ export default function SolitarioPage() {
       setSelection(null)
       let msg = `${cardDesc} a ${describePile(result.state, pileId)}`
       if (result.pts > 0) msg += ` +${result.pts} puntos.`
+      else if (result.pts < 0) msg += ` ${result.pts} puntos.`
       if (result.flipped) msg += ' Se gira una carta.'
       if (result.state.won) {
         audio.correct()
