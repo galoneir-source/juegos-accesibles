@@ -96,6 +96,28 @@ export default async function Home() {
           Todos los juegos se controlan completamente con el teclado y son compatibles con lectores de pantalla como NVDA, JAWS y VoiceOver.
         </p>
 
+        <section aria-labelledby="antes-de-jugar" className="mb-10 p-5 rounded-lg border border-[#333] bg-[#111] text-base leading-relaxed">
+          <h2 id="antes-de-jugar" className="text-xl font-bold mb-3">Antes de jugar</h2>
+          <ul className="list-disc pl-6 space-y-2">
+            <li>
+              <strong>No hace falta cuenta.</strong> Si te registras, guardas tus puntuaciones y compites en la tabla de
+              líderes. Las partidas a medias de las aventuras de texto se guardan en tu navegador, con cuenta o sin ella.
+            </li>
+            <li>
+              <strong>Navegadores:</strong> versiones recientes de Chrome, Edge o Firefox con NVDA o JAWS en Windows; Safari
+              con VoiceOver en Mac, iPhone y iPad. En móvil y tableta, los juegos de teclado muestran controles táctiles.
+            </li>
+            <li>
+              <Link href="/novedades" className="text-[#ffd700] underline hover:text-white">Novedades</Link>: juegos nuevos y
+              mejoras recientes. ¿Algo no funciona con tu lector de pantalla? Escribe a{' '}
+              <a href="mailto:contacto@dvillalon.com" className="text-[#ffd700] underline hover:text-white">
+                contacto@dvillalon.com
+              </a>
+              .
+            </li>
+          </ul>
+        </section>
+
         {CATEGORIES.map((category) => (
           <section key={category.id} aria-labelledby={`cat-${category.id}`} className="mb-10">
             <h2 id={`cat-${category.id}`} className="text-xl font-bold mb-4">
@@ -129,6 +151,14 @@ export default async function Home() {
           Un proyecto de{' '}
           <a href="https://dvillalon.com/" className="text-[#ffd700] underline hover:text-white">
             Daniel Villalón
+          </a>
+          {' · '}
+          <Link href="/novedades" className="text-[#ffd700] underline hover:text-white">
+            Novedades
+          </Link>
+          {' · '}
+          <a href="mailto:contacto@dvillalon.com" className="text-[#ffd700] underline hover:text-white">
+            Contacto
           </a>
           {' · '}
           <Link href="/privacidad" className="text-[#ffd700] underline hover:text-white">
