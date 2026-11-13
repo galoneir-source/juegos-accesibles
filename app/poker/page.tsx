@@ -111,7 +111,8 @@ function evaluate5(cards: Card[]): HandResult {
   const countVals = Object.values(counts).sort((a, b) => b - a)
 
   if (isFlush && isStraight) {
-    const high = ranks[0] === 14 && ranks[1] === 13 ? 14 : ranks[0]
+    // A-2-3-4-5 es la escalera de color más baja (el As cuenta como 1)
+    const high = ranks[0] === 14 && ranks[1] === 5 ? 5 : ranks[0]
     return { rank: 8, name: high === 14 ? 'Escalera Real de Color' : 'Escalera de Color', tiebreakers: [high] }
   }
   if (countVals[0] === 4) {
@@ -596,7 +597,12 @@ export default function PokerPage() {
       switch (key) {
         case 'i': readStatus(); break
         case 'n':
-          if (ph === 'finished') newGame()
+          if (ph === 'finished') {
+            // sin fichas no hay más manos: N empieza una partida nueva, como el botón
+            const { playerChips: pc, aiChips: ac } = stateRef.current
+            if (pc > 0 && ac > 0) newGame()
+            else firstGame()
+          }
           break
         case 'f': if (ipt && ph === 'betting') playerAct('fold'); break
         case 'c':

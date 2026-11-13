@@ -42,8 +42,12 @@ const RANK_ORDER: Record<Rank, number> = {
 const INSTRUCTIONS = `Gin Rummy. Objetivo: forma combinaciones con tus 10 cartas y llama cuando tu puntaje de cartas sueltas sea bajo.
 Combinaciones válidas: trío o cuarteto del mismo rango (ej: tres Reinas), o escalera de 3 o más cartas del mismo palo en orden (ej: 4-5-6 de Picas).
 Cada turno: roba una carta del mazo (tecla M) o del descarte (tecla D), luego descarta una carta de tu mano (teclas 1 a 0 para seleccionar, U para la carta recién robada, y R para descartar).
-Cuando tengas 10 o menos puntos en cartas no combinadas, puedes llamar con tecla L (Llamada). Con 0 puntos puedes Gin con tecla G (bonificación extra).
+Cuando tengas 10 o menos puntos en cartas no combinadas, puedes llamar con tecla L (Llamada). Con 0 puntos puedes Gin con tecla G (bonificación extra). Si alguien llama y el otro tiene tantos puntos sueltos o menos, este le hace undercut y gana la ronda.
 Tecla H para ver tu mano completa. Tecla I para repetir instrucciones. Tecla N para nueva partida.`
+
+// Bonus del undercut: lo gana quien, tras la llamada del otro, tiene
+// tantos puntos sueltos o menos
+const UNDERCUT_BONUS = 25
 
 // ── utilidades de baraja ────────────────────────────────────────────────────
 
@@ -208,7 +212,7 @@ function CardVisual({ card, selected, hidden }: { card: Card; selected?: boolean
           : isRed
           ? 'border-[#ef4444] text-[#ef4444]'
           : 'border-[#d4d4d4] text-[#d4d4d4]'
-      } ${selected ? (isRed ? 'text-[#ef4444]' : 'text-[#d4d4d4]') : ''}`}
+      } ${selected ? (isRed ? 'text-[#f87171]' : 'text-[#d4d4d4]') : ''}`}
     >
       <span className="text-xs font-bold leading-none">{card.rank}</span>
       <span className="text-sm leading-none">{SUIT_SYMBOL[card.suit]}</span>
@@ -397,16 +401,17 @@ export default function GinRummyPage() {
       setTurnStep('draw')
       finishRound('ai-gin')
     } else if (aiDw <= 10) {
+      // La IA llama por su propia mano, sin mirar la tuya: si tus puntos
+      // sueltos son iguales o menores, le haces undercut y ganas la ronda.
       const { deadwood: playerDw } = calcDeadwood(pHand)
-      if (aiDw < playerDw) {
-        announceAssertive(`¡La IA llama! Sus puntos sueltos: ${aiDw}. Los tuyos: ${playerDw}. La IA gana esta ronda.`)
-        setTurnStep('draw')
-        finishRound('ai-call')
+      setTurnStep('draw')
+      if (playerDw <= aiDw) {
+        const pts = aiDw - playerDw + UNDERCUT_BONUS
+        announceAssertive(`¡La IA llama con ${aiDw} puntos sueltos! Los tuyos: ${playerDw}. ¡Le haces undercut! Ganas ${pts} puntos (${aiDw - playerDw} de diferencia + ${UNDERCUT_BONUS} de bonus).`)
+        finishRound('player-undercut', pts)
       } else {
-        // la IA tiene pocos puntos pero no gana, no llama
-        const { deadwood: pDw } = calcDeadwood(pHand)
-        const discardName = cardLabel(newDiscard[newDiscard.length - 1])
-        announcePolite(`La IA descarta ${discardName}. Toca robar: tecla M (mazo) o D (descarte). Tus puntos sueltos: ${pDw}.`)
+        announceAssertive(`¡La IA llama! Sus puntos sueltos: ${aiDw}. Los tuyos: ${playerDw}. La IA gana esta ronda.`)
+        finishRound('ai-call')
       }
     } else {
       const { deadwood: pDw } = calcDeadwood(pHand)
@@ -447,13 +452,13 @@ export default function GinRummyPage() {
       const bonus = 25
       const pts = aiDw + bonus
       announceAssertive(
-        `¡GIN! Tus puntos: 0. IA: ${aiDw}. Ganás ${pts} puntos (${aiDw} del deadwood + ${bonus} de bonus de Gin).`
+        `¡GIN! Tus puntos: 0. IA: ${aiDw}. Ganas ${pts} puntos (${aiDw} del deadwood + ${bonus} de bonus de Gin).`
       )
       finishRound('gin', pts)
     } else {
       const pts = aiDw - pDw
       announceAssertive(
-        `¡Llamas! Tus puntos: ${pDw}. IA: ${aiDw}. Ganás ${pts} puntos.`
+        `¡Llamas! Tus puntos: ${pDw}. IA: ${aiDw}. Ganas ${pts} puntos.`
       )
       finishRound('call', pts)
     }
@@ -462,7 +467,7 @@ export default function GinRummyPage() {
   // ── resolver ronda ──────────────────────────────────────────────────────
 
   function finishRound(
-    result: 'gin' | 'call' | 'undercut' | 'ai-gin' | 'ai-call' | null,
+    result: 'gin' | 'call' | 'undercut' | 'player-undercut' | 'ai-gin' | 'ai-call' | null,
     pts?: number
   ) {
     let earned = 0
@@ -478,6 +483,11 @@ export default function GinRummyPage() {
       earned = pts ?? 0
       outcome = 'win'
       msg = `¡Llamada ganada! +${earned} puntos.`
+      audio.correct()
+    } else if (result === 'player-undercut') {
+      earned = pts ?? 0
+      outcome = 'win'
+      msg = `¡Undercut a la IA! +${earned} puntos.`
       audio.correct()
     } else if (result === 'undercut' || result === 'ai-gin' || result === 'ai-call') {
       earned = 0
@@ -689,7 +699,7 @@ export default function GinRummyPage() {
             ))}
           </div>
           {playerMelds.length > 0 && (
-            <p className="text-[#22c55e] text-xs mt-2" aria-live="polite">
+            <p className="text-[#22c55e] text-xs mt-2">
               Combinaciones: {playerMelds.map(m => m.map(c => `${c.rank}${SUIT_SYMBOL[c.suit]}`).join('+')).join(' | ')}
             </p>
           )}

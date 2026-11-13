@@ -147,7 +147,7 @@ export const GAME_GUIDES: Record<string, GameGuide> = {
   'gin-rummy': {
     como: 'El lector de pantalla te lee cada carta que robas y la que descarta la IA, y te avisa de tus puntos sueltos en cada turno. Cada carta de la mano tiene una tecla del 1 al 0 (y la U para la que acabas de robar, que es la 11.ª), así que puedes elegirla sin moverte por la pantalla. Con H oyes tu mano completa cuando quieras.',
     controles: 'En tu turno roba del mazo con M o del descarte con D; luego elige una carta con las teclas del 1 al 0, o la recién robada con U, y descártala con R. L para cerrar (llamar) y G para cantar Gin. H lee tu mano, I repite las instrucciones y N empieza una partida nueva.',
-    progreso: 'Forma tríos o cuartetos del mismo valor y escaleras de 3 o más cartas del mismo palo. Puedes cerrar cuando tus cartas sueltas sumen 10 puntos o menos; con 0 puntos cantas Gin y ganas una bonificación.',
+    progreso: 'Forma tríos o cuartetos del mismo valor y escaleras de 3 o más cartas del mismo palo. Puedes cerrar cuando tus cartas sueltas sumen 10 puntos o menos; con 0 puntos cantas Gin y ganas una bonificación. Si cierras y la IA tiene tantos puntos sueltos como tú o menos, te hace undercut y gana la ronda; y al revés: si cierra la IA y tú tienes tantos o menos, el undercut es tuyo.',
   },
   'poker': {
     como: 'Texas Hold\'em contra la inteligencia artificial. El juego te anuncia tus dos cartas, las comunitarias a medida que salen (flop, turn y river), lo que apuesta el rival y quién gana cada mano y con qué jugada. Con I escuchas en cualquier momento el estado: fichas, bote y cartas.',
@@ -157,7 +157,7 @@ export const GAME_GUIDES: Record<string, GameGuide> = {
   'truco': {
     como: 'El Truco argentino con la baraja española de 40 cartas, uno contra uno con la IA. El juego te lee tus tres cartas, la carta que juega la IA en cada baza y sus cantos, y te pregunta si aceptas cuando canta Envido o Truco. Con I escuchas el estado de la mano en cualquier momento.',
     controles: 'Teclas 1, 2 y 3 para jugar cada carta. E canta Envido (pulsando más veces, Real Envido y Falta Envido) y T canta Truco (y después Retruco y Vale Cuatro). Cuando canta la IA: S para aceptar, N para rechazar y T para subir el Truco. I lee el estado.',
-    progreso: 'Cada mano son 3 cartas y 3 bazas; quien gana 2 bazas se lleva la mano. Gana la partida quien llega primero a 15 puntos.',
+    progreso: 'Cada mano son 3 cartas y 3 bazas; quien gana 2 bazas se lleva la mano. Sale primero el mano, que se alterna en cada mano, y luego quien ganó la baza anterior; los empates (pardas y envido) favorecen al mano. Gana la partida quien llega primero a 15 puntos.',
   },
   'generala': {
     como: 'La Generala, prima del Yahtzee, con cinco dados. Cada dado suena con una nota según su valor al tirarlo, y el lector de pantalla te dice el resultado de la tirada, qué dados tienes guardados y cuántos puntos daría cada categoría.',
@@ -175,9 +175,9 @@ export const GAME_GUIDES: Record<string, GameGuide> = {
     progreso: 'Empiezas con 100 créditos ficticios; la partida acaba cuando te quedas sin ellos o cuando sales con Q. El premio mayor son tres sietes: 250 créditos.',
   },
   'solitario': {
-    como: 'El Solitario Klondike, adaptado para jugarse con el teclado y el lector de pantalla. Te mueves de pila en pila y el lector de pantalla te describe cada una al llegar; con R vuelves a escucharla. Girar una carta, colocarla en su fundación o hacer un movimiento no válido tienen su sonido.',
+    como: 'El Solitario Klondike, adaptado para jugarse con el teclado y el lector de pantalla. Te mueves de pila en pila y el lector de pantalla te describe cada una al llegar; con R vuelves a escucharla y, en las columnas, oyes todas las cartas boca arriba. Girar una carta, colocarla en su fundación o hacer un movimiento no válido tienen su sonido.',
     controles: 'Flechas izquierda y derecha para moverte entre pilas, teclas del 1 al 7 para ir a una columna, S para el mazo, W para el descarte y F para recorrer las fundaciones. Enter o Espacio para coger y dejar cartas, Escape para cancelar, A para mandar la carta a su fundación y D para robar del mazo. R describe la pila, N empieza una partida nueva e I repite las instrucciones.',
-    progreso: '15 puntos por cada carta que llevas a una fundación, 5 por girar una carta oculta y 5 por pasar una carta del descarte a una columna.',
+    progreso: '15 puntos por cada carta que llevas a una fundación, 5 por girar una carta oculta y 5 por pasar una carta del descarte a una columna. Devolver una carta de una fundación a una columna resta 15.',
   },
 
   // ── Juegos de mesa ─────────────────────────────────────────────────────────
