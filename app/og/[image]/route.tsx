@@ -1,7 +1,7 @@
 import { readFile } from 'node:fs/promises'
 import { join } from 'node:path'
 import { ImageResponse } from 'next/og'
-import { CATEGORIES, GAMES, ogImageSlugs } from '@/lib/games'
+import { CATEGORIES, GAMES, gameGenre, ogImageSlugs } from '@/lib/games'
 
 // Imagen para compartir en redes de cada juego y cada categoría
 // (/og/<slug>.png, 1200×630). Se generan todas en el build a partir del
@@ -34,7 +34,7 @@ export async function GET(_request: Request, { params }: { params: Promise<{ ima
   const category = CATEGORIES.find((c) => c.slug === slug)
   if (!game && !category) return new Response('No encontrado', { status: 404 })
 
-  const kicker = game ? CATEGORIES.find((c) => c.id === game.category)!.label : 'Juegos Accesibles'
+  const kicker = game ? gameGenre(game) : 'Juegos Accesibles'
   const title = game ? game.label : category!.label
   const count = category ? GAMES.filter((g) => g.category === category.id).length : 0
   const subtitle = game ? 'Juego accesible para ciegos, gratis' : `${count} juegos accesibles para ciegos, gratis`
