@@ -11,7 +11,6 @@ export const GAMES = [
   { id: 'casa-encantada', category: 'aventuras', href: '/casa-encantada', label: 'Casa Encantada', meta: 'Aventura de texto de terror: explora la Mansión Voss, cuida tu vida y tu cordura y derrota al Espectro del Amo. Gratis y accesible para ciegos.', desc: 'Aventura de texto de terror. Explora la Mansión Voss, cuida tu vida y tu cordura, y derrota al Espectro del Amo para escapar.' },
   { id: 'aventura-espacio', category: 'aventuras', href: '/aventura-espacio', label: 'Aventura Espacial', meta: 'Aventura de texto espacial: explora la estación UES Kronos, descubre qué le pasó a la tripulación y destruye al Vórtex Primario. Accesible y gratis.', desc: 'Explora la estación espacial UES Kronos con comandos de texto. Descubre qué le ocurrió a la tripulación y destruye al Vórtex Primario.' },
   { id: 'breakout', category: 'arcade', href: '/breakout', label: 'Breakout', meta: 'Breakout accesible: rompe todos los bloques con la paleta, que mueves con las flechas, y lanza la bola con Espacio. Gratis en el navegador.', desc: 'Rompe todos los bloques con la paleta. Usa las flechas para moverte y Espacio para lanzar.' },
-  { id: 'rpg', category: 'arcade', href: '/mazmorra-oscura', label: 'Mazmorra Oscura', meta: 'Mazmorra Oscura, RPG medieval accesible: explora mazmorras con WASD, ataca con Espacio e interactúa con E. Gratis, en español y en el navegador.', desc: 'RPG medieval accesible. Explora mazmorras con WASD, ataca con Espacio e interactúa con E.' },
   { id: 'mastermind', category: 'palabras', href: '/mastermind', label: 'Mastermind de Números', meta: 'Mastermind de números para ciegos: adivina el número secreto de 4 cifras con pistas de toros y vacas. Gratis, solo con teclado y lector de pantalla.', desc: 'Adivina el número secreto de 4 dígitos. Recibirás pistas: toros (posición correcta) y vacas (dígito correcto, posición incorrecta).' },
   { id: 'wordle', category: 'palabras', href: '/wordle', label: 'Wordle', meta: 'Wordle accesible en español: adivina la palabra de 5 letras en 6 intentos con pistas que lee tu lector de pantalla. Gratis y solo con teclado.', desc: 'Adivina la palabra de 5 letras en 6 intentos. Verde = posición correcta, amarillo = letra presente, gris = letra ausente.' },
   { id: 'mates-rapidas', category: 'palabras', href: '/mates-rapidas', label: 'Matemáticas Rápidas', meta: 'Matemáticas rápidas: resuelve operaciones de cálculo mental antes de que se acabe el tiempo, en tres niveles. Gratis y accesible para ciegos.', desc: 'Responde operaciones aritméticas antes de que se agote el tiempo. Elige entre tres niveles de dificultad.' },
@@ -58,6 +57,7 @@ export const GAMES = [
   { id: 'china', category: 'aventuras', href: '/china', label: 'El Dragón del Cielo', meta: 'El Dragón del Cielo: aventura de texto en la China imperial. Libera el Palacio Prohibido y derrota al Dragón del Cielo Oscuro. Gratis y accesible.', desc: 'Aventura de texto en la China Imperial. Explora 49 zonas del Palacio Prohibido corrompido por la oscuridad, descubre sus secretos y derrota al Dragón del Cielo Oscuro. Elige entre Guerrero Imperial, Hechicera del Dragón o Espía de la Seda.' },
   { id: 'rusia', category: 'aventuras', href: '/el-ultimo-bogatyr', label: 'El Último Bogatyr', meta: 'El Último Bogatyr: aventura de texto del folclore eslavo. Recorre el palacio del Zar y derrota a Koschei el Inmortal. Gratis y accesible para ciegos.', desc: 'Aventura de texto en la Rusia Imperial y el folclore eslavo. Explora 49 zonas del palacio del Zar corrompido por Koschei el Inmortal, descubre sus secretos y derrota al hechicero de la muerte. Elige entre Bogatyr, Hechicera del Bosque o Ladrón del Zar.' },
   { id: 'oeste', category: 'aventuras', href: '/oeste', label: 'El Forajido Inmortal', meta: 'El Forajido Inmortal: aventura de texto del Lejano Oeste. Derrota forajidos en 49 zonas y enfréntate a Deadwood Jack. Gratis y accesible para ciegos.', desc: 'Aventura de texto en el Lejano Oeste. Explora 49 zonas del pueblo y el fortín maldito, derrota forajidos y criaturas del desierto, y enfrenta a Deadwood Jack, el Forajido Inmortal. Elige entre Pistolero, Curandera Apache o Buscador de Oro.' },
+  { id: 'rpg', category: 'aventuras', genre: 'Rol', href: '/mazmorra-oscura', label: 'Mazmorra Oscura', meta: 'Mazmorra Oscura, RPG medieval accesible: explora mazmorras con WASD, ataca con Espacio e interactúa con E. Gratis, en español y en el navegador.', desc: 'RPG medieval accesible. Explora mazmorras con WASD, ataca con Espacio e interactúa con E.' },
 ]
 
 // Categorías, en el orden en que se muestran en la portada. Cada una es un
@@ -140,6 +140,7 @@ export const CATEGORIES = [
     intro: [
       'Las aventuras de texto, también llamadas aventuras conversacionales o ficción interactiva, son accesibles por naturaleza: todo el juego es texto que lee tu lector de pantalla. Exploras escribiendo órdenes como «ir norte», «tomar llave» o «atacar», descubres el mapa sala a sala y resuelves el misterio de cada historia.',
       'Hay ambientaciones para todos los gustos: terror gótico, ciencia ficción, piratas, el antiguo Egipto, el Japón feudal, la Grecia mitológica o el Lejano Oeste. En muchas eliges al principio entre tres personajes con estilos de juego distintos.',
+      'Al final de la lista está Mazmorra Oscura, un juego de rol que no es de texto: te mueves por la mazmorra con WASD y atacas e interactúas con teclas, sin escribir órdenes.',
     ],
     // La página de la categoría lista sus juegos agrupados por ambientación.
     // Cada aventura tiene que estar en un grupo: si falta alguna, el build falla.
@@ -150,6 +151,7 @@ export const CATEGORIES = [
       { id: 'mitologia', label: 'Mitología y civilizaciones antiguas', ids: ['egipto', 'templo', 'inca', 'grecia', 'bagdad', 'china', 'rusia'] },
       { id: 'historia', label: 'Piratas, samuráis, vikingos y el Oeste', ids: ['pirata', 'samurai', 'vikingos', 'oeste'] },
       { id: 'misterio', label: 'Misterio', ids: ['misterio'] },
+      { id: 'rol', label: 'Rol y mazmorras', ids: ['rpg'] },
     ],
   },
 ]
@@ -275,6 +277,14 @@ export function relatedGames(slug: string, count = 4): Game[] {
   return Array.from({ length: Math.min(count, same.length - 1) }, (_, i) => same[(start + 1 + i) % same.length])
 }
 
+// Género de un juego para el JSON-LD y la imagen para redes: el nombre de su
+// categoría, salvo que el juego tenga uno propio (Mazmorra Oscura está con las
+// aventuras de texto, pero es un juego de rol).
+export function gameGenre(game: Game): string {
+  if ('genre' in game && game.genre) return game.genre
+  return categoryById(game.category).label
+}
+
 // Datos estructurados VideoGame de la página de un juego. No es un script
 // ejecutable; se escapa "<" para que ningún texto pueda cerrar la etiqueta.
 export function gameJsonLd(slug: string): string {
@@ -286,7 +296,7 @@ export function gameJsonLd(slug: string): string {
     description: game.meta,
     url: `${SITE_URL}${game.href}`,
     image: `${SITE_URL}${gameOgImage(game).url}`,
-    genre: CATEGORIES.find((c) => c.id === game.category)?.label,
+    genre: gameGenre(game),
     gamePlatform: 'Web browser',
     applicationCategory: 'Game',
     operatingSystem: 'Cualquiera con navegador web',
